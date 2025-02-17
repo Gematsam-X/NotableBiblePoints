@@ -1,0 +1,118 @@
+<!-- File HTML per Fm -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Fermio (Fm)</title>
+  </head>
+  <body>
+    <h1>Fermio (Fm)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Fm/fm.png"
+        alt="Modello di Bohr di un atomo di fermio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>100</p>
+
+    <h3>Peso atomico:</h3>
+    <p>257 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Elemento artificiale, metallo di transizione interna, attinoide</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il fermio è un elemento chimico radioattivo con simbolo Fm e numero
+      atomico 100. È stato scoperto nel 1952, durante lo studio dei prodotti
+      della detonazione della prima bomba a <a href="h.html">idrogeno</a>. Prende il nome dal fisico
+      Enrico Fermi, celebre per il suo contributo alla fisica nucleare. Il
+      fermio è un elemento estremamente raro, prodotto artificialmente in
+      piccoli quantitativi all'interno di reattori nucleari, dove viene generato
+      tramite bombardamento neutronico di elementi più leggeri.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      A causa della sua elevata radioattività e delle difficoltà legate alla
+      produzione in quantità significative, il fermio ha applicazioni limitate.
+      Viene utilizzato principalmente nella ricerca scientifica per studiare le
+      proprietà nucleari e per comprendere meglio i processi di decadimento
+      radioattivo, contribuendo all'espansione delle conoscenze sui nuclei
+      atomici pesanti.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il fermio è uno degli elementi più pesanti che possa essere prodotto in
+      quantità misurabili, sebbene ogni campione sia di dimensioni estremamente
+      ridotte. Inoltre, a causa della sua radioattività, il fermio non esiste
+      naturalmente sulla Terra, ma viene creato solo in condizioni controllate.
+      Ha svolto un ruolo fondamentale nella ricerca nucleare, aiutando gli
+      scienziati a sviluppare teorie sulla stabilità dei nuclei superpesanti.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul fermio e su altri elementi superpesanti rappresenta una
+      frontiera della fisica nucleare. Gli scienziati sperano che studi
+      approfonditi possano offrire nuove intuizioni sulla struttura dei nuclei
+      atomici e sulle forze che li tengono uniti. Esplorando la possibilità di
+      creare isotopi più stabili, si potrebbe scoprire una "isola di stabilità",
+      dove elementi con massa atomica elevata avrebbero una durata maggiore e,
+      quindi, potenziali applicazioni future.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 1.3 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 15.6 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.16 nm</li>
+      <li>Raggio covalente: 0.112 nm</li>
+      <li>Volume atomico: 20.5 nm³</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 1527 °C</li>
+      <li>Punto di ebollizione: sconosciuto</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.12 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 6.21 eV</li>
+    </ul>
+
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 30, 8, 2);
+    </script>
+  </body>
+</html>

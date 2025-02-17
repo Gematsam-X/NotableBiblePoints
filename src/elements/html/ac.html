@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Attinio (Ac)</title>
+  </head>
+  <body>
+    <h1>Attinio (Ac)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Ac/ac.png"
+        alt="Modello di Bohr di un atomo di attinio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>89</p>
+
+    <h3>Peso atomico:</h3>
+    <p>227 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Metallo di transizione interna, attinoide</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      L'attinio è un elemento chimico raro, radioattivo e facente parte della
+      serie degli attinoidi. Fu scoperto nel 1899 dallo scienziato francese
+      André-Louis Debierne, rappresentando uno dei primi elementi radioattivi ad
+      essere identificato dopo il radio. L'attinio si distingue per la sua
+      elevata radioattività, che causa un leggero bagliore azzurrino al buio,
+      visibile a causa della ionizzazione dell'aria circostante. Questo metallo
+      è altamente reattivo e tende a ossidarsi rapidamente in presenza di
+      <a href="o.html">ossigeno</a> e umidità, trasformandosi in una polvere bianca. È estremamente
+      raro nella crosta terrestre e solitamente si trova in piccole tracce nei
+      minerali di <a href="u.html">uranio</a> e <a href="th.html">torio</a>.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      L'attinio ha un uso limitato, principalmente a causa della sua
+      radioattività e rarità. Viene utilizzato nella produzione di neutroni
+      grazie alla sua capacità di emettere particelle alfa in maniera costante e
+      controllata, qualità che lo rende prezioso in alcuni dispositivi di
+      ricerca scientifica e nella radioterapia sperimentale. In campo medico,
+      l'isotopo attinio-225 viene studiato per applicazioni oncologiche, dove le
+      sue radiazioni possono aiutare a distruggere cellule tumorali difficili da
+      trattare con i metodi tradizionali. Tuttavia, l'uso dell'attinio è
+      strettamente regolato e limitato a strutture specializzate.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      L'attinio è uno degli elementi più rari e costosi da estrarre, poiché è
+      disponibile solo in tracce nelle rocce di <a href="u.html">uranio</a> e <a href="th.html">torio</a>. A causa della
+      sua radioattività, emette un bagliore azzurro-verde al buio, che non è
+      dovuto a una reazione chimica ma alla ionizzazione dell'aria che circonda
+      l'elemento. Questa proprietà lo rende visivamente unico e affascinante per
+      chi studia la chimica degli elementi radioattivi. È interessante notare
+      che l'attinio è l'antenato della serie degli attinoidi nella tavola
+      periodica, una famiglia che include anche elementi noti come l'
+      <a href="u.html"><a href="u.html">uranio</a></a> e il <a href="pu.html"><a href="pu.html">plutonio</a></a>. Tuttavia,
+      a differenza di questi ultimi, l'attinio è meno conosciuto e studiato per
+      via delle sue limitate applicazioni pratiche.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      Il futuro della ricerca sull'attinio si concentra principalmente sul suo
+      impiego in campo medico, dove le radiazioni emesse dall'isotopo
+      attinio-225 sono oggetto di studio per la cura di alcune forme di cancro.
+      In particolare, si stanno studiando terapie mirate che potrebbero
+      sfruttare le radiazioni dell'attinio per attaccare selettivamente le
+      cellule tumorali senza danneggiare i tessuti sani circostanti. Inoltre,
+      l'attinio continua a suscitare interesse come fonte di neutroni in
+      laboratorio, con ricerche che esplorano nuovi modi di utilizzare questo
+      elemento per migliorare le tecniche di imaging nucleare e sviluppare
+      materiali avanzati. Essendo un elemento raro e costoso, le sfide
+      principali riguardano la produzione e la gestione sicura dell'attinio
+      nelle ricerche future.
+    </p>
+
+    <h2>Proprietà</h2>
+
+    <ul>
+      <li>Elettronegatività: 1.1 &#967;</li>
+      <li>Struttura cristallina: Esagonale compatta (HCP)</li>
+      <li>Densità: 10.07 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.247 nm</li>
+      <li>Raggio covalente: 0.186 nm</li>
+      <li>Volume atomico: 37.8 nm³</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 1050 °C</li>
+      <li>Punto di ebollizione: 3200 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.08 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 5.178 eV</li>
+    </ul>
+
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <button class="theme-toggle">Cambia tema</button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+
+      create3dModel(2, 8, 18, 32, 18, 9, 2);
+    </script>
+  </body>
+</html>

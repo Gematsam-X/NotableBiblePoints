@@ -1,0 +1,110 @@
+<!-- File HTML per Hg -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Mercurio (Hg)</title>
+  </head>
+  <body>
+    <h1>Mercurio (Hg)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Hg/hg.png"
+        alt="Modello di Bohr di un atomo di mercurio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>80</p>
+
+    <h3>Peso atomico:</h3>
+    <p>200.59 u</p>
+
+    <h3>Tipo:</h3>
+    <p>Metallo di transizione</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il mercurio, simbolo chimico Hg, deriva dal latino "Hydrargyrum", che
+      significa "<a href="ag.html">argento</a> liquido". È un metallo pesante e unico nel suo genere
+      poiché si presenta allo stato liquido a temperatura ambiente. È un
+      elemento raro che si trova principalmente combinato in minerali come il
+      cinabro (HgS).
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il mercurio è stato storicamente utilizzato in strumenti scientifici come
+      termometri, barometri e manometri. Tuttavia, a causa della sua tossicità,
+      l'uso è stato ridotto. Viene ancora impiegato in alcune applicazioni
+      industriali, come nelle lampade a vapori di mercurio e nella produzione di
+      <a href="./cl.html"><a href="cl.html">cloro</a></a> e soda caustica.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il mercurio è l'unico metallo liquido a temperatura ambiente. Il suo punto
+      di fusione è -38,83 °C, mentre il punto di ebollizione è 356,73 °C. È
+      altamente tossico e deve essere maneggiato con estrema cura. Nonostante la
+      sua tossicità, era utilizzato in passato nella medicina per trattare
+      diverse malattie, pratica oggi completamente abbandonata.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul mercurio si concentra sullo sviluppo di tecnologie per la
+      riduzione dell'inquinamento e per la gestione sicura dei rifiuti
+      contenenti mercurio. Si studiano anche alternative più sicure per
+      sostituire il mercurio nelle applicazioni industriali e scientifiche.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 2.0 &#967;</li>
+      <li>Struttura cristallina: Esagonale compatta (HCP)</li>
+      <li>Densità: 13.534 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.15 nm</li>
+      <li>Raggio covalente: 0.132 nm</li>
+      <li>Volume atomico: 14.1 nm³</li>
+      <li>Percentuale sulla crosta terrestre: 2e-05%</li>
+      <li>Punto di fusione: -39 °C</li>
+      <li>Punto di ebollizione: 357 °C</li>
+      <li>Conducibilità elettrica: 1.04e+06 S/m</li>
+      <li>Conducibilità termica: 8.4 W/(m·K)</li>
+      <li>Calore specifico: 0.138 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 10.438 eV</li>
+    </ul>
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 18, 2);
+    </script>
+  </body>
+</html>

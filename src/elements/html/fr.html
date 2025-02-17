@@ -1,0 +1,113 @@
+<!-- File HTML per Fr -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Francio (Fr)</title>
+  </head>
+  <body>
+    <h1>Francio (Fr)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Fr/fr.png"
+        alt="Modello di Bohr di un atomo di francio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>87</p>
+
+    <h3>Peso atomico:</h3>
+    <p>223 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Metallo alcalino</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il francio è un elemento chimico radioattivo con simbolo Fr e numero
+      atomico 87. È estremamente raro in natura, in quanto si trova solo come
+      prodotto di decadimento di altri elementi radioattivi. Essendo un metallo
+      alcalino, ha caratteristiche simili al <a href="cs.html">cesio</a> e al <a href="rb.html">rubidio</a>, ma si distingue
+      per la sua elevata radioattività e instabilità, con un’emivita molto
+      breve.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il francio ha poche applicazioni pratiche a causa della sua scarsissima
+      disponibilità e della sua radioattività. Viene impiegato soprattutto nella
+      ricerca scientifica, in particolare nella fisica atomica e nella
+      spettroscopia, per studiare il comportamento dei metalli alcalini e gli
+      effetti della radioattività sulla struttura atomica.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il francio è stato scoperto nel 1939 dalla scienziata francese Marguerite
+      Perey, che gli ha dato questo nome in onore della Francia. È uno degli
+      elementi naturali più rari sulla Terra, con una quantità stimata inferiore
+      a 1 grammo in tutta la crosta terrestre.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul francio è orientata verso una migliore comprensione della
+      fisica nucleare e dei fenomeni legati alla radioattività. Nonostante la
+      sua scarsa utilità pratica, le sue proprietà uniche possono offrire spunti
+      per applicazioni future in campo scientifico, specialmente per
+      approfondire la conoscenza dei metalli alcalini e delle interazioni tra
+      elementi radioattivi.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 0.7 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 1.87 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.348 nm</li>
+      <li>Raggio covalente: 0.233 nm</li>
+      <li>Volume atomico: 71.1 nm³</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 27 °C</li>
+      <li>Punto di ebollizione: 677 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.13 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 4.072 eV</li>
+    </ul>
+
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 18, 8, 1);
+    </script>
+  </body>
+</html>

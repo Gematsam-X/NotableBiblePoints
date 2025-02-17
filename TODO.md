@@ -1,0 +1,32 @@
+# TODO list
+
+- [X] Make the table interactive
+- [X] Add detailed in-depth information
+- [X] Make the table fullscreen
+- [X] Correct incorrect information in the in-depths
+- [X] Add images
+- [X] Add gh-pages support
+- [X] Add a legend
+- [X] Implement dark theme
+- [X] Add icons
+- [X] Add a search bar
+- [X] Change the font to a better one
+- [X] Merge all CSS files into a single one
+- [X] Add a type-filtered view
+- [X] Include the metal type in the in-depths
+- [X] Add a 3D model
+- [X] Add a button to highlight the element in the periodic table
+- [X] Implement hover effects
+- [X] Fix the initial flash when loading the page
+- [X] Add an advanced view for different types of elements (e.g., transition metals, alkali metals)
+- [X] Add extra properties to the in-depths (e.g., electronegativity, density)
+- [X] Translate code content (e.g., CSS classes, functions, comments) to English
+- [X] Add an ALT attribute for the imgs
+- [X] Add a group-period-filtered view
+- [X] Refactor the main logic using the data attributes
+- [X] Correct the names with the IUPAC's official version
+- [X] Add a search bar for specific words in the in-depths
+- [X] Improve the SEO with a sitemap on Google Search Console
+- [X] Use a different image for the generic metals when the advanced view is on.
+- [X] Improve the Lighthouse score. Focus on accessibility (92) and best practices (96). Remember to check the score in all the pages of the project.
+- [X] Add hyperlinks when mentioning other elements in an in-depth

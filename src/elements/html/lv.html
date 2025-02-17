@@ -1,0 +1,121 @@
+<!-- File HTML per Lv -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Livermorio (Lv)</title>
+  </head>
+  <body>
+    <h1>Livermorio (Lv)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Lv/lv.png"
+        alt="Modello di Bohr di un atomo di livermorio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>116</p>
+
+    <h3>Peso atomico:</h3>
+    <p>293 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Elemento artificiale, metallo di post-transizione, calcogeno</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il livermorio (Lv) è un elemento chimico artificiale, con simbolo Lv e
+      numero atomico 116. Appartiene alla famiglia dei metalli di
+      post-transizione e alla 16ª colonna della tavola periodica, nel gruppo dei
+      calcogeni. È stato sintetizzato per la prima volta nel 2000 da un team di
+      scienziati russi e americani presso il Joint Institute for Nuclear
+      Research (JINR) in Russia. Questo elemento è altamente instabile e non si
+      trova in natura, ma viene creato artificialmente in acceleratori di
+      particelle tramite reazioni nucleari.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      A causa della sua instabilità e della difficoltà nella sua produzione, il
+      livermorio non ha applicazioni pratiche al momento. Viene principalmente
+      studiato in ambito scientifico per esplorare la stabilità degli elementi
+      superpesanti e per comprendere le forze nucleari che governano la materia
+      in regioni di massa estremamente alta. La sua sintesi ha rappresentato un
+      importante passo nella comprensione della tavola periodica e delle
+      proprietà degli elementi transuranici.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il livermorio è stato nominato in onore della Livermore National
+      Laboratory in California, dove sono stati condotti importanti esperimenti
+      nucleari. Questo elemento è parte di un gruppo di elementi chimici che
+      sono stati creati in laboratorio e che esistono solo per frazioni di
+      secondo, rendendoli estremamente difficili da studiare. La scoperta del
+      livermorio ha contribuito a espandere i limiti della tavola periodica,
+      portando la conoscenza della materia a nuove frontiere.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul livermorio è ancora nelle fasi iniziali, ma rappresenta
+      un'area di grande interesse per la fisica nucleare. La comprensione dei
+      comportamenti di questi elementi superpesanti potrebbe portare a nuove
+      scoperte nella scienza dei materiali e nella fisica teorica. Inoltre, gli
+      scienziati sono alla ricerca di modi per sintetizzare elementi ancora più
+      pesanti e stabili, il che potrebbe portare alla scoperta di nuovi fenomeni
+      nucleari e all'ampliamento della tavola periodica.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 2.0 &#967;</li>
+      <li>Struttura cristallina: sconosciuta</li>
+      <li>Densità: sconosciuta</li>
+      <li>Raggio atomico: sconosciuto</li>
+      <li>Raggio covalente: sconosciuto</li>
+      <li>Volume atomico: sconosciuto</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: sconosciuto</li>
+      <li>Punto di ebollizione: sconosciuto</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: sconosciuto</li>
+      <li>Energia di prima ionizzazione: 8.6 eV</li>
+    </ul>
+
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 32, 18, 6);
+    </script>
+  </body>
+</html>

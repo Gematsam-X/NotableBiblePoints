@@ -1,0 +1,125 @@
+<!-- File HTML per Am -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Americio (Am)</title>
+  </head>
+  <body>
+    <h1>Americio (Am)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Am/am.png"
+        alt="Modello di Bohr di un atomo di americio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>95</p>
+
+    <h3>Peso atomico:</h3>
+    <p>243 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Elemento artificiale, metallo di transizione interna, attinoide</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      L'americio è un elemento sintetico creato per la prima volta nel 1944
+      durante il Progetto Manhattan. Parte della serie degli attinoidi, questo
+      metallo radioattivo è caratterizzato da una forte emissione di radiazioni
+      alfa, che lo rende utile in alcune applicazioni scientifiche e
+      industriali. L'americio si presenta come un solido argentato e lucente, ma
+      perde la sua lucentezza quando si ossida in aria. Viene prodotto
+      principalmente bombardando <a href="pu.html">plutonio</a> con neutroni in reattori nucleari, ed
+      è molto raro in natura.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      L'uso più comune dell’americio è nei rilevatori di fumo domestici, dove
+      l'isotopo americio-241 è utilizzato per la sua capacità di ionizzare
+      l'aria, creando un circuito elettrico che, in presenza di fumo, viene
+      interrotto, facendo scattare l'allarme. Questo isotopo è scelto per la sua
+      lunga emivita di 432 anni, che garantisce un funzionamento duraturo. In
+      campo industriale, l'americio è utilizzato anche in apparecchiature di
+      misurazione della densità e spessore di materiali, sfruttando la sua
+      capacità di emettere radiazioni penetranti.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il nome "americio" deriva dal continente americano, in analogia al
+      "<a href="cm.html">curio</a>", un altro elemento della stessa serie, chiamato così in onore di
+      Marie Curie. Americio-241 è uno degli elementi più longevi tra gli
+      attinoidi sintetici, con una mezza vita di diversi secoli. Inoltre,
+      sebbene sia un elemento altamente radioattivo, la sua bassa energia di
+      radiazione lo rende relativamente sicuro per usi controllati come nei
+      rilevatori di fumo. Infine, l’americio è stato uno dei primi elementi
+      artificiali ad essere prodotto in quantità utili per applicazioni
+      commerciali.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      Le ricerche sull’americio sono concentrate principalmente sulle sue
+      potenziali applicazioni nella produzione di energia nucleare, poiché
+      potrebbe essere utilizzato come combustibile nei reattori nucleari di
+      nuova generazione. Inoltre, si stanno studiando tecniche avanzate per il
+      recupero dell’americio dai rifiuti nucleari, riducendo così la quantità di
+      materiale radioattivo destinato allo smaltimento a lungo termine. Infine,
+      poiché l’americio è un elemento sintetico, gli studi sui suoi composti e
+      sulla sua chimica potrebbero offrire nuove informazioni sulla reattività e
+      sul comportamento degli attinoidi.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 1.13 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 13.67 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.18 nm</li>
+      <li>Raggio covalente: 0.127 nm</li>
+      <li>Volume atomico: 20.8 nm³</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 994 °C</li>
+      <li>Punto di ebollizione: 2600 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.15 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 5.973 eV</li>
+    </ul>
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 25, 8, 2);
+    </script>
+  </body>
+</html>
