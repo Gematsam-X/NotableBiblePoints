@@ -1,0 +1,110 @@
+<!-- File HTML per Cs -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Cesio (Cs)</title>
+  </head>
+  <body>
+    <h1>Cesio (Cs)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Cs/cs.png"
+        alt="Modello di Bohr di un atomo di cesio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>55</p>
+
+    <h3>Peso atomico:</h3>
+    <p>132.91 u</p>
+
+    <h3>Tipo:</h3>
+    <p>Metallo alcalino</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il cesio è un metallo alcalino molto reattivo e di colore dorato in
+      atmosfera inerte. Al contatto con acqua e aria perde il suo colore dorato
+      a causa della formazione di ossidi e idrossidi e assume un colore
+      biancastro. È noto per essere estremamente morbido e può persino fondere a
+      temperature relativamente basse (28.5°C). Il cesio è uno dei metalli più
+      elettropositivi e reattivi, noto per la sua reazione esplosiva con
+      l'acqua.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il cesio viene impiegato nelle celle fotoelettriche, negli orologi atomici
+      di altissima precisione, e in alcune tecnologie per la perforazione di
+      pozzi petroliferi. È utilizzato anche in strumenti di misura grazie alla
+      sua capacità di emettere elettroni sotto l'influenza della luce.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il nome 'cesio' deriva dal latino 'caesius', che significa 'azzurro
+      cielo', per via delle righe blu presenti nel suo spettro di emissione.
+      Inoltre, il cesio è usato per definire la durata di un secondo nella
+      misurazione del tempo tramite gli orologi atomici.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul cesio si concentra principalmente sul miglioramento degli
+      orologi atomici per ottenere una maggiore precisione nelle misurazioni
+      temporali. Nuove applicazioni sono esplorate anche in campo medico, come
+      la radioterapia, e nella tecnologia delle comunicazioni.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 0.79 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 1.873 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.298 nm</li>
+      <li>Raggio covalente: 0.235 nm</li>
+      <li>Volume atomico: 70.4 nm³</li>
+      <li>Percentuale sulla crosta terrestre: 0.0002%</li>
+      <li>Punto di fusione: 28 °C</li>
+      <li>Punto di ebollizione: 671 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: 35.0 W/(m·K)</li>
+      <li>Calore specifico: 0.242 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 3.8939 eV</li>
+    </ul>
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 18, 8, 1);
+    </script>
+  </body>
+</html>

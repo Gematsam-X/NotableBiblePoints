@@ -1,0 +1,111 @@
+<!-- File HTML per Bk -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Berkelio (Bk)</title>
+  </head>
+  <body>
+    <h1>Berkelio (Bk)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Bk/bk.png"
+        alt="Modello di Bohr di un atomo di berkelio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>97</p>
+
+    <h3>Peso atomico:</h3>
+    <p>247 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Elemento artificiale, metallo di transizione interna, attinoide</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il berkelio è un elemento chimico della tavola periodica con simbolo Bk e
+      numero atomico 97. È un metallo radioattivo e uno degli attinoidi.
+      Scoperto nel 1949, il berkelio è stato il primo elemento chimico a essere
+      prodotto artificialmente. Il suo nome deriva dalla città di Berkeley, in
+      California, dove è stato scoperto.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il berkelio ha pochi usi pratici a causa della sua radioattività e della
+      difficoltà di produzione. Viene principalmente utilizzato per scopi di
+      ricerca scientifica e nella produzione di isotopi radioattivi per
+      applicazioni mediche. È anche impiegato nella ricerca su materiali
+      nucleari e nella fisica delle particelle.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il berkelio è stato il primo elemento chimico prodotto artificialmente
+      dopo il <a href="pu.html">plutonio</a> e viene creato in piccole quantità in reattori nucleari.
+      È altamente radioattivo e la sua esposizione richiede precauzioni
+      speciali. Non esistono applicazioni commerciali significative per il
+      berkelio a causa della sua scarsità e della sua instabilità.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sul berkelio e sugli attinoidi in generale continua, con un
+      interesse particolare nella sintesi di nuovi isotopi e nella comprensione
+      delle loro proprietà chimiche e fisiche. Gli scienziati stanno esplorando
+      anche le possibilità di utilizzo di elementi radioattivi in campo medico e
+      nella produzione di energia nucleare.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 1.3 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 14.79 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.166 nm</li>
+      <li>Raggio covalente: 0.12 nm</li>
+      <li>Volume atomico: 16.6 nm³</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 986 °C</li>
+      <li>Punto di ebollizione: 2627 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.13 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 6.147 eV</li>
+    </ul>
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 27, 8, 2);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,730 @@
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1c1c1c;
+    color: #f4f4f9;
+  }
+}
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("./assets/fonts/Cinzel-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fira Sans Condensed";
+  src: url("./assets/fonts/FiraSansCondensed-SemiBold.woff2") format("woff2");
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  visibility: hidden;
+  display: none;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+
+html.theme-loaded {
+  visibility: visible;
+  display: block;
+  opacity: 1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.no-click {
+  pointer-events: none !important;
+}
+
+img {
+  pointer-events: none;
+}
+
+#github_img {
+  pointer-events: all;
+}
+
+/* General styles for the light theme (default) */
+body {
+  background-color: #f4f4f9;
+  color: #1c1c1c;
+  font-family: "Fira Sans Condensed", Arial;
+}
+
+/* Stilizzazione dell'interruttore (switch) */
+.switch {
+  position: relative;
+  display: inline-block;
+  margin-left: 5px;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4caf50;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  border-radius: 50%;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider:before {
+  transform: translateX(
+    26px
+  ); /* Muovi la pallina a destra quando è selezionato */
+}
+
+.switch-label {
+  margin-left: 5px;
+}
+
+.group,
+.period {
+  font-size: 2rem;
+  text-align: center;
+  border: none !important;
+  font-family: "Cinzel", Arial;
+  color: #1c1c1c;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  color: #1c1c1c;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #1c1c1c;
+}
+
+.periodic-table {
+  margin: 0 auto;
+  width: 90%;
+  border-collapse: collapse;
+}
+
+.periodic-table td {
+  z-index: 999;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  user-select: none;
+  transition: opacity 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
+}
+
+/* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  word-break: break-word;
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #ddd;
+  width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header,
+.modal-footer,
+.modal-body,
+.modal-content {
+  padding: 10px;
+  background-color: #f4f4f9;
+  color: #1c1c1c;
+  border-radius: 10px 10px 0 0;
+}
+
+.modal-header,
+.modal-footer {
+  font-family: "Cinzel", Arial;
+}
+
+.modal-footer {
+  border-radius: 0 0 10px 10px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #868686;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+hr.dashed {
+  border: 0;
+  border-top: 1px dashed; /* Linea tratteggiata */
+  margin: 20px 0;
+}
+
+hr.normal {
+  border: 0;
+  border-top: 1px solid;
+  margin: 30px 0;
+}
+
+td:hover {
+  transform: scale(1.1);
+}
+
+.non-metal {
+  background-color: lightpink;
+}
+
+.non-metal:hover {
+  background-color: #d39da5;
+}
+
+.metal {
+  background-color: #acf8ac;
+}
+
+.metal:hover {
+  background-color: #7dbf7d;
+}
+/* Specific categories of elements */
+
+.halogen {
+  background-color: #fc952f !important;
+}
+
+.halogen:hover {
+  background-color: #c97a1f !important;
+}
+
+#halogensLegendContainer {
+  background-color: transparent !important;
+}
+
+.chalcogen {
+  background-color: #50c440 !important;
+}
+
+.chalcogen:hover {
+  background-color: #3a8f2f !important;
+}
+
+#chalcogensLegendContainer {
+  background-color: transparent !important;
+}
+
+.pnictogen {
+  background-color: #d14cdd !important;
+}
+
+.pnictogen:hover {
+  background-color: #a63aae !important;
+}
+
+#pnictogensLegendContainer {
+  background-color: transparent !important;
+}
+
+/* Various types of metals */
+
+.internalTransitionMetal {
+  background-color: #f3c705 !important;
+}
+
+.internalTransitionMetal:hover {
+  background-color: #b39305 !important;
+}
+
+#internalTransitionMetalsLegendContainer {
+  background-color: transparent !important;
+}
+
+.transitionMetal {
+  background-color: #559af5 !important;
+}
+
+.transitionMetal:hover {
+  background-color: #457ec9 !important;
+}
+
+#transitionMetalsLegendContainer {
+  background-color: transparent !important;
+}
+
+.alkaliMetal {
+  background-color: #05b8b8 !important;
+}
+
+.alkaliMetal:hover {
+  background-color: #047777 !important;
+}
+
+#alkaliMetalsLegendContainer {
+  background-color: transparent !important;
+}
+
+.alkalineEarthMetal {
+  background-color: #c787be !important;
+}
+
+.alkalineEarthMetal:hover {
+  background-color: #9b6994 !important;
+}
+
+#alkalineEarthMetalsLegendContainer {
+  background-color: transparent !important;
+}
+
+.postTransitionMetal {
+  background-color: #f0ee85 !important;
+}
+
+.postTransitionMetal:hover {
+  background-color: #b9b86a !important;
+}
+
+#postTransitionMetalsLegendContainer {
+  background-color: transparent !important;
+}
+
+.noble-gas {
+  background-color: #ffcc99;
+}
+
+.noble-gas:hover {
+  background-color: #c09a75;
+}
+
+.metalloid {
+  background-color: lightgrey;
+}
+
+.metalloid:hover {
+  background-color: #a09e9e;
+}
+
+.artificial {
+  background-color: #8fbcd4 !important;
+}
+
+.artificial:hover {
+  background-color: #7295a8 !important;
+}
+
+.special {
+  background-color: white !important;
+}
+
+.special:hover {
+  background-color: #e6e6e6 !important;
+}
+
+.specialLegend {
+  background-color: transparent !important;
+}
+
+.specialLegend:hover {
+  background-color: transparent !important;
+}
+
+.no-border {
+  border: none !important; /* Removes the border for legend td */
+}
+
+/* Class to make elements transparent */
+.faded {
+  pointer-events: none !important;
+  z-index: 0 !important;
+  opacity: 0.2 !important;
+}
+
+button {
+  text-align: center;
+  font-family: "Fira Sans Condensed", Arial;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #f4f4f9;
+  background-color: #1c1c1c;
+  border-radius: 5px;
+  transition: background-color 0.5s ease;
+  opacity: 1 !important;
+}
+
+button:hover {
+  background-color: #000000;
+}
+
+button.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  border: none;
+  font-size: 16px;
+  font-family: "Fira Sans Condensed", Arial;
+  color: #f4f4f9;
+  background-color: #1c1c1c;
+  border-radius: 5px;
+}
+
+.search-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+#search-input {
+  transition: background-color 0.5s ease;
+  height: 40px;
+  margin-right: 5px;
+  padding: 0 10px;
+  font-size: 16px;
+  width: 19.4rem;
+  background-color: #1c1c1c;
+  color: #f4f4f9;
+  border: none;
+  border-radius: 5px;
+  font-family: "Fira Sans Condensed", Arial;
+}
+
+#search-button {
+  border: none;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  border-radius: 5px;
+}
+
+#search-input::placeholder {
+  color: #ddd;
+}
+
+.legend {
+  background-color: transparent !important;
+}
+
+#artificialsLegendContainer {
+  background-color: transparent !important;
+}
+
+.no-border {
+  border: none !important;
+}
+
+/* Dark theme styles for the modal */
+.dark-theme .modal-content {
+  border: 1px solid #444;
+  background-color: #1c1c1c;
+}
+
+.dark-theme .modal-header,
+.dark-theme .modal-footer,
+.dark-theme .modal-body {
+  background-color: #1c1c1c;
+  color: #f4f4f9;
+}
+
+.dark-theme .close {
+  color: #ddd;
+}
+
+.dark-theme .close:hover,
+.dark-theme .close:focus {
+  color: #bbb;
+}
+
+/* Style for the dark theme */
+body.dark-theme {
+  background-color: #1c1c1c;
+  color: #f4f4f9;
+}
+
+.dark-theme h1 {
+  color: #f4f4f9;
+}
+
+.dark-theme footer {
+  color: #f4f4f9;
+}
+
+.dark-theme .group,
+.dark-theme .period {
+  color: #f4f4f9 !important;
+}
+
+.dark-theme .periodic-table td {
+  border: 1px solid #444;
+  color: #1c1c1c;
+}
+
+.dark-theme #search-input {
+  background-color: #f4f4f9;
+  color: #1c1c1c;
+}
+
+.dark-theme #search-input::placeholder {
+  color: #4b4b4b;
+}
+
+.dark-theme .non-metal {
+  background-color: #ff7675;
+}
+
+.non-metal:hover {
+  background-color: #d86565;
+}
+
+.dark-theme .noble-gas {
+  background-color: #55efc4;
+}
+
+.dark-theme .noble-gas:hover {
+  background-color: #46be9c;
+}
+
+.dark-theme .metal {
+  background-color: #a29bfe;
+}
+
+.dark-theme .metal:hover {
+  background-color: #847fd1;
+}
+
+.dark-theme .metalloid {
+  background-color: #ffeaa7;
+}
+
+.dark-theme .metalloid:hover {
+  background-color: #d4c38b;
+}
+
+/* Specific categories of elements */
+
+/* The color of halogens is a bright orange and is fine for both themes */
+
+.dark-theme .pnictogen {
+  background-color: #67b4f3 !important;
+}
+
+.dark-theme .pnictogen:hover {
+  background-color: #4f8dbf !important;
+}
+
+.dark-theme .chalcogen {
+  background-color: #62b800 !important;
+}
+
+.dark-theme .chalcogen:hover {
+  background-color: #4f8f00 !important;
+}
+
+/* Various types of metals */
+
+.dark-theme .postTransitionMetal {
+  background-color: #c16cfd !important;
+}
+
+.dark-theme .postTransitionMetal:hover {
+  background-color: #9c57ce !important;
+}
+
+.dark-theme .alkalineEarthMetal {
+  background-color: #ff1493 !important;
+}
+
+.dark-theme .alkalineEarthMetal:hover {
+  background-color: #be116e !important;
+}
+
+.dark-theme .alkaliMetal {
+  background-color: #2ea3a3 !important;
+}
+
+.dark-theme .alkaliMetal:hover {
+  background-color: #207070 !important;
+}
+
+.dark-theme .transitionMetal {
+  background-color: #4d89d8 !important;
+}
+
+.dark-theme .transitionMetal:hover {
+  background-color: #3564b1 !important;
+}
+
+.dark-theme .internalTransitionMetal {
+  background-color: #b89706 !important;
+}
+
+.dark-theme .internalTransitionMetal:hover {
+  background-color: #8f7503 !important;
+}
+
+.dark-theme .NOBG-internalTransitionMetal {
+  background-color: inherit;
+}
+
+.dark-theme .artificial {
+  background-color: #fab1a0 !important;
+}
+
+.dark-theme .artificial:hover {
+  background-color: #c98e81 !important;
+}
+
+.dark-theme .special {
+  background-color: #91949b !important;
+}
+
+.dark-theme .special:hover {
+  background-color: #73767c !important;
+}
+
+.dark-theme .specialLegend {
+  color: #f4f4f9 !important;
+  background-color: transparent !important;
+}
+.dark-theme .specialLegend:hover {
+  background-color: transparent !important;
+}
+
+.dark-theme button.theme-toggle {
+  background-color: #f4f4f9;
+  color: #1c1c1c;
+}
+
+.dark-theme .legend {
+  background-color: transparent !important;
+  color: #f4f4f9 !important;
+}
+
+.dark-theme .no-border {
+  border: none !important;
+}
+
+.dark-theme .return {
+  color: #1c1c1c;
+  background-color: #f4f4f9;
+}
+
+.dark-theme button {
+  background-color: #f4f4f9;
+  color: #1c1c1c;
+}
+
+.dark-theme button:hover {
+  background-color: #d1d1d1;
+}
+
+/* Styles for in-depth sections */
+
+h2,
+h3,
+p,
+li,
+ul {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 85%;
+  word-wrap: break-word;
+  white-space: normal;
+  list-style-position: inside;
+}
+
+canvas {
+  display: block;
+  margin: 0;
+}
+
+.controls {
+  text-align: center;
+}
+
+.controls button {
+  margin: 10px;
+  cursor: pointer;
+}
+
+#rendererContainer {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.5s ease !important;
+  background-color: #f4f4f9;
+}
+
+.dark-theme #rendererContainer {
+  background-color: #1c1c1c;
+}
+
+.main-img {
+  text-align: center;
+}
+
+.return {
+  font-family: "Fira Sans Condensed", Arial;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #f4f4f9;
+  background-color: #1c1c1c;
+  border-radius: 5px;
+}
+
+#showInPeriodicTableButton {
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  display: block;
+}

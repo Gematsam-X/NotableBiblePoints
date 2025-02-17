@@ -1,0 +1,121 @@
+<!-- File HTML per Eu -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Europio (Eu)</title>
+  </head>
+  <body>
+    <h1>Europio (Eu)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Eu/eu.png"
+        alt="Modello di Bohr di un atomo di europio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>63</p>
+
+    <h3>Peso atomico:</h3>
+    <p>151.96 u</p>
+
+    <h3>Tipo:</h3>
+    <p>Metallo di transizione interna, lantanoide</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      L'europio è un elemento chimico della serie delle terre rare, noto per la
+      sua proprietà di emettere luce fluorescente. È un metallo tenero, duttile,
+      e ha una struttura argentea che si ossida facilmente all'aria. L'europio è
+      uno degli elementi più reattivi della serie dei lantanoidi, ed è
+      ampiamente utilizzato per la sua intensità luminosa che lo rende ideale
+      per applicazioni nei display a schermo piatto.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Viene principalmente utilizzato nelle industrie dei fosfori per schermi
+      televisivi e lampade fluorescenti, dove il suo potere di fluorescenza è
+      sfruttato per produrre colori intensi e brillanti. È anche usato nei
+      materiali di sicurezza, come nei segnali di emergenza e nei dispositivi di
+      illuminazione di sicurezza, grazie alla sua capacità di emettere luce in
+      condizioni di bassa visibilità. In ambito scientifico, viene utilizzato
+      come marcatore nei test biomedici e nei processi di ricerca, sfruttando la
+      sua fluorescenza unica.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il nome 'europio' deriva dal continente europeo, in quanto l'elemento è
+      stato scoperto da un team di scienziati europei nel 1896. L'europio è uno
+      degli elementi più reattivi della sua categoria ed è altamente raro in
+      natura, ed è per questo che viene estratto da minerali complessi. È così
+      luminoso che può essere utilizzato per creare luci visibili anche in
+      assenza di fonti di energia diretta, come nelle luci di emergenza.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca sull'europio si concentra sull'ottimizzazione delle sue
+      proprietà luminose per applicazioni più avanzate, come la produzione di
+      dispositivi elettronici più efficienti e schermi a risoluzione ultra-alta.
+      Un altro campo di ricerca promettente riguarda il miglioramento delle
+      tecniche di recupero e riciclaggio, dato l'alto valore dell'europio per
+      l'industria elettronica, ma anche la crescente domanda per applicazioni
+      sostenibili che riducano l'impatto ambientale del suo uso. Inoltre, nuove
+      scoperte potrebbero permettere di utilizzare l'europio in tecnologie
+      avanzate come le batterie ad alta efficienza e i laser.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 1.2 &#967;</li>
+      <li>Struttura cristallina: Esagonale compatta (HCP)</li>
+      <li>Densità: 5.243 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.198 nm</li>
+      <li>Raggio covalente: 0.198 nm</li>
+      <li>Volume atomico: 28.9 nm³</li>
+      <li>Percentuale sulla crosta terrestre: 0.0002%</li>
+      <li>Punto di fusione: 822 °C</li>
+      <li>Punto di ebollizione: 1529 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: 16.3 W/(m·K)</li>
+      <li>Calore specifico: 0.16 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 5.67 eV</li>
+    </ul>
+
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 25, 8, 2);
+    </script>
+  </body>
+</html>

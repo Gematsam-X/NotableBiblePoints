@@ -1,0 +1,114 @@
+<!-- File HTML per Ne -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Neon (Ne)</title>
+  </head>
+  <body>
+    <h1>Neon (Ne)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Ne/ne.png"
+        alt="Modello di Bohr di un atomo di neon"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>10</p>
+
+    <h3>Peso atomico:</h3>
+    <p>20,180 u</p>
+
+    <h3>Tipo:</h3>
+    <p>Gas nobile</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il neon è un elemento chimico appartenente al gruppo dei gas nobili. È il
+      secondo per leggerezza dopo l'<a href="he.html">elio</a> e si distingue per la sua
+      caratteristica incandescenza rossastra, visibile quando viene utilizzato
+      in tubi a scarica, noti come "lampade al neon". Questo elemento, sebbene
+      raro, è molto importante per diverse applicazioni tecnologiche e
+      industriali.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il neon è impiegato principalmente per la produzione di insegne luminose e
+      decorazioni grazie alla sua brillante scarica luminosa. Inoltre, viene
+      utilizzato come refrigerante meno costoso rispetto all'<a href="he.html">elio</a> in molte
+      applicazioni industriali. Il neon è noto per possedere la scarica più
+      intensa tra tutti i gas, rendendolo ideale per apparecchiature che
+      richiedono elevata visibilità.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il neon è completamente inerte e non magnetico. È un materiale gassoso che
+      diventa liquido solo a temperature estremamente basse. Ha un punto di
+      fusione di -248 °C e un punto di ebollizione di -246. Grazie alla sua
+      capacità di generare una luce intensa, è stato utilizzato in esperimenti
+      di fisica per studiare le proprietà delle scariche elettriche nei gas.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      Le ricerche sul neon si concentrano sull'ottimizzazione delle sue
+      applicazioni nel campo dell'illuminazione e della refrigerazione. Inoltre,
+      potrebbe essere utilizzato in tecnologie innovative per la fisica delle
+      particelle e nella progettazione di nuovi sistemi di raffreddamento
+      criogenico, grazie alla sua economicità rispetto all'<a href="he.html">elio</a> e alle sue
+      proprietà uniche.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 0.0 &#967;</li>
+      <li>Struttura cristallina: aeriforme a temperatura ambiente</li>
+      <li>Densità: 0.8999 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.038 nm</li>
+      <li>Raggio covalente: 0.058 nm</li>
+      <li>Volume atomico: 16.7 nm³</li>
+      <li>Percentuale sulla crosta terrestre: 0.002%</li>
+      <li>Punto di fusione: -248 °C</li>
+      <li>Punto di ebollizione: -246 °C</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 1.029 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 21.5645 eV</li>
+    </ul>
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8);
+    </script>
+  </body>
+</html>

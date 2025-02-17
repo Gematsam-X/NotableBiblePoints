@@ -1,0 +1,138 @@
+<!-- File HTML per Sg -->
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../../assets/favicon.ico" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <title>Seaborgio (Sg)</title>
+  </head>
+  <body>
+    <h1>Seaborgio (Sg)</h1>
+
+    <div class="main-img">
+      <img
+        src="../assets/Sg/sg.png"
+        alt="Modello di Bohr di un atomo di seaborgio"
+      />
+    </div>
+    <div id="rendererContainer"></div>
+
+    <div class="controls">
+      <button id="pauseButton">Pausa</button>
+      <button id="speedUpButton">Velocizza</button>
+      <button id="slowDownButton">Rallenta</button>
+      <button id="pauseCameraButton">Pausa camera</button>
+      <button id="pauseAnimationsButton">Pausa animazioni</button>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>Numero atomico:</h2>
+    <p>106</p>
+
+    <h3>Peso atomico:</h3>
+    <p>271 u (stima)</p>
+
+    <h3>Tipo:</h3>
+    <p>Elemento artificiale, metallo di transizione</p>
+
+    <h2>Descrizione</h2>
+    <p>
+      Il seaborgio è un elemento chimico sintetico con simbolo Sg e numero
+      atomico 106. Questo elemento è un metallo di transizione altamente
+      radioattivo, situato nel gruppo 6 della tavola periodica. Il seaborgio non
+      si trova naturalmente sulla Terra, ma viene prodotto artificialmente
+      tramite reazioni di fusione nucleare tra isotopi pesanti. La sua esistenza
+      è stata confermata per la prima volta nel 1974 dai ricercatori presso il
+      Lawrence Berkeley National Laboratory negli Stati Uniti e da un team di
+      scienziati sovietici presso il Joint Institute for Nuclear Research. A
+      causa della sua estrema radioattività e della breve durata delle sue
+      isotopi, il seaborgio è difficile da studiare in dettaglio e le sue
+      proprietà fisiche e chimiche rimangono in gran parte sconosciute. Le poche
+      informazioni disponibili suggeriscono che possa avere un comportamento
+      simile a quello del tungsteno e del <a href="mo.html">molibdeno</a>.
+    </p>
+
+    <h2>Uso</h2>
+    <p>
+      Il seaborgio è un elemento senza applicazioni pratiche al di fuori della
+      ricerca scientifica. La sua sintesi richiede un ambiente controllato di
+      laboratorio e strumenti altamente specializzati, come acceleratori di
+      particelle, che permettono la fusione degli isotopi per produrre quantità
+      estremamente piccole di questo elemento. Nei laboratori, il seaborgio è
+      impiegato principalmente per studi fondamentali nel campo della chimica
+      nucleare e per comprendere meglio le proprietà degli elementi
+      superpesanti. La difficoltà nel produrlo e nella sua manipolazione limita
+      la quantità di esperimenti che possono essere eseguiti su di esso.
+    </p>
+
+    <h2>Curiosità</h2>
+    <p>
+      Il seaborgio è stato nominato in onore di Glenn T. Seaborg, uno dei
+      pionieri della chimica nucleare e scopritore di numerosi elementi
+      transuranici. Seaborg è stato uno dei pochi scienziati ad avere un
+      elemento intitolato a sé mentre era ancora in vita. Il nome è stato
+      controverso e oggetto di discussione internazionale per diversi anni, ma è
+      stato infine accettato nel 1997 dall'Unione Internazionale di Chimica Pura
+      e Applicata (IUPAC). Sebbene la sua stabilità sia limitata, il seaborgio è
+      un importante oggetto di studio nella ricerca sugli elementi superpesanti,
+      contribuendo alla nostra comprensione delle forze nucleari che mantengono
+      insieme i nuclei di grandi dimensioni.
+    </p>
+
+    <h2>Futuro della ricerca</h2>
+    <p>
+      La ricerca futura sul seaborgio è orientata verso l’esplorazione della sua
+      chimica in condizioni estreme e la possibilità di creare nuovi isotopi con
+      una maggiore stabilità. L’interesse per il seaborgio e altri elementi
+      transuranici risiede nelle proprietà uniche che questi nuclei pesanti
+      potrebbero rivelare, in particolare nel campo della fisica nucleare e
+      della chimica teorica. La sintesi di isotopi più stabili consentirebbe
+      esperimenti più dettagliati e approfonditi, contribuendo a chiarire la
+      disposizione elettronica e la reattività chimica degli elementi
+      superpesanti. Inoltre, le ricerche future si concentrano sull’applicazione
+      dei principi di simmetria e della teoria quantistica per modellare il
+      comportamento del seaborgio e degli altri elementi della stessa classe.
+      Questo potrebbe portare anche a nuovi sviluppi nella tecnologia dei
+      materiali e nell’energia nucleare, aprendo strade inesplorate
+      nell'industria scientifica.
+    </p>
+    <h2>Proprietà</h2>
+    <ul>
+      <li>Elettronegatività: 1.3 &#967;</li>
+      <li>Struttura cristallina: Cubica a Corpo Centrato (BCC)</li>
+      <li>Densità: 18.7 g/cm<sup>3</sup></li>
+      <li>Raggio atomico: 0.154 nm</li>
+      <li>Raggio covalente: 0.101 nm</li>
+      <li>Volume atomico: sconosciuto</li>
+      <li>Percentuale sulla crosta terrestre: sconosciuta</li>
+      <li>Punto di fusione: 2627 °C</li>
+      <li>Punto di ebollizione: sconosciuto</li>
+      <li>Conducibilità elettrica: sconosciuta</li>
+      <li>Conducibilità termica: sconosciuta</li>
+      <li>Calore specifico: 0.1 J/(g·K)</li>
+      <li>Energia di prima ionizzazione: 6.9 eV</li>
+    </ul>
+
+    <button class="theme-toggle">Cambia tema</button>
+    <button id="showInPeriodicTableButton">
+      Mostra nella tavola periodica
+    </button>
+    <a href="../../index.html"><button class="return">Indietro</button></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="../../js/theme.js"></script>
+    <script type="module">
+      import create3dModel from "../../js/3dmodel.js";
+      import showInPeriodicTable from "../../js/showInPeriodicTable.js";
+
+      showInPeriodicTable();
+      create3dModel(2, 8, 18, 32, 32, 12, 2);
+    </script>
+  </body>
+</html>
