@@ -3,30 +3,109 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NotableBiblePoints</title>
+    <title>NotableBiblePoints - Salva i punti notevoli</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Login e Recupero Testo</h1>
-
-    <form id="loginForm">
-      <label for="email">Email:</label>
-      <input type="email" id="email" required />
-      <label for="password">Password:</label>
-      <input type="password" id="password" required />
-      <textarea
-        id="userText"
-        placeholder="Scrivi il tuo testo..."
-        required
-      ></textarea>
-      <button type="submit" id="login">Sign in</button>
-      <button type="submit" id="register">Sign up</button>
-    </form>
-
-    <h2>Testo precedente scritto:</h2>
-    <div id="previousText"></div>
-
+    <h1>NotableBiblePoints - Salva i punti notevoli</h1>
+    <button class="theme-toggle">Cambia tema</button>
+    <table class="periodic-table">
+      <tr>
+        <td class="law">Genesi</td>
+        <td class="law">Esodo</td>
+        <td class="law">Levitico</td>
+        <td class="law">Numeri</td>
+        <td class="law">Deuteronomio</td>
+      </tr>
+      <tr>
+        <td class="historical">Giosuè</td>
+        <td class="historical">Giudici</td>
+        <td class="historical">Rut</td>
+        <td class="historical">1 Samuele</td>
+        <td class="historical">2 Samuele</td>
+      </tr>
+      <tr>
+        <td class="historical">1 Re</td>
+        <td class="historical">2 Re</td>
+        <td class="historical">1 Cronache</td>
+        <td class="historical">2 Cronache</td>
+        <td class="historical">Esdra</td>
+      </tr>
+      <tr>
+        <td class="historical">Neemia</td>
+        <td class="historical">Ester</td>
+        <td class="wisdom">Giobbe</td>
+        <td class="wisdom">Salmi</td>
+        <td class="wisdom">Proverbi</td>
+      </tr>
+      <tr>
+        <td class="wisdom">Ecclesiaste</td>
+        <td class="wisdom">Cantico dei Cantici</td>
+        <td class="maj-prophet">Isaia</td>
+        <td class="maj-prophet">Geremia</td>
+        <td class="wisdom">Lamentazioni</td>
+      </tr>
+      <tr>
+        <td class="maj-prophet">Ezechiele</td>
+        <td class="maj-prophet">Daniele</td>
+        <td class="min-prophet">Osea</td>
+        <td class="min-prophet">Gioele</td>
+        <td class="min-prophet">Amos</td>
+      </tr>
+      <tr>
+        <td class="min-prophet">Abdia</td>
+        <td class="min-prophet">Giona</td>
+        <td class="min-prophet">Michea</td>
+        <td class="min-prophet">Naum</td>
+        <td class="min-prophet">Abacuc</td>
+      </tr>
+      <tr>
+        <td class="min-prophet">Sofonia</td>
+        <td class="min-prophet">Aggeo</td>
+        <td class="min-prophet">Zaccaria</td>
+        <td class="min-prophet">Malachia</td>
+        <td class="apostles">Matteo</td>
+      </tr>
+      <tr>
+        <td class="apostles">Marco</td>
+        <td class="apostles">Luca</td>
+        <td class="apostles">Giovanni</td>
+        <td class="apostles">Atti</td>
+        <td class="letter">Romani</td>
+      </tr>
+      <tr>
+        <td class="letter">1 Corinti</td>
+        <td class="letter">2 Corinti</td>
+        <td class="letter">Galati</td>
+        <td class="letter">Efesini</td>
+        <td class="letter">Filippesi</td>
+      </tr>
+      <tr>
+        <td class="letter">Colossesi</td>
+        <td class="letter">1 Tessalonicesi</td>
+        <td class="letter">2 Tessalonicesi</td>
+        <td class="letter">1 Timoteo</td>
+        <td class="letter">2 Timoteo</td>
+      </tr>
+      <td class="letter">Tito</td>
+      <td class="letter">Filemone</td>
+      <td class="letter">Ebrei</td>
+      <td class="letter">Giacomo</td>
+      <td class="letter">1 Pietro</td>
+      <tr>
+        <td class="letter">2 Pietro</td>
+        <td class="letter">1 Giovanni</td>
+        <td class="letter">2 Giovanni</td>
+        <td class="letter">3 Giovanni</td>
+        <td class="letter">Giuda</td>
+      </tr>
+      <tr>
+        <td class="other">Rivelazione</td>
+      </tr>
+    </table>
     <!-- Includi il Backendless SDK dal CDN -->
-    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
-    <script src="js/backendless.js"></script>
+    <!-- <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+    <script src="js/backendless.js"></script> -->
+    <script type="module" src="js/theme.js"></script>
   </body>
 </html>
