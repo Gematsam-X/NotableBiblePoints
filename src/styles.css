@@ -53,6 +53,19 @@ body {
   font-family: "Fira Sans Condensed", Arial;
 }
 
+body.centered-body {
+  margin-top: 40vh;
+}
+
+.login-form {
+  text-align: center;
+  font-size: larger;
+}
+
+.login-form * {
+  margin: 20px 10px auto auto;
+}
+
 /* Stilizzazione dell'interruttore (switch) */
 .switch {
   position: relative;
@@ -114,7 +127,7 @@ input:checked + .slider:before {
 h1 {
   text-align: center;
   align-items: center;
-  margin-top: 20px;
+  margin: 0 0 auto;
   color: #1c1c1c;
 }
 
@@ -310,13 +323,12 @@ button.theme-toggle {
   position: fixed;
   top: 20px;
   left: 20px;
-  padding: 10px 20px;
-  border: none;
-  font-size: 16px;
-  font-family: "Fira Sans Condensed", Arial;
-  color: #f4f4f9;
-  background-color: #1c1c1c;
-  border-radius: 5px;
+}
+
+button.account {
+  position: fixed;
+  top: 20px;
+  right: 20px;
 }
 
 .search-container {
@@ -373,6 +385,10 @@ button.theme-toggle {
 .dark-theme .modal-body {
   background-color: #1c1c1c;
   color: #f4f4f9;
+}
+
+.dark-theme a {
+  color: #9f52f8;
 }
 
 .dark-theme .close {
@@ -433,11 +449,11 @@ body.dark-theme {
   background-color: #46be9c;
 }
 
-.dark-theme .metal {
+.dark-theme .law {
   background-color: #a29bfe;
 }
 
-.dark-theme .metal:hover {
+.dark-theme .law:hover {
   background-color: #847fd1;
 }
 
@@ -469,52 +485,6 @@ body.dark-theme {
   background-color: #4f8f00 !important;
 }
 
-/* Various types of metals */
-
-.dark-theme .postTransitionMetal {
-  background-color: #c16cfd !important;
-}
-
-.dark-theme .postTransitionMetal:hover {
-  background-color: #9c57ce !important;
-}
-
-.dark-theme .alkalineEarthMetal {
-  background-color: #ff1493 !important;
-}
-
-.dark-theme .alkalineEarthMetal:hover {
-  background-color: #be116e !important;
-}
-
-.dark-theme .alkaliMetal {
-  background-color: #2ea3a3 !important;
-}
-
-.dark-theme .alkaliMetal:hover {
-  background-color: #207070 !important;
-}
-
-.dark-theme .transitionMetal {
-  background-color: #4d89d8 !important;
-}
-
-.dark-theme .transitionMetal:hover {
-  background-color: #3564b1 !important;
-}
-
-.dark-theme .internalTransitionMetal {
-  background-color: #b89706 !important;
-}
-
-.dark-theme .internalTransitionMetal:hover {
-  background-color: #8f7503 !important;
-}
-
-.dark-theme .NOBG-internalTransitionMetal {
-  background-color: inherit;
-}
-
 .dark-theme .min-prophet {
   background-color: #fab1a0 !important;
 }
@@ -535,13 +505,9 @@ body.dark-theme {
   color: #f4f4f9 !important;
   background-color: transparent !important;
 }
+
 .dark-theme .specialLegend:hover {
   background-color: transparent !important;
-}
-
-.dark-theme button.theme-toggle {
-  background-color: #f4f4f9;
-  color: #1c1c1c;
 }
 
 .dark-theme .legend {

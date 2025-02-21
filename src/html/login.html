@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>NotableBiblePoints login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="centered-body login-form">
+    <button class="theme-toggle">Cambia tema</button>
+    <h1>NotableBiblePoints login</h1>
+    <form>
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email" />
+      <br>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+      <br>
+      <button type="submit" id="signIn">Accedi</button>
+      <button type="submit" id="signUp">Registrati</button>
+    </form>
+    <p id="previousText"></p>
+    <!-- Includi il Backendless SDK dal CDN -->
+    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+    <script src="../js/backendlessInit.js"></script>
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/rememberMe.js"></script>
+    <script type="module" src="../js/theme.js"></script>
+  </body>
+</html>

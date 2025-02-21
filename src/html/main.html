@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NotableBiblePoints - Salva i punti notevoli</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
     <h1>NotableBiblePoints - Salva i punti notevoli</h1>
     <button class="theme-toggle">Cambia tema</button>
+    <button class="account">
+      <img width="40px" height="40px" id="avatar_img" />
+    </button>
     <table class="periodic-table">
       <tr>
         <td class="law">Genesi</td>
@@ -103,9 +106,12 @@
         <td class="other">Rivelazione</td>
       </tr>
     </table>
-    <!-- Includi il Backendless SDK dal CDN -->
-    <!-- <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
-    <script src="js/backendless.js"></script> -->
-    <script type="module" src="js/theme.js"></script>
+    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+    <script src="../js/backendlessInit.js"></script>
+    <script type="module" src="../js/theme.js"></script>
+    <script src="../js/referrer.js"></script>
+    <script type="module" src="../js/legend.js"></script>
+    <script type="module" src="../js/rememberMe.js"></script>
+    <script src="../js/main.js"></script>
   </body>
 </html>

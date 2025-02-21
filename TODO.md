@@ -1,0 +1,7 @@
+- [X] Add the logic for the auth using Backendless
+- [X] Init the UI
+- [X] Add a "Remember me" function
+- [X] Fix the loop of redirectings
+- [] Add the account page
+- [] Add the main logic
+- [] Add the number of the notes for each book under the name of the book in the main table
