@@ -73,6 +73,7 @@ export async function redirectToOriginPage() {
   const previousPage = await findValidHistoryEntry();
 
   if (previousPage) {
+    console.log("Ritornando a " + previousPage);
     window.location.href = previousPage;
   } else {
     window.location.href = "login.html";
