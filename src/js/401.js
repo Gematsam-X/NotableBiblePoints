@@ -1,12 +1,23 @@
-if (
-  localStorage.getItem("isAuthenticated") === "true" &&
-  document.referrer !== document.location.href
-) {
-  console.log(
-    "Autenticato, ritorno alla pagina precedente" + document.referrer
-  );
-  window.location.href = document.referrer;
-} else {
-  console.log("Non autenticato, resto al 401");
-  localStorage.setItem("isAuthenticated", "false");
-}
+import { redirectToOriginPage } from "./logoutAndDelete.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    if (
+      localStorage.getItem("isAuthenticated") === "true" &&
+      sessionStorage.getItem("scriptExecuted") === "true"
+    ) {
+      redirectToOriginPage();
+    } else {
+      console.log(
+        "Gli script sono stati eseguiti?",
+        sessionStorage.getItem("scriptExecuted")
+      );
+      console.log("Referrer:", document.referrer);
+      console.log(
+        "L'utente è autenticato?",
+        localStorage.getItem("isAuthenticated")
+      );
+      console.log("Non autenticato, resto al 401");
+    }
+  }, 500);
+});

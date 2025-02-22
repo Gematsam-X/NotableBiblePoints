@@ -73,6 +73,7 @@ export async function redirectToOriginPage() {
   const previousPage = await findValidHistoryEntry();
 
   if (previousPage) {
+    localStorage.setItem("isAuthenticathed", "true");
     console.log("Ritornando a " + previousPage);
     window.location.href = previousPage;
   } else {

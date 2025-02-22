@@ -66,6 +66,11 @@ body.centered-body {
   margin: 20px 10px auto auto;
 }
 
+#linkToOriginPage {
+  margin-top: 20px;
+  color: #9f52f8;
+}
+
 /* Stilizzazione dell'interruttore (switch) */
 .switch {
   position: relative;
