@@ -41,3 +41,5 @@ if (userEmail && userToken) {
   )
     window.location.href = "login.html";
 }
+
+sessionStorage.setItem("scriptExecuted", "true");
