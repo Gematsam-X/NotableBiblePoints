@@ -55,6 +55,15 @@ body {
 
 body.centered-body {
   margin-top: 40vh;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  body.centered-body {
+    margin-top: 20vh;
+  }
 }
 
 .login-form {
@@ -68,7 +77,65 @@ body.centered-body {
 
 #linkToOriginPage {
   margin-top: 20px;
-  color: #9f52f8;
+  color: blue;
+}
+
+.action {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  border: 0.3rem dotted #1c1c1c;
+  padding: 15px;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+.action img {
+  width: 10rem;
+  height: auto;
+}
+
+.action .text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+div.actions-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  div.actions-row {
+    flex-direction: column;
+  }
+}
+
+#chapters-container {
+  margin: 0 auto;
+  max-width: 43.5rem;
+}
+
+.chapter {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: lightgreen;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  border: 1px solid #1c1c1c;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.5s ease;
+}
+
+.dark-theme .chapter {
+  background-color: #7dbf7d;
+  border-color: #f4f4f9;
 }
 
 /* Stilizzazione dell'interruttore (switch) */
@@ -409,6 +476,14 @@ button.account {
 body.dark-theme {
   background-color: #1c1c1c;
   color: #f4f4f9;
+}
+
+.dark-theme .action {
+  border-color: #f4f4f9;
+}
+
+.dark-theme #linkToOriginPage {
+  color: #9f52f8;
 }
 
 .dark-theme h1 {
