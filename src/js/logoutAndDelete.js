@@ -13,7 +13,10 @@ export async function deleteCurrentUser() {
 
     if (!confirmDelete) return;
 
-    await Backendless.UserService.remove(currentUser);
+    await Backendless.Data.of("Users").remove(currentUser);
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userToken");
     alert("Account eliminato con successo.");
 
     await Backendless.UserService.logout();
@@ -29,8 +32,11 @@ export async function logoutUser() {
   try {
     // Logout the user
     await Backendless.UserService.logout();
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userToken");
     alert("Logout effettuato con successo.");
-    redirectToOriginPage();
+    window.location.href = "login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
     alert("Errore durante il logout: " + error.message);

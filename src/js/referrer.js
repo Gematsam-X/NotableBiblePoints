@@ -1,5 +1,10 @@
 const referrer = document.referrer;
-const allowedPages = ["login.html", "accessRestricted.html", "main.html"];
+const allowedPages = [
+  "login.html",
+  "accessRestricted.html",
+  "main.html",
+  "chapters.html",
+];
 
 // Controlla se il referrer è valido
 const isAllowed = allowedPages.some((allowedPage) =>
@@ -8,6 +13,12 @@ const isAllowed = allowedPages.some((allowedPage) =>
 
 let shouldRedirect = null;
 
+if (
+  window.location.href === "main.html" &&
+  document.referrer === "chapters.html"
+) {
+  shouldRedirect = false;
+}
 if (
   referrer === "login.html" ||
   isAllowed ||
@@ -21,6 +32,5 @@ if (
 if (!isAllowed || localStorage.getItem("isAuthenticated") !== "true") {
   // Se il referrer non è tra quelli consentiti, reindirizza alla pagina di errore
   console.warn("Referrer non valido o utente non autenticato.");
-  shouldRedirect = true;
-  if (shouldRedirect) window.location.href = "accessRestricted.html"; // Modifica con la tua pagina di errore
+  window.location.href = "accessRestricted.html"; // Modifica con la tua pagina di errore
 }
