@@ -138,62 +138,9 @@ div.actions-row {
   border-color: #f4f4f9;
 }
 
-/* Stilizzazione dell'interruttore (switch) */
-.switch {
-  position: relative;
-  display: inline-block;
-  margin-left: 5px;
-  width: 60px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #4caf50;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  border-radius: 50%;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-}
-
-input:checked + .slider:before {
-  transform: translateX(
-    26px
-  ); /* Muovi la pallina a destra quando è selezionato */
-}
-
-.switch-label {
-  margin-left: 5px;
-}
-
-.group,
-.period {
-  font-size: 2rem;
+.notes-page-title {
   text-align: center;
-  border: none !important;
-  font-family: "Cinzel", Arial;
-  color: #1c1c1c;
+  margin: 0 auto;
 }
 
 h1 {
@@ -226,18 +173,31 @@ footer {
   transition: opacity 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
 }
 
+.notes-page-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* Modal styles */
+
+.openModal {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
 .modal {
   display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
+  position: fixed;
   word-break: break-word;
-  z-index: 1000; /* Sit on top */
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
@@ -268,18 +228,18 @@ footer {
   border-radius: 0 0 10px 10px;
 }
 
-.close {
-  color: #aaa;
+.closeModal {
+  color: red;
   float: right;
+  cursor: pointer;
   font-size: 28px;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
-  color: #868686;
+.closeModal:hover,
+.closeModal:focus {
+  color: darkred;
   text-decoration: none;
-  cursor: pointer;
 }
 
 hr.dashed {

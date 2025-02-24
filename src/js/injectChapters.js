@@ -2,7 +2,11 @@ const selectedBook = sessionStorage.getItem("selectedBook");
 const bookTitle = document.getElementById("book-title");
 const chaptersContainer = document.getElementById("chapters-container");
 
-if (bookTitle) bookTitle.textContent = `Capitoli di ${selectedBook}`;
+if (bookTitle) {
+  const title = `Capitoli di ${selectedBook}`;
+  bookTitle.textContent = title;
+  window.document.title = title + " - NotableBiblePoints";
+}
 
 const chaptersByBook = {
   Genesi: 50,
@@ -73,7 +77,7 @@ const chaptersByBook = {
   Rivelazione: 22,
 };
 
-const chaptersNum = chaptersByBook[selectedBook] || 1; // Default 1 se non trovato
+const chaptersNum = chaptersByBook[selectedBook]; // Default 1 se non trovato
 
 // Funzione per creare i quadrati dei capitoli
 function createSquares(num) {
@@ -81,6 +85,10 @@ function createSquares(num) {
     const square = document.createElement("div");
     square.classList.add("chapter");
     square.textContent = i;
+    square.addEventListener("click", () => {
+      sessionStorage.setItem("selectedChapter", i);
+      window.location.href = "notes.html";
+    });
     if (chaptersContainer) chaptersContainer.appendChild(square);
   }
 }
