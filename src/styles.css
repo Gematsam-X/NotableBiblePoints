@@ -179,12 +179,25 @@ footer {
   align-items: center;
 }
 
+.notesContainer .note {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 2px dashed #f4f4f9;
+  margin: 10px 0;
+}
+
 /* Modal styles */
 
 .openModal {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  cursor: pointer;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .modal {
