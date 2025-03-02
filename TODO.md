@@ -4,7 +4,8 @@
 - [X] Fix the loop of redirectings
 - [X] Add the account page
 - [X] Add the chapters logic
-- [ ] Add the notes logic (with a json for each user on the Backendless server) with a selector for the verse number
+- [X] Add the notes logic (with a json for each user on the Backendless server) with a selector for the verse number
+- [X] Fix the images logic
+- [ ] Add a loading GIF while deleting the user
 - [ ] Add a backup feature in the account page
-- [ ] Add the number of the notes for each book under the name of the book in the main table
 - [ ] Add a "Back" button in the appropriate pages

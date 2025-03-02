@@ -13,7 +13,20 @@ export async function deleteCurrentUser() {
 
     if (!confirmDelete) return;
 
-    await Backendless.Data.of("Users").remove(currentUser);
+    // Elimina tutti i dati associati all'utente nella tabella "NotableBiblePoints"
+    const userEmail = localStorage.getItem("userEmail");
+    const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
+      `NotablePoints LIKE '%${userEmail}%'`
+    );
+    const pointsToDelete = await Backendless.Data.of("NotableBiblePoints").find(
+      queryBuilder
+    );
+
+    for (const point of pointsToDelete) {
+      await Backendless.Data.of("NotableBiblePoints").remove(point.objectId);
+    }
+
+    await Backendless.Data.of("Users").remove(currentUser.objectId);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");

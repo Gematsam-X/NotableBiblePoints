@@ -1,4 +1,4 @@
-import { logoutUser, deleteCurrentUser } from "./logoutAndDelete.js";
+import { deleteCurrentUser, logoutUser } from "./logoutAndDelete.js";
 
 function addSpecificEventListener(id, callback) {
     return document.getElementById(id).addEventListener("click", callback);

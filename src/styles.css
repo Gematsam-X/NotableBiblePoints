@@ -19,6 +19,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Fira Sans Condensed Bold";
+  src: url("./assets/fonts/FiraSansCondensed-ExtraBold.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
 html {
   display: none;
   visibility: hidden;
@@ -58,6 +65,36 @@ body.centered-body {
   text-align: center;
   align-items: center;
   justify-content: center;
+}
+
+h1 {
+  text-align: center;
+  align-items: center;
+  margin: 0 0 auto;
+  color: #1c1c1c;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #1c1c1c;
+}
+
+.periodic-table {
+  margin: 0 auto;
+  width: 70%;
+  margin-top: 17vh;
+  border-collapse: collapse;
+}
+
+.periodic-table td {
+  z-index: 999;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  transition: opacity 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
 }
 
 @media (max-width: 768px) {
@@ -143,34 +180,8 @@ div.actions-row {
   margin: 0 auto;
 }
 
-h1 {
-  text-align: center;
-  align-items: center;
-  margin: 0 0 auto;
-  color: #1c1c1c;
-}
-
-footer {
-  text-align: center;
-  margin-top: 20px;
-  color: #1c1c1c;
-}
-
-.periodic-table {
-  margin: 0 auto;
-  width: 70%;
-  margin-top: 17vh;
-  border-collapse: collapse;
-}
-
-.periodic-table td {
-  z-index: 999;
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-  user-select: none;
-  cursor: pointer;
-  transition: opacity 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
+.note-title {
+  font-family: "Fira Sans Condensed Bold", Arial;
 }
 
 .notes-page-title-container {
@@ -179,14 +190,111 @@ footer {
   align-items: center;
 }
 
-.notesContainer .note {
+.notesContainer {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border: 2px dashed #f4f4f9;
-  margin: 10px 0;
+  gap: 20px;
+  margin: 0 auto;
+  max-width: 43.5rem;
+}
+
+.notesContainer .note {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 0.1rem solid #1c1c1c;
+  padding: 15px;
+  width: 100%;
+  word-wrap: break-word;
+  background-color: #f4f4f9 !important;
+  transition: background-color 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  .notesContainer .note {
+    max-width: 42vh;
+  }
+}
+
+.dark-theme .notesContainer .note {
+  border-color: #f4f4f9;
+  background-color: #1c1c1c !important;
+}
+
+.notesContainer .note .verse-number {
+  text-align: center;
+  justify-content: center;
+  margin-right: 5rem;
+}
+
+.notesContainer .note .verse-number h4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.notesContainer .note .note-body {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  word-break: break-word;
+  justify-content: space-between;
+  text-align: center;
+}
+
+#clicked-note {
+  display: flex;
+  flex-direction: column;
+}
+
+#clicked-note .verse-number {
+  margin-right: 0;
+  font-size: larger;
+  text-decoration: underline;
+  margin-bottom: 10rem;
+}
+
+#clicked-note .note-body {
+  gap: 5rem;
+}
+
+.delete,
+.share,
+.edit {
+  position: fixed;
+  visibility: hidden;
+  display: none;
+}
+
+.share {
+  bottom: 10rem;
+  right: 20%;
+}
+
+.delete {
+  bottom: 10rem;
+  left: 20%;
+}
+
+.edit {
+  bottom: 10rem;
+  right: 49%;
+}
+
+@media (max-width: 768px) {
+  .edit {
+    right: 44%;
+  }
+}
+
+#clicked-note .delete,
+#clicked-note .share,
+#clicked-note .edit {
+  visibility: visible;
+  display: block;
 }
 
 /* Modal styles */
@@ -235,6 +343,23 @@ footer {
 .modal-header,
 .modal-footer {
   font-family: "Cinzel", Arial;
+}
+
+.modal-body {
+  display: flex;
+}
+
+.note-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 50%;
+  margin-right: 25%;
+}
+
+#saveNote {
+  height: fit-content;
+  margin-top: 8vh;
 }
 
 .modal-footer {
