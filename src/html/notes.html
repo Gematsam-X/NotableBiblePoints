@@ -23,12 +23,14 @@
         </div>
         <hr />
         <div class="modal-body">
-          <label for="noteTitle">Titolo</label>
-          <input type="text" id="noteTitle" />
-          <label for="verseNumber">Versetto</label>
-          <input id="verseNumber" type="number" />
-          <label for="note-content">Contenuto</label>
-          <textarea id="noteContent"></textarea>
+          <div class="note-form-body">
+            <label for="noteTitle">Titolo</label>
+            <input type="text" id="noteTitle" />
+            <label for="verseNumber">Versetto</label>
+            <input id="verseNumber" type="number" />
+            <label for="note-content">Contenuto</label>
+            <textarea id="noteContent"></textarea>
+          </div>
           <button id="saveNote">Salva</button>
         </div>
         <hr />
@@ -39,8 +41,10 @@
     </div>
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>
-    <script type="module" src="../js/chaptersAndNotesReferrer.js"></script>
-    <script src="../js/notes.js"></script>
     <script type="module" src="../js/theme.js"></script>
+    <script type="module" src="../js/chaptersAndNotesReferrer.js"></script>
+    <script type="module" src="../js/notes.js"></script>
+    <script type="module" src="../js/legend.js"></script>
+    <script type="module" src="../js/isDarkTheme.js"></script>
   </body>
 </html>

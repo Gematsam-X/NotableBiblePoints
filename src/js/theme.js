@@ -7,8 +7,6 @@ if (localStorage.getItem("theme") === "dark") {
   body.classList.add("dark-theme"); // Apply the dark theme if it was previously set
 }
 
-export const isDarkTheme = body.classList.contains("dark-theme") ? true : false; // Determine the current theme
-
 // Function to toggle the theme between light and dark
 function toggleTheme() {
   body.style.transition = "background-color 0.5s ease"; // Add a transition effect for the background color
