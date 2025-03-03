@@ -4,8 +4,10 @@
 - [X] Fix the loop of redirectings
 - [X] Add the account page
 - [X] Add the chapters logic
-- [X] Add the notes logic (with a json for each user on the Backendless server) with a selector for the verse number
+- [X] Add the notes logic with a selector for the verse number
 - [X] Fix the images logic
-- [ ] Add a loading GIF while deleting the user
+- [X] Change the storing method in Backendless; instead of single records, use only a JSON per user (avoiding too much API calls)
+- [ ] Add a "Back" button in the appropriate pagesa
+- [ ] Improve the style of the modal for saving a new note
+- [ ] Add a loading GIF while doing operation using Backendless
 - [ ] Add a backup feature in the account page
-- [ ] Add a "Back" button in the appropriate pages
