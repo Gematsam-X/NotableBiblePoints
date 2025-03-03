@@ -33,35 +33,31 @@ async function loadNotes() {
 
   try {
     // Recupera l'utente corrente
-    const currentUser = await Backendless.UserService.getCurrentUser();
-    const userEmail = currentUser.email;
+    const userEmail = localStorage.getItem("userEmail");
 
-    // Carica le note associate all'utente per il libro e capitolo selezionato
-    const notes = await Backendless.Data.of("NotableBiblePoints").find({
-      condition: `NotablePoints LIKE '%${userEmail}%'`,
-    });
+    // Carica tutte le note dell'utente
+    const userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst(
+      {
+        condition: `email = '${userEmail}'`,
+      }
+    );
 
     notesContainer.innerHTML = ""; // Svuota il contenitore
     let notesFound = false;
 
     // Se ci sono note, le visualizza
-    if (notes.length > 0) {
+    if (userNotes && userNotes.NotablePoints) {
+      const notes = userNotes.NotablePoints;
       notes.forEach((note) => {
-        let parsedNote = note.NotablePoints;
-
         // Verifica che la nota corrisponda al capitolo e libro selezionati
-        if (
-          parsedNote &&
-          parsedNote.book === selectedBook &&
-          parsedNote.chapter === chapter
-        ) {
+        if (note.book === selectedBook && note.chapter === chapter) {
           notesFound = true;
 
           // Recupera le informazioni dalla nota
-          const verse = parsedNote.verse;
-          const title = parsedNote.title;
-          const content = parsedNote.content;
-          const noteId = note.objectId; // Recupera l'ID della nota
+          const verse = note.verse;
+          const title = note.title;
+          const content = note.content;
+          const noteId = note.id; // Recupera l'ID della nota
 
           // Crea un elemento HTML per la nota e aggiungi l'ID come attributo
           const noteElement = document.createElement("div");
@@ -132,45 +128,35 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    const noteData = {
-      NotablePoints: JSON.stringify({
-        title: noteTitle,
-        verse: verseNumber,
-        content: noteContent,
-        chapter: chapter,
-        book: selectedBook,
-        author: userEmail,
-      }),
+    // Carica tutte le note dell'utente
+    let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst({
+      condition: `email = '${userEmail}'`,
+    });
+
+    if (!userNotes) {
+      userNotes = { email: userEmail, NotablePoints: "[]" };
+    }
+
+    let notes = [];
+    if (userNotes.NotablePoints) {
+      notes = userNotes.NotablePoints;
+    }
+
+    const newNote = {
+      id: Date.now().toString(),
+      title: noteTitle,
+      verse: verseNumber,
+      content: noteContent,
+      chapter: chapter,
+      book: selectedBook,
     };
 
-    await Backendless.Data.of("NotableBiblePoints").save(noteData);
+    notes.push(newNote);
+    userNotes.NotablePoints = JSON.stringify(notes);
+
+    await Backendless.Data.of("NotableBiblePoints").save(userNotes);
     alert("Punto notevole salvato con successo.");
     document.querySelector(".modal").style.display = "none";
-
-    // Cambia le immagini in base al tema
-    const deleteImageSrc = isDarkTheme
-      ? "../assets/notes/delete/dark.webp"
-      : "../assets/notes/delete/light.webp";
-    const editImageSrc = isDarkTheme
-      ? "../assets/notes/edit/dark.webp"
-      : "../assets/notes/edit/light.webp";
-    const shareImageSrc = isDarkTheme
-      ? "../assets/notes/share/dark.webp"
-      : "../assets/notes/share/light.webp";
-
-    // Aggiorna le immagini delle note esistenti
-    document.querySelectorAll(".note").forEach((noteElement) => {
-      const deleteImg = noteElement.querySelector(".deleteNote_img");
-      const editImg = noteElement.querySelector(".edit_img");
-      const shareImg = noteElement.querySelector(".share_img");
-
-      deleteImg.src = deleteImageSrc;
-      console.log("isDarkTheme?", isDarkTheme, deleteImg.src);
-      editImg.src = editImageSrc;
-      console.log(editImg.src);
-      shareImg.src = shareImageSrc;
-      console.log(shareImg.src);
-    });
     loadNotes();
   } catch (error) {
     console.error("Errore durante il salvataggio:", error);
@@ -222,6 +208,7 @@ document.querySelector(".notesContainer").addEventListener("click", (event) => {
   }
 });
 
+// Funzione per eliminare una nota
 async function deleteNote(noteElement) {
   if (!confirm("Sei sicuro di voler eliminare questa nota?")) return;
 
@@ -233,7 +220,28 @@ async function deleteNote(noteElement) {
       return;
     }
 
-    await Backendless.Data.of("NotableBiblePoints").remove(noteId);
+    const userEmail = localStorage.getItem("userEmail");
+
+    // Carica tutte le note dell'utente
+    let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst({
+      condition: `email = '${userEmail}'`,
+    });
+
+    if (!userNotes) {
+      alert("Errore: impossibile trovare le note dell'utente.");
+      return;
+    }
+
+    let notes = [];
+    if (userNotes.NotablePoints) {
+      notes = userNotes.NotablePoints;
+    }
+
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
+
+    userNotes.NotablePoints = JSON.stringify(updatedNotes);
+
+    await Backendless.Data.of("NotableBiblePoints").save(userNotes);
 
     noteElement.remove(); // Rimuove la nota dal DOM
     alert("Nota eliminata con successo!");
@@ -328,25 +336,41 @@ async function editNote(noteElement) {
     }
 
     try {
-      const currentUser = await Backendless.UserService.getCurrentUser();
-      const userEmail = currentUser.email;
+      const userEmail = localStorage.getItem("userEmail");
+      // Carica tutte le note dell'utente
+      let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst(
+        {
+          condition: `email = '${userEmail}'`,
+        }
+      );
 
-      const updatedNoteData = {
-        NotablePoints: JSON.stringify({
-          title: updatedTitle,
-          verse: updatedVerse,
-          content: updatedContent,
-          chapter: chapter,
-          book: selectedBook,
-          author: userEmail,
-        }),
+      if (!userNotes) {
+        alert("Errore: impossibile trovare le note dell'utente.");
+        return;
+      }
+
+      let notes = [];
+      if (userNotes.NotablePoints) {
+        notes = userNotes.NotablePoints;
+      }
+
+      const noteIndex = notes.findIndex((note) => note.id === noteId);
+
+      if (noteIndex === -1) {
+        alert("Errore: impossibile trovare la nota da modificare.");
+        return;
+      }
+
+      notes[noteIndex] = {
+        ...notes[noteIndex],
+        title: updatedTitle,
+        verse: updatedVerse,
+        content: updatedContent,
       };
 
-      await Backendless.Data.of("NotableBiblePoints").save({
-        objectId: noteId,
-        ...updatedNoteData,
-      });
+      userNotes.NotablePoints = JSON.stringify(notes);
 
+      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
       alert("Nota modificata con successo.");
       document.querySelector(".modal").style.display = "none";
       loadNotes(); // Aggiorna la lista delle note
