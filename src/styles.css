@@ -516,6 +516,12 @@ button.theme-toggle {
   left: 20px;
 }
 
+#return-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
 button.account {
   position: fixed;
   top: 20px;

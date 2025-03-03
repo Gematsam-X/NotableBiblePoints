@@ -6,10 +6,12 @@ if (
   window.location.href = "main.html";
 }
 
+const referrer = document.referrer.split("/").pop();
+
 if (
-  document.referrer.split("/").pop() !== "main.html" &&
-  document.referrer.split("/").pop() !== "chapters.html" &&
-  document.referrer.split("/").pop() !== "notes.html"
+  referrer !== "main.html" &&
+  referrer !== "chapters.html" &&
+  referrer !== "notes.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
   sessionStorage.removeItem("selectedBook");
