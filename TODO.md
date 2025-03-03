@@ -7,7 +7,7 @@
 - [X] Add the notes logic with a selector for the verse number
 - [X] Fix the images logic
 - [X] Change the storing method in Backendless; instead of single records, use only a JSON per user (avoiding too much API calls)
-- [ ] Add a "Back" button in the appropriate pagesa
+- [X] Add a "Back" button in the appropriate pages
 - [ ] Improve the style of the modal for saving a new note
 - [ ] Add a loading GIF while doing operation using Backendless
 - [ ] Add a backup feature in the account page
