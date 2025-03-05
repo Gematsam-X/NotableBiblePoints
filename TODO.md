@@ -10,6 +10,7 @@
 - [x] Add a "Back" button in the appropriate pages
 - [x] Improve the security of the app: add variables hiding the API_KEY and APP_ID
 - [X] Improve the style of the modal for saving a new note
+- [ ] Add an icon
 - [ ] Improve the UX: remove the invasive alerts and use toasts or similar for a more elegant design
 - [ ] Add a loading GIF while doing operation using Backendless
 - [ ] Add a backup feature in the account page
