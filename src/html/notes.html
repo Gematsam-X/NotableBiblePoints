@@ -20,17 +20,28 @@
       <div class="modal-content">
         <div class="modal-header">
           <span class="closeModal">&times;</span>
-          <h2>Nuovo punto notevole</h2>
+          <h2>Nuova nota o punto notevole</h2>
         </div>
         <hr />
         <div class="modal-body">
           <div class="note-form-body">
             <label for="noteTitle">Titolo</label>
-            <input type="text" id="noteTitle" />
+            <input
+              type="text"
+              id="noteTitle"
+              placeholder="Titolo della nota..."
+            />
             <label for="verseNumber">Versetto</label>
-            <input id="verseNumber" type="number" />
+            <input
+              id="verseNumber"
+              type="number"
+              placeholder="Versetto di riferimento..."
+            />
             <label for="note-content">Contenuto</label>
-            <textarea id="noteContent"></textarea>
+            <textarea
+              id="noteContent"
+              placeholder="Contenuto della nota..."
+            ></textarea>
           </div>
           <button id="saveNote">Salva</button>
         </div>

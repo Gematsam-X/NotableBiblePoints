@@ -1,15 +1,20 @@
-- [X] Add the logic for the auth using Backendless
-- [X] Init the UI
-- [X] Add a "Remember me" function
-- [X] Fix the loop of redirectings
-- [X] Add the account page
-- [X] Add the chapters logic
-- [X] Add the notes logic with a selector for the verse number
-- [X] Fix the images logic
-- [X] Change the storing method in Backendless; instead of single records, use only a JSON per user (avoiding too much API calls)
-- [X] Add a "Back" button in the appropriate pages
-- [X] Improve the security of the app: add variables hiding the API_KEY and APP_ID
-- [ ] Improve the style of the modal for saving a new note
+- [x] Add the logic for the auth using Backendless
+- [x] Init the UI
+- [x] Add a "Remember me" function
+- [x] Fix the loop of redirectings
+- [x] Add the account page
+- [x] Add the chapters logic
+- [x] Add the notes logic with a selector for the verse number
+- [x] Fix the images logic
+- [x] Change the storing method in Backendless; instead of single records, use only a JSON per user (avoiding too much API calls)
+- [x] Add a "Back" button in the appropriate pages
+- [x] Improve the security of the app: add variables hiding the API_KEY and APP_ID
+- [X] Improve the style of the modal for saving a new note
+- [ ] Improve the UX: remove the invasive alerts and use toasts or similar for a more elegant design
 - [ ] Add a loading GIF while doing operation using Backendless
 - [ ] Add a backup feature in the account page
 - [ ] Add the README
+- [ ] Add a refresh button
+- [ ] Add that if you click on the verse when the note is clicked, all the notes corresponding to that verse of that chapter open
+- [ ] Sort the notes by verse
+- [ ] Add a mini FindBiblePassages in the main page
