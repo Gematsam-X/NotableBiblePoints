@@ -269,6 +269,7 @@ div.actions-row {
 #clicked-note {
   display: flex;
   flex-direction: column;
+  border: none;
 }
 
 #clicked-note .verse-number {
@@ -292,23 +293,16 @@ div.actions-row {
 
 .share {
   bottom: 10rem;
-  right: 20%;
+  right: 2vh;
 }
 
 .delete {
   bottom: 10rem;
-  left: 20%;
+  left: 2vh;
 }
 
 .edit {
   bottom: 10rem;
-  right: 49%;
-}
-
-@media (max-width: 768px) {
-  .edit {
-    right: 44%;
-  }
 }
 
 #clicked-note .delete,
@@ -349,6 +343,32 @@ div.actions-row {
   width: 80%;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-body textarea {
+  height: 10rem;
+}
+
+.modal-body input,
+.modal-body textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: 1px solid #1c1c1c;
+  background-color: inherit;
+}
+
+.dark-theme .modal-body input,
+.dark-theme .modal-body textarea {
+  border: 1px solid #f4f4f9;
+  color: #f4f4f9;
+  font-family: "Fira Sans Condensed", Arial;
+  font-size: medium;
+}
+
+.modal-body input:hover {
+  border: inherit; /* Nessun cambiamento del bordo */
 }
 
 .modal-header,
@@ -399,6 +419,21 @@ div.actions-row {
 .closeModal:focus {
   color: darkred;
   text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .modal-body {
+    flex-direction: column;
+  }
+
+  .modal-body input,
+  .modal-body textarea {
+    width: 200%;
+  }
+
+  #saveNote {
+    margin-top: 4vh;
+  }
 }
 
 hr.dashed {
