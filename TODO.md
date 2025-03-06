@@ -11,10 +11,10 @@
 - [x] Improve the style of the modal for saving a new note
 - [x] Add an icon
 - [x] Add the README
+- [x] Add a refresh button in the notes page
 - [ ] Improve the UX: remove the invasive alerts and use toasts or similar for a more elegant design
 - [ ] Add a loading GIF while doing operation using Backendless
 - [ ] Add a backup feature in the account page
-- [ ] Add a refresh button
 - [ ] Add that if you click on the verse when the note is clicked, all the notes corresponding to that verse of that chapter open
 - [ ] Sort the notes by verse
 - [ ] Add a mini FindBiblePassages in the main page

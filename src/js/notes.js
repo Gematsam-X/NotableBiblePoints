@@ -393,3 +393,5 @@ const observer = new MutationObserver(() => {
 observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
+
+document.querySelector(".refreshNotes").addEventListener("click", loadNotes);
