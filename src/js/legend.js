@@ -25,6 +25,10 @@ const categories = {
     "../assets/account/logout/light.webp",
     "../assets/account/logout/dark.webp",
   ],
+  refreshNotes: [
+    "../assets/notes/refresh/light.webp",
+    "../assets/notes/refresh/dark.webp",
+  ],
 };
 
 let index = localStorage.getItem("theme") === "dark" ? 1 : 0;
