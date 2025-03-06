@@ -293,16 +293,26 @@ div.actions-row {
 
 .share {
   bottom: 10rem;
-  right: 2vh;
+  right: 30vh;
 }
 
 .delete {
   bottom: 10rem;
-  left: 2vh;
+  left: 30vh;
 }
 
 .edit {
   bottom: 10rem;
+}
+
+@media (min-width: 368px) and (max-width: 928px) {
+  .delete {
+    left: 2vh;
+  }
+
+  .share {
+    right: 2vh;
+  }
 }
 
 #clicked-note .delete,
@@ -337,7 +347,7 @@ div.actions-row {
 }
 
 .modal-content {
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
@@ -367,10 +377,6 @@ div.actions-row {
   font-size: medium;
 }
 
-.modal-body input:hover {
-  border: inherit; /* Nessun cambiamento del bordo */
-}
-
 .modal-header,
 .modal-footer,
 .modal-body,
@@ -395,12 +401,14 @@ div.actions-row {
   flex-direction: column;
   gap: 0.3rem;
   width: 50%;
-  margin-right: 25%;
+  margin-right: 20%;
 }
 
 #saveNote {
-  height: fit-content;
-  margin-top: 8vh;
+  height: 6rem;
+  width: 10rem;
+  font-size: 2.3rem;
+  margin-top: 10%;
 }
 
 .modal-footer {
