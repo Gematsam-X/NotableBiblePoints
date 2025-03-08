@@ -1,4 +1,5 @@
 import { isDarkTheme } from "./isDarkTheme.js";
+import toast from "./toast.js";
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");
@@ -101,7 +102,7 @@ async function loadNotes() {
   } catch (error) {
     // Gestione degli errori
     console.error("Errore nel recupero delle note:", error);
-    alert(error.message);
+    toast(error.message);
     notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi. Dettagli dell'errore: ${error.message}</p>`;
   } finally {
     document.querySelector("#noteContent").value = "";
@@ -121,7 +122,7 @@ async function saveNote() {
 
   // Controllo di validità dei campi
   if (!noteTitle || isNaN(verseNumber) || !noteContent) {
-    alert("Compila tutti i campi correttamente!");
+    toast("Compila tutti i campi correttamente!");
     return;
   }
 
@@ -155,12 +156,12 @@ async function saveNote() {
     userNotes.NotablePoints = JSON.stringify(notes);
 
     await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-    alert("Punto notevole salvato con successo.");
+    toast("Punto notevole salvato con successo.");
     document.querySelector(".modal").style.display = "none";
     loadNotes();
   } catch (error) {
     console.error("Errore durante il salvataggio:", error);
-    alert(
+    toast(
       "Errore durante il salvataggio del punto notevole. Riprova più tardi."
     );
   }
@@ -216,7 +217,7 @@ async function deleteNote(noteElement) {
     const noteId = noteElement.getAttribute("data-id"); // Prendi l'ID della nota
 
     if (!noteId) {
-      alert("Errore: impossibile trovare l'ID della nota.");
+      toast("Errore: impossibile trovare l'ID della nota.");
       return;
     }
 
@@ -228,7 +229,7 @@ async function deleteNote(noteElement) {
     });
 
     if (!userNotes) {
-      alert("Errore: impossibile trovare le note dell'utente.");
+      toast("Errore: impossibile trovare le note dell'utente.");
       return;
     }
 
@@ -244,10 +245,10 @@ async function deleteNote(noteElement) {
     await Backendless.Data.of("NotableBiblePoints").save(userNotes);
 
     noteElement.remove(); // Rimuove la nota dal DOM
-    alert("Nota eliminata con successo!");
+    toast("Nota eliminata con successo!");
   } catch (error) {
     console.error("Errore durante l'eliminazione:", error);
-    alert("Errore durante l'eliminazione della nota. Riprova più tardi.");
+    toast("Errore durante l'eliminazione della nota. Riprova più tardi.");
   }
 }
 
@@ -285,7 +286,7 @@ function copyToClipboard(text) {
   navigator.clipboard.writeText();
   document.body.removeChild(textarea);
 
-  alert("Il testo della nota è stato copiato negli appunti!");
+  toast("Il testo della nota è stato copiato negli appunti!");
 }
 
 document.addEventListener("keypress", (event) => {
@@ -331,7 +332,7 @@ async function editNote(noteElement) {
 
     // Controllo di validità dei campi
     if (!updatedTitle || isNaN(updatedVerse) || !updatedContent) {
-      alert("Compila tutti i campi correttamente!");
+      toast("Compila tutti i campi correttamente!");
       return;
     }
 
@@ -345,7 +346,7 @@ async function editNote(noteElement) {
       );
 
       if (!userNotes) {
-        alert("Errore: impossibile trovare le note dell'utente.");
+        toast("Errore: impossibile trovare le note dell'utente.");
         return;
       }
 
@@ -357,7 +358,7 @@ async function editNote(noteElement) {
       const noteIndex = notes.findIndex((note) => note.id === noteId);
 
       if (noteIndex === -1) {
-        alert("Errore: impossibile trovare la nota da modificare.");
+        toast("Errore: impossibile trovare la nota da modificare.");
         return;
       }
 
@@ -371,12 +372,12 @@ async function editNote(noteElement) {
       userNotes.NotablePoints = JSON.stringify(notes);
 
       await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-      alert("Nota modificata con successo.");
+      toast("Nota modificata con successo.");
       document.querySelector(".modal").style.display = "none";
       loadNotes(); // Aggiorna la lista delle note
     } catch (error) {
       console.error("Errore durante la modifica:", error);
-      alert("Errore durante la modifica della nota. Riprova più tardi.");
+      toast("Errore durante la modifica della nota. Riprova più tardi.");
     }
   });
 }

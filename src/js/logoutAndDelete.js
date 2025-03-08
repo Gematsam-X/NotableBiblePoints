@@ -1,9 +1,11 @@
+import toast from "./toast.js";
+
 export async function deleteCurrentUser() {
   try {
     const currentUser = await Backendless.UserService.getCurrentUser();
 
     if (!currentUser) {
-      alert("Nessun utente loggato.");
+      toast("Nessun utente loggato.");
       return;
     }
 
@@ -30,14 +32,14 @@ export async function deleteCurrentUser() {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");
-    alert("Account eliminato con successo.");
+    toast("Account eliminato con successo.");
 
     await Backendless.UserService.logout();
 
     window.location.href = "login.html";
   } catch (error) {
     console.error("Errore nella cancellazione dell'account:", error);
-    alert("Errore durante l'eliminazione dell'account: " + error.message);
+    toast("Errore durante l'eliminazione dell'account: " + error.message);
   }
 }
 
@@ -48,11 +50,11 @@ export async function logoutUser() {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");
-    alert("Logout effettuato con successo.");
+    toast("Logout effettuato con successo.");
     window.location.href = "login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
-    alert("Errore durante il logout: " + error.message);
+    toast("Errore durante il logout: " + error.message, 4000);
   }
 }
 

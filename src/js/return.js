@@ -13,6 +13,11 @@ if (loc === "notes.html") {
     "click",
     () => (window.location.href = "main.html")
   );
+} else if (loc === "account.html") {
+  returnButton.addEventListener(
+    "click",
+    () => (window.location.href = "main.html")
+  );
 } else {
   returnButton.addEventListener("click", redirectToOriginPage);
 }

@@ -4,6 +4,7 @@ const allowedPages = [
   "accessRestricted.html",
   "main.html",
   "chapters.html",
+  "account.html",
 ];
 
 // Controlla se il referrer è valido
@@ -32,5 +33,5 @@ if (
 if (!isAllowed || localStorage.getItem("isAuthenticated") !== "true") {
   // Se il referrer non è tra quelli consentiti, reindirizza alla pagina di errore
   console.warn("Referrer non valido o utente non autenticato.");
-  window.location.href = "accessRestricted.html"; // Modifica con la tua pagina di errore
+  window.location.href = "accessRestricted.html";
 }
