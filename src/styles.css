@@ -806,37 +806,6 @@ ul {
   list-style-position: inside;
 }
 
-canvas {
-  display: block;
-  margin: 0;
-}
-
-.controls {
-  text-align: center;
-}
-
-.controls button {
-  margin: 10px;
-  cursor: pointer;
-}
-
-#rendererContainer {
-  margin: 20px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.5s ease !important;
-  background-color: #f4f4f9;
-}
-
-.dark-theme #rendererContainer {
-  background-color: #1c1c1c;
-}
-
-.main-img {
-  text-align: center;
-}
-
 .return {
   font-family: "Fira Sans Condensed", Arial;
   position: fixed;
@@ -851,9 +820,18 @@ canvas {
   border-radius: 5px;
 }
 
-#showInPeriodicTableButton {
-  align-items: center;
-  justify-content: center;
-  margin: 20px auto;
-  display: block;
+.toast {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  font-size: 1.6rem;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
 }

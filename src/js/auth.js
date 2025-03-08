@@ -1,6 +1,8 @@
+import toast from "./toast.js";
+
 async function registerUser(email, password) {
   if (password.length < 6) {
-    alert("La password deve contenere almeno 6 caratteri.");
+    toast("La password deve contenere almeno 6 caratteri.");
     return;
   }
 
@@ -12,29 +14,29 @@ async function registerUser(email, password) {
   try {
     const registeredUser = await Backendless.UserService.register(user);
     console.log("Utente registrato:", registeredUser);
-    alert(`Registrazione riuscita! Controlla la tua email per la conferma.`);
+    toast(`Registrazione riuscita! Controlla la tua email per la conferma.`);
   } catch (error) {
     console.error("Errore durante la registrazione:", error);
     const errMsg = error.message.toLowerCase();
 
     if (errMsg.includes("already exists")) {
-      alert("L'utente è già registrato. Prova ad effettuare il login.");
+      toast("L'utente è già registrato. Prova ad effettuare il login.");
     } else if (errMsg.includes("session timeout")) {
-      alert("Sessione scaduta. Riprova dopo aver riavviato l'app.");
+      toast("Sessione scaduta. Riprova dopo aver riavviato l'app.");
     } else if (
       errMsg.includes("network error") ||
       errMsg.includes("failed to fetch")
     ) {
-      alert("Errore di connessione. Controlla la tua rete e riprova.");
+      toast("Errore di connessione. Controlla la tua rete e riprova.");
     } else {
-      alert(error.message);
+      toast(error.message);
     }
   }
 }
 
 async function loginUser(email, password) {
   if (!email || !password) {
-    alert("Inserisci sia l'email che la password.");
+    toast("Inserisci sia l'email che la password.");
     return;
   }
 
@@ -49,7 +51,7 @@ async function loginUser(email, password) {
     // Salva l'email dell'utente in localStorage
     localStorage.setItem("userEmail", loggedInUser.email);
 
-    // Salva l'utente corrente in Backendless per mantenerlo loggato
+    // Salva l'utente corrente sul localStorage per mantenerlo loggato
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
     window.location.href = "main.html"; // Reindirizza alla pagina principale
@@ -58,22 +60,25 @@ async function loginUser(email, password) {
     const errMsg = error.message.toLowerCase();
 
     if (errMsg.includes("invalid login or password")) {
-      alert(
+      toast(
         "Credenziali errate o utente non registrato. Controlla l'email e la password, verifica di essere registrato e riprova."
       );
     } else if (errMsg.includes("password value cannot be empty")) {
-      alert("Inserisci la password.");
+      toast("Inserisci la password.", 2000);
     } else if (errMsg.includes("email value cannot be empty")) {
-      alert("Inserisci l'email.");
+      toast("Inserisci l'email.", 2000);
     } else if (errMsg.includes("email address must be confirmed first")) {
-      alert("Conferma il tuo indirizzo email prima di accedere.");
+      toast(
+        "Conferma il tuo indirizzo email prima di accedere. Puoi farlo accedendo alla tua posta elettronica e cliccando sul link contenuto nella mail da parte di Backendless.",
+        5000
+      );
     } else if (
       errMsg.includes("network error") ||
       errMsg.includes("failed to fetch")
     ) {
-      alert("Errore di connessione. Controlla la tua rete e riprova.");
+      toast("Errore di connessione. Controlla la tua rete e riprova.");
     } else {
-      alert(error.message);
+      toast(error.message);
     }
   }
 }
