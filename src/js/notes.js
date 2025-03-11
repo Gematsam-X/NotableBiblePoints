@@ -1,5 +1,6 @@
 import { isDarkTheme } from "./isDarkTheme.js";
 import toast from "./toast.js";
+import { showGif, hideGif } from "./loadingGif.js";
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");
@@ -56,7 +57,7 @@ async function loadNotes() {
 
           // Recupera le informazioni dalla nota
           const verse = note.verse;
-          const title = note.title;
+          const title = note.title || "";
           const content = note.content;
           const noteId = note.id; // Recupera l'ID della nota
 
@@ -121,41 +122,54 @@ async function saveNote() {
   const noteContent = document.querySelector("#noteContent").value.trim();
 
   // Controllo di validità dei campi
-  if (!noteTitle || isNaN(verseNumber) || !noteContent) {
-    toast("Compila tutti i campi correttamente!");
+  if (isNaN(verseNumber) || !noteContent) {
+    toast(
+      "Inserisci il numero del versetto e il contenuto della nota per continuare.",
+      2300
+    );
     return;
   }
+
+  console.log(verseNumber, noteContent);
+
+  showGif();
 
   try {
     const userEmail = localStorage.getItem("userEmail");
 
+    if (!userEmail) {
+      console.error("Nessuna email trovata in localStorage.");
+      return;
+    }
+
     // Carica tutte le note dell'utente
-    let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst({
-      condition: `email = '${userEmail}'`,
+    let userNotesArray = await Backendless.Data.of("NotableBiblePoints").find({
+      condition: `NotablePoints LIKE '%${userEmail}%'`,
     });
 
-    if (!userNotes) {
-      userNotes = { email: userEmail, NotablePoints: "[]" };
-    }
+    let userNotes = userNotesArray[0] || {
+      NotablePoints: "[]",
+    };
 
-    let notes = [];
-    if (userNotes.NotablePoints) {
-      notes = userNotes.NotablePoints;
-    }
+    let notes = Array.from(userNotes.NotablePoints);
 
+    // Crea la nuova nota
     const newNote = {
       id: Date.now().toString(),
-      title: noteTitle,
+      ...(noteTitle && { title: noteTitle }), // Aggiunge "title" solo se noteTitle esiste
       verse: verseNumber,
       content: noteContent,
       chapter: chapter,
       book: selectedBook,
+      owner: userEmail,
     };
 
+    // Aggiunge la nuova nota e salva
     notes.push(newNote);
     userNotes.NotablePoints = JSON.stringify(notes);
 
     await Backendless.Data.of("NotableBiblePoints").save(userNotes);
+
     toast("Punto notevole salvato con successo.");
     document.querySelector(".modal").style.display = "none";
     loadNotes();
@@ -164,6 +178,8 @@ async function saveNote() {
     toast(
       "Errore durante il salvataggio del punto notevole. Riprova più tardi."
     );
+  } finally {
+    hideGif();
   }
 }
 
@@ -213,6 +229,8 @@ document.querySelector(".notesContainer").addEventListener("click", (event) => {
 async function deleteNote(noteElement) {
   if (!confirm("Sei sicuro di voler eliminare questa nota?")) return;
 
+  showGif();
+
   try {
     const noteId = noteElement.getAttribute("data-id"); // Prendi l'ID della nota
 
@@ -249,6 +267,8 @@ async function deleteNote(noteElement) {
   } catch (error) {
     console.error("Errore durante l'eliminazione:", error);
     toast("Errore durante l'eliminazione della nota. Riprova più tardi.");
+  } finally {
+    hideGif();
   }
 }
 
@@ -326,15 +346,18 @@ async function editNote(noteElement) {
 
   // Aggiungi il nuovo event listener
   newSaveButton.addEventListener("click", async () => {
-    const updatedTitle = document.querySelector("#noteTitle").value.trim();
+    const updatedTitle =
+      document.querySelector("#noteTitle").value.trim() || " ";
     const updatedVerse = parseInt(document.querySelector("#verseNumber").value);
     const updatedContent = document.querySelector("#noteContent").value.trim();
 
     // Controllo di validità dei campi
-    if (!updatedTitle || isNaN(updatedVerse) || !updatedContent) {
+    if (isNaN(updatedVerse) || !updatedContent) {
       toast("Compila tutti i campi correttamente!");
       return;
     }
+
+    showGif();
 
     try {
       const userEmail = localStorage.getItem("userEmail");
@@ -364,7 +387,7 @@ async function editNote(noteElement) {
 
       notes[noteIndex] = {
         ...notes[noteIndex],
-        title: updatedTitle,
+        ...(updatedTitle && { title: updatedTitle }),
         verse: updatedVerse,
         content: updatedContent,
       };
@@ -378,6 +401,11 @@ async function editNote(noteElement) {
     } catch (error) {
       console.error("Errore durante la modifica:", error);
       toast("Errore durante la modifica della nota. Riprova più tardi.");
+    } finally {
+      document.querySelector("#noteContent").value = "";
+      document.querySelector("#noteTitle").value = "";
+      document.querySelector("#verseNumber").value = "";
+      hideGif();
     }
   });
 }

@@ -1,4 +1,5 @@
 import toast from "./toast.js";
+import { showGif, hideGif } from "./loadingGif.js";
 
 export async function deleteCurrentUser() {
   try {
@@ -8,6 +9,8 @@ export async function deleteCurrentUser() {
       toast("Nessun utente loggato.");
       return;
     }
+
+    showGif();
 
     const confirmDelete = confirm(
       "Questa azione è irreversibile e cancella tutti i dati associati a questo account. Sei sicuro di voler proseguire ed eliminare il tuo account?"
@@ -20,13 +23,13 @@ export async function deleteCurrentUser() {
     const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
       `NotablePoints LIKE '%${userEmail}%'`
     );
-    const pointsToDelete = await Backendless.Data.of("NotableBiblePoints").find(
+    const recordToDelete = await Backendless.Data.of("NotableBiblePoints").find(
       queryBuilder
     );
-
-    for (const point of pointsToDelete) {
-      await Backendless.Data.of("NotableBiblePoints").remove(point.objectId);
-    }
+    console.log(recordToDelete);
+    await Backendless.Data.of("NotableBiblePoints").remove(
+      recordToDelete.objectId
+    );
 
     await Backendless.Data.of("Users").remove(currentUser.objectId);
     localStorage.removeItem("isAuthenticated");
@@ -40,21 +43,25 @@ export async function deleteCurrentUser() {
   } catch (error) {
     console.error("Errore nella cancellazione dell'account:", error);
     toast("Errore durante l'eliminazione dell'account: " + error.message);
+  } finally {
+    hideGif();
   }
 }
 
 export async function logoutUser() {
+  showGif();
   try {
     // Logout the user
     await Backendless.UserService.logout();
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");
-    toast("Logout effettuato con successo.");
     window.location.href = "login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
     toast("Errore durante il logout: " + error.message, 4000);
+  } finally {
+    hideGif();
   }
 }
 

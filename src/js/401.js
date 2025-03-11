@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.getItem("isAuthenticated")
       );
       console.log("Non autenticato, resto al 401");
+      console.log(localStorage.getItem("isAuthenticated"));
     }
   }, 500);
 });

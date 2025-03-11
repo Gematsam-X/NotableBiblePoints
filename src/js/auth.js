@@ -1,4 +1,5 @@
 import toast from "./toast.js";
+import { showGif, hideGif } from "./loadingGif.js";
 
 async function registerUser(email, password) {
   if (password.length < 6) {
@@ -6,8 +7,10 @@ async function registerUser(email, password) {
     return;
   }
 
+  showGif();
+
   const user = new Backendless.User();
-  user.email = email;
+  user.email = email.toLowerCase().trim();
   user.password = password;
   user.name = email.toLowerCase().trim(); // Usa l'email come nome utente
 
@@ -31,6 +34,8 @@ async function registerUser(email, password) {
     } else {
       toast(error.message);
     }
+  } finally {
+    hideGif();
   }
 }
 
@@ -39,6 +44,8 @@ async function loginUser(email, password) {
     toast("Inserisci sia l'email che la password.");
     return;
   }
+
+  showGif();
 
   try {
     const loggedInUser = await Backendless.UserService.login(
@@ -80,6 +87,8 @@ async function loginUser(email, password) {
     } else {
       toast(error.message);
     }
+  } finally {
+    hideGif();
   }
 }
 

@@ -13,7 +13,7 @@
 - [x] Add the README
 - [x] Add a refresh button in the notes page
 - [x] Improve the UX: remove the invasive alerts and use toasts or similar for a more elegant design
-- [ ] Add a loading GIF while doing operation using Backendless
+- [x] Add a loading GIF while doing operation using Backendless
 - [ ] Improve the login page with two indipendent sections for the login and the signup
 - [ ] Add recovery methods
 - [ ] Add a backup feature in the account page
