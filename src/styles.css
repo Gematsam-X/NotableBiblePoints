@@ -88,7 +88,7 @@ footer {
 }
 
 .periodic-table td {
-  z-index: 999;
+  z-index: 2;
   border: 1px solid #ddd;
   padding: 10px;
   text-align: center;
@@ -333,11 +333,12 @@ div.actions-row {
   font-weight: bold;
 }
 
-.modal {
+.modal,
+.loadingModal {
   display: none; /* Hidden by default */
   position: fixed;
   word-break: break-word;
-  z-index: 1000;
+  z-index: 2;
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -346,13 +347,24 @@ div.actions-row {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.modal-content {
+.loadingModal {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content,
+.loadingModalContent {
   margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.loadingModalContent {
+  background-color: #1c1c1c;
 }
 
 .modal-body textarea {
@@ -367,14 +379,14 @@ div.actions-row {
   display: inline-block;
   border: 1px solid #1c1c1c;
   background-color: inherit;
+  font-family: "Fira Sans Condensed", Arial;
+  font-size: medium;
 }
 
 .dark-theme .modal-body input,
 .dark-theme .modal-body textarea {
   border: 1px solid #f4f4f9;
   color: #f4f4f9;
-  font-family: "Fira Sans Condensed", Arial;
-  font-size: medium;
 }
 
 .modal-header,
@@ -830,7 +842,7 @@ ul {
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
+  z-index: 3;
   font-size: 1.6rem;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
