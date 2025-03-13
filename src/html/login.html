@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="../login.css" />
     <link rel="icon" href="../assets/favicon.ico" />
+    <script>
+      if (localStorage.getItem("isAuthenticated") === "true") {
+        window.location.href = 'main.html';
+    }
+    </script>
     <!-- Meta tag Open Graph -->
     <meta
       property="og:title"

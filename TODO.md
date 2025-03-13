@@ -19,7 +19,7 @@
 - [ ] Add recovery methods
 - [ ] Add a backup feature in the account page
 - [ ] Add that if you click on the verse when the note is clicked, all the notes corresponding to that verse of that chapter of that book open
-- [ ] Sort the notes by verse
+- [ ] Automatically sort the notes by verse
 - [ ] Add a mini FindBiblePassages in the main page
 - [ ] Change the color of the chapter if there aren't notes
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID
