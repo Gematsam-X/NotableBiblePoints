@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../styles.css" />
     <link rel="icon" href="../assets/favicon.ico">
+    <script type="module">
+      import redirectToOriginPage from "../js/logoutAndDelete.js"
+      if (localStorage.getItem("isAuthenticated") === "true") redirectToOriginPage();
+</script>
   </head>
   <body class="centered-body">
     <button class="theme-toggle">Cambia tema</button>
