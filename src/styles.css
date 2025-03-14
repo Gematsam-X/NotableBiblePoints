@@ -4,7 +4,7 @@
   --border-col: black;
   --link-col: blue;
   --chapter-col: #90ee90;
-  --btn-hover: #d1d1d1;
+  --btn-hover: black;
 
   --historical: #ffb6c1;
   --historical-hover: #d39da5;
@@ -28,7 +28,7 @@
   --border-col: #bbb;
   --link-col: #9f52f8;
   --chapter-col: #7dbf7d;
-  --btn-hover: black;
+  --btn-hover: #d1d1d1;
 
   --historical: #ff7675;
   --historical-hover: #d86565;
@@ -657,15 +657,15 @@ p {
 
 .toast {
   position: fixed;
-  bottom: 50%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  z-index: 3;
+  z-index: 99;
   font-size: 1.6rem;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;

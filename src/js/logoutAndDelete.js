@@ -48,8 +48,8 @@ export async function deleteCurrentUser() {
   }
 }
 
-export async function logoutUser() {
-  showGif();
+export async function logoutUser(showAlert = true) {
+  if (showAlert) showGif();
   try {
     // Logout the user
     await Backendless.UserService.logout();
