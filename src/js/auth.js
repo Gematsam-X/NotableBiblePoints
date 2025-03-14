@@ -4,8 +4,11 @@ import { showGif, hideGif } from "./loadingGif.js";
 async function registerUser(email, password) {
   if (password.length < 6) {
     toast("La password deve contenere almeno 6 caratteri.");
-    return;
+
+    return; // Fermiamo l'esecuzione qui
   }
+
+  console.log("Lunghezza password valida:", password.length);
 
   showGif();
 
@@ -31,6 +34,8 @@ async function registerUser(email, password) {
       errMsg.includes("failed to fetch")
     ) {
       toast("Errore di connessione. Controlla la tua rete e riprova.");
+    } else if (errMsg.includes("provided email has wrong format")) {
+      toast("Inserisci un'email valida.");
     } else {
       toast(error.message);
     }
@@ -108,8 +113,8 @@ if (signInButton) {
 if (signUpButton) {
   signUpButton.addEventListener("click", (e) => {
     e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = document.getElementById("newEmail").value.trim();
+    const password = document.getElementById("newPassword").value.trim();
     registerUser(email, password);
   });
 }

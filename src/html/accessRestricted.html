@@ -5,11 +5,7 @@
     <title>Accesso non consentito</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="icon" href="../assets/favicon.ico">
-    <script type="module">
-      import redirectToOriginPage from "../js/logoutAndDelete.js"
-      if (localStorage.getItem("isAuthenticated") === "true") redirectToOriginPage();
-</script>
+    <link rel="icon" href="../assets/favicon.ico" />
   </head>
   <body class="centered-body">
     <button class="theme-toggle">Cambia tema</button>
@@ -23,7 +19,6 @@
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>
     <script type="module" src="../js/theme.js"></script>
-    <script type="module" src="../js/rememberMe.js"></script>
     <script type="module" src="../js/logoutAndDelete.js"></script>
     <script type="module">
       import { redirectToOriginPage } from "../js/logoutAndDelete.js";
@@ -31,6 +26,5 @@
         .querySelector("#linkToOriginPage")
         .addEventListener("click", redirectToOriginPage);
     </script>
-    <script type="module" defer src="../js/401.js"></script>
   </body>
 </html>

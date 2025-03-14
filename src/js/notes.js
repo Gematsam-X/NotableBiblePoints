@@ -34,63 +34,66 @@ async function loadNotes() {
   notesContainer.innerHTML = "<p>Caricamento in corso...</p>";
 
   try {
-    // Recupera l'utente corrente
     const userEmail = localStorage.getItem("userEmail");
 
-    // Carica tutte le note dell'utente
-    const userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst(
-      {
-        condition: `email = '${userEmail}'`,
-      }
-    );
+    // Recupera tutte le note dell'autore (email dell'utente) dal database
+    const userNotes = await Backendless.Data.of("NotableBiblePoints").find({
+      condition: `owner = '${userEmail}'`, // Usa il campo "owner" per la ricerca
+    });
+
+    console.log("Note di", userEmail);
 
     notesContainer.innerHTML = ""; // Svuota il contenitore
     let notesFound = false;
 
     // Se ci sono note, le visualizza
-    if (userNotes && userNotes.NotablePoints) {
-      const notes = userNotes.NotablePoints;
-      notes.forEach((note) => {
-        // Verifica che la nota corrisponda al capitolo e libro selezionati
-        if (note.book === selectedBook && note.chapter === chapter) {
-          notesFound = true;
+    if (Array.isArray(userNotes) && userNotes.length > 0) {
+      userNotes.forEach((noteObj) => {
+        if (noteObj.NotablePoints && Array.isArray(noteObj.NotablePoints)) {
+          noteObj.NotablePoints.forEach((note) => {
+            // Verifica che la nota corrisponda al capitolo e libro selezionati
+            if (
+              note.book === selectedBook &&
+              note.chapter === chapter &&
+              note.owner == userEmail
+            ) {
+              notesFound = true;
 
-          // Recupera le informazioni dalla nota
-          const verse = note.verse;
-          const title = note.title || "";
-          const content = note.content;
-          const noteId = note.id; // Recupera l'ID della nota
+              // Recupera le informazioni dalla nota
+              const { verse, title = "", content, id: noteId } = note;
 
-          // Crea un elemento HTML per la nota e aggiungi l'ID come attributo
-          const noteElement = document.createElement("div");
-          noteElement.classList.add("note");
-          noteElement.setAttribute("data-id", noteId); // Aggiungi l'ID della nota al div
+              // Crea un elemento HTML per la nota e aggiungi l'ID come attributo
+              const noteElement = document.createElement("div");
+              noteElement.classList.add("note");
+              noteElement.setAttribute("data-id", noteId);
 
-          // Cambia le immagini in base al tema
-          const deleteImageSrc = isDarkTheme
-            ? "../assets/notes/delete/dark.webp"
-            : "../assets/notes/delete/light.webp";
-          const editImageSrc = isDarkTheme
-            ? "../assets/notes/edit/dark.webp"
-            : "../assets/notes/edit/light.webp";
-          const shareImageSrc = isDarkTheme
-            ? "../assets/notes/share/dark.webp"
-            : "../assets/notes/share/light.webp";
+              // Cambia le immagini in base al tema
+              const deleteImageSrc = isDarkTheme
+                ? "../assets/notes/delete/dark.webp"
+                : "../assets/notes/delete/light.webp";
+              const editImageSrc = isDarkTheme
+                ? "../assets/notes/edit/dark.webp"
+                : "../assets/notes/edit/light.webp";
+              const shareImageSrc = isDarkTheme
+                ? "../assets/notes/share/dark.webp"
+                : "../assets/notes/share/light.webp";
 
-          noteElement.innerHTML = `
-            <div class="verse-number">
-              <h4>Versetto ${verse}</h4>
-            </div>
-            <div class="note-body">
-              <h2 class="note-title">${title}</h2>
-              <h3>${content}</h3>
-            </div>
-            <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
-            <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
-            <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
-          `;
+              noteElement.innerHTML = `
+                <div class="verse-number">
+                  <h4>Versetto ${verse}</h4>
+                </div>
+                <div class="note-body">
+                  <h2 class="note-title">${title}</h2>
+                  <h3>${content}</h3>
+                </div>
+                <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
+                <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
+                <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
+              `;
 
-          notesContainer.appendChild(noteElement); // Aggiungi la nota al contenitore
+              notesContainer.appendChild(noteElement);
+            }
+          });
         }
       });
     }
@@ -103,8 +106,8 @@ async function loadNotes() {
   } catch (error) {
     // Gestione degli errori
     console.error("Errore nel recupero delle note:", error);
-    toast(error.message);
-    notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi. Dettagli dell'errore: ${error.message}</p>`;
+    toast(`Errore: ${error.message}`);
+    notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
@@ -142,16 +145,32 @@ async function saveNote() {
       return;
     }
 
-    // Carica tutte le note dell'utente
+    // Cerca nel database un record dell'utente
     let userNotesArray = await Backendless.Data.of("NotableBiblePoints").find({
-      condition: `NotablePoints LIKE '%${userEmail}%'`,
+      condition: `owner = '${userEmail}'`, // Usa il campo "owner" per identificare l'utente
     });
 
-    let userNotes = userNotesArray[0] || {
-      NotablePoints: "[]",
-    };
+    let userNotes;
 
-    let notes = Array.from(userNotes.NotablePoints);
+    if (userNotesArray.length > 0) {
+      userNotes = userNotesArray[0]; // Usa il record esistente
+    } else {
+      // Nessun record trovato → Creiamo un nuovo record per l'utente
+      userNotes = {
+        owner: userEmail,
+        NotablePoints: [], // Inizializza un array vuoto
+      };
+
+      // Salva il nuovo record nel database e ottieni l'ID
+      userNotes = await Backendless.Data.of("NotableBiblePoints").save(
+        userNotes
+      );
+    }
+
+    // Assicurati che NotablePoints sia un array
+    if (!Array.isArray(userNotes.NotablePoints)) {
+      userNotes.NotablePoints = [];
+    }
 
     // Crea la nuova nota
     const newNote = {
@@ -161,13 +180,13 @@ async function saveNote() {
       content: noteContent,
       chapter: chapter,
       book: selectedBook,
-      owner: userEmail,
+      owner: userEmail, // Associa l'email dell'utente come autore
     };
 
     // Aggiunge la nuova nota e salva
-    notes.push(newNote);
-    userNotes.NotablePoints = JSON.stringify(notes);
+    userNotes.NotablePoints.push(newNote);
 
+    // Salva le modifiche nel database
     await Backendless.Data.of("NotableBiblePoints").save(userNotes);
 
     toast("Punto notevole salvato con successo.");
