@@ -1,6 +1,6 @@
 import { isDarkTheme } from "./isDarkTheme.js";
+import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
-import { showGif, hideGif } from "./loadingGif.js";
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");

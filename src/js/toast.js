@@ -1,54 +1,36 @@
 export default function toast(message, duration = 3000) {
-  console.log("Toast chiamato con il messaggio:", message); // Aggiungi questo log per il debug
+  console.log("Toast chiamato con il messaggio:", message); // Debug
 
   const toast = document.createElement("div");
   toast.classList.add("toast");
   toast.textContent = message;
 
-  function isOnNotesPage() {
-    return window.location.href.split("/").pop() == "notes.html";
+  function isOnPage(page) {
+    return window.location.href.split("/").pop() === page;
   }
 
-  function isOnLoginPage() {
-    return window.location.href.split("/").pop() == "login.html";
-  }
-
-  if (isOnNotesPage()) {
-    document.querySelector(".notesContainer").appendChild(toast);
-  } else if (isOnLoginPage()) {
-    document.querySelector(".container").appendChild(toast);
+  if (isOnPage("notes.html")) {
+    document.querySelector(".notesContainer")?.appendChild(toast);
+  } else if (isOnPage("login.html")) {
+    document.querySelector(".container")?.appendChild(toast);
   } else {
-    // Aggiunta del toast alla pagina
     document.body.appendChild(toast);
   }
 
-  let shouldRemove = true;
+  // Aggiungiamo la classe per la transizione dopo un breve ritardo
+  setTimeout(() => toast.classList.add("show"), 10);
 
-  // Funzione per nascondere il toast dopo il tempo specificato
-  function hideToast() {
-    // Diamo il tempo per vedere il toast prima di rimuoverlo
-    setTimeout(() => {
-      if (shouldRemove) {
-        toast.style.opacity = "0"; // Inizia la transizione di opacità
-        setTimeout(() => {
-          // Rimuove il toast dal DOM dopo la transizione
-          document.removeChild(toast);
-        }, 500); // Tempo di transizione della scomparsa
-      }
-      console.log("Toast rimosso");
-    }, duration); // Questo è il tempo in cui il toast sarà visibile
-  }
+  // Rimozione del toast dopo la durata specificata
+  const hideToast = () => {
+    toast.classList.remove("show"); // Animazione di uscita
+    setTimeout(() => toast.remove(), 500); // Attendi la transizione CSS prima di rimuoverlo
+  };
 
-  // Nascondiamo il toast dopo la durata
-  if (shouldRemove) {
+  const timeout = setTimeout(hideToast, duration);
+
+  // Rimuove il toast immediatamente se cliccato
+  toast.addEventListener("click", () => {
+    clearTimeout(timeout);
     hideToast();
-  }
-
-  // Gestione della rimozione manuale del toast se cliccato
-  document.addEventListener("click", (e) => {
-    if ((e.target != toast.parentElement) == document.body) {
-      shouldRemove = false;
-      document.body.removeChild(toast); // Rimuove subito il toast se cliccato
-    }
   });
 }

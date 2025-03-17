@@ -29,6 +29,14 @@ const categories = {
     "../assets/notes/refresh/light.webp",
     "../assets/notes/refresh/dark.webp",
   ],
+  restoreBackup: [
+    "../assets/account/backup/restore/light.webp",
+    "../assets/account/backup/restore/dark.webp",
+  ],
+  createBackup: [
+    "../assets/account/backup/create/light.webp",
+    "../assets/account/backup/create/dark.webp",
+  ],
 };
 
 let index = localStorage.getItem("theme") === "dark" ? 1 : 0;

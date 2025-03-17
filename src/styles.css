@@ -204,6 +204,7 @@ div.actions-row {
   justify-content: space-around;
   gap: 20px;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
@@ -667,6 +668,20 @@ p {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   z-index: 99;
   font-size: 1.6rem;
+  opacity: 0;
+  pointer-events: none; /* Impedisce interazioni finché non è visibile */
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Quando il toast viene mostrato */
+.toast.show {
   opacity: 1;
-  transition: opacity 0.5s ease-in-out;
+  pointer-events: auto; /* Ora diventa interattivo */
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* Quando il toast si nasconde */
+.toast.hide {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
 }
