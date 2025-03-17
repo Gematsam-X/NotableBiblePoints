@@ -1,9 +1,10 @@
+import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
-import { showGif, hideGif } from "./loadingGif.js";
 
 export async function deleteCurrentUser() {
   try {
     const currentUser = await Backendless.UserService.getCurrentUser();
+    console.log("Utente attuale:", currentUser);
 
     if (!currentUser) {
       toast("Nessun utente loggato.");
@@ -16,30 +17,47 @@ export async function deleteCurrentUser() {
       "Questa azione è irreversibile e cancella tutti i dati associati a questo account. Sei sicuro di voler proseguire ed eliminare il tuo account?"
     );
 
-    if (!confirmDelete) return;
+    if (!confirmDelete) {
+      hideGif();
+      return;
+    }
 
-    // Elimina tutti i dati associati all'utente nella tabella "NotableBiblePoints"
+    // Recupera l'email dell'utente
     const userEmail = localStorage.getItem("userEmail");
-    const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
-      `NotablePoints LIKE '%${userEmail}%'`
-    );
-    const recordToDelete = await Backendless.Data.of("NotableBiblePoints").find(
-      queryBuilder
-    );
-    console.log(recordToDelete);
-    await Backendless.Data.of("NotableBiblePoints").remove(
-      recordToDelete.objectId
+    if (!userEmail) {
+      toast("Errore: email utente non trovata.");
+      hideGif();
+      return;
+    }
+
+    // Recupera l'oggetto JSON dalla tabella NotableBiblePoints
+    const databaseEntry = await Backendless.Data.of(
+      "NotableBiblePoints"
+    ).findFirst();
+
+    if (!databaseEntry || !databaseEntry.NotablePoints) {
+      toast("Errore: dati non trovati.");
+      hideGif();
+      return;
+    }
+
+    console.log("Dati attuali:", databaseEntry.NotablePoints);
+
+    // Filtra i dati per rimuovere quelli dell'utente
+    const updatedNotablePoints = databaseEntry.NotablePoints.filter(
+      (entry) => entry.owner !== userEmail
     );
 
+    console.log("Dati aggiornati:", updatedNotablePoints);
+
+    // Aggiorna il database con i dati filtrati
+    databaseEntry.NotablePoints = updatedNotablePoints;
+    await Backendless.Data.of("NotableBiblePoints").save(databaseEntry);
+
+    // Elimina l'utente dalla tabella Users
+    console.log("Eliminazione utente con ID:", currentUser.objectId);
     await Backendless.Data.of("Users").remove(currentUser.objectId);
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userToken");
-    toast("Account eliminato con successo.");
-
-    await Backendless.UserService.logout();
-
-    window.location.href = "login.html";
+    logoutUser(false);
   } catch (error) {
     console.error("Errore nella cancellazione dell'account:", error);
     toast("Errore durante l'eliminazione dell'account: " + error.message);

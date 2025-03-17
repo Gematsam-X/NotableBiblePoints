@@ -17,8 +17,8 @@
 - [x] Add a quick redirect if the user is authenticated
 - [x] Use the CSS vars instead of a different style for each theme
 - [x] Improve the login page with two indipendent sections for the login and the signup
+- [X] Add a backup feature in the account page
 - [ ] Add recovery methods
-- [ ] Add a backup feature in the account page
 - [ ] Add that if you click on the verse when the note is clicked, all the notes corresponding to that verse of that chapter of that book open
 - [ ] Automatically sort the notes by verse
 - [ ] Add a mini FindBiblePassages in the main page

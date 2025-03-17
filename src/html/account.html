@@ -48,9 +48,6 @@
           </h3>
         </div>
       </div>
-      <br />
-      <br />
-      <br />
       <div class="action" id="delete">
         <div class="img-container">
           <img id="deleteAccount_img" />
@@ -64,6 +61,38 @@
           </h3>
         </div>
       </div>
+    </div>
+    <div class="actions-row">
+      <div class="action" id="createBackup">
+        <div class="img-container">
+          <img id="createBackup_img" />
+        </div>
+        <div class="text-container">
+          <h2>Crea un backup</h2>
+          <h3>
+            Esporta tutte le tue note attuali. Quello che hai già scritto non
+            sarà cancellato e le note che scriverai dalla creazione del backup
+            in poi non saranno riportate in esso. Puoi importare le tue note su
+            un altro account/dispositivo utilizzando il tasto qua accanto
+            "Importa backup".
+          </h3>
+        </div>
+      </div>
+
+      <div class="action" id="restoreBackup">
+        <div class="img-container">
+          <img id="restoreBackup_img" />
+        </div>
+        <div class="text-container">
+          <h2>Importa un backup</h2>
+          <h3>
+            Importa le note che hai salvato tramite un backup creato in
+            precedenza attraverso il tasto qua accanto. Le note già scritte
+            saranno rimpiazzate dal contenuto del backup.
+          </h3>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept=".json" style="display: none" />
     </div>
     <!-- Scripts -->
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>

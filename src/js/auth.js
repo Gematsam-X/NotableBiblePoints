@@ -1,5 +1,5 @@
+import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
-import { showGif, hideGif } from "./loadingGif.js";
 
 async function registerUser(email, password) {
   if (password.length < 6) {
