@@ -356,6 +356,12 @@ div.actions-row {
 
 /* Modal styles */
 
+.centeredModal * {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
 .openModal {
   position: fixed;
   bottom: 20px;
@@ -441,6 +447,10 @@ div.actions-row {
   gap: 0.3rem;
   width: 50%;
   margin-right: 20%;
+}
+
+#emailForRecovery {
+  text-align: left;
 }
 
 #saveNote {
