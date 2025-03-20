@@ -9,3 +9,8 @@ addSpecificEventListener("logout", logoutUser);
 addSpecificEventListener("delete", deleteCurrentUser);
 addSpecificEventListener("createBackup", createBackup);
 addSpecificEventListener("restoreBackup", restoreBackup);
+
+console.log(document.querySelector("#userEmail").textContent);
+
+document.querySelector("#userEmail").textContent =
+  localStorage.getItem("userEmail");
