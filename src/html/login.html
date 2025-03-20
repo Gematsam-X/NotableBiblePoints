@@ -49,6 +49,11 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password" />
         <button type="submit" id="signIn">Accedi</button>
+        <br />
+        <br />
+        <br />
+        <br />
+        <ins id="recovery">Hai dimenticato la password? Recuperala.</ins>
       </form>
 
       <!-- Modulo Signup -->
@@ -60,6 +65,28 @@
         <button type="submit" id="signUp">Registrati</button>
       </form>
     </div>
+
+    <div class="modal centeredModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="closeModal">&times;</span>
+          <h2>Recupera la tua password</h2>
+        </div>
+        <hr />
+        <div class="modal-body">
+          <form>
+            <label for="emailForRecovery">La tua email di registrazione</label>
+            <input type="email" id="emailForRecovery" />
+            <button type="submit" id="recoveryBtn">Avanti</button>
+          </form>
+        </div>
+        <hr />
+        <div class="modal-footer">
+          <h3>NotableBiblePoints - Salva i punti notevoli</h3>
+        </div>
+      </div>
+    </div>
+
     <!-- Includi il Backendless SDK dal CDN -->
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>
@@ -68,5 +95,6 @@
     <script type="module" src="../js/loadingGif.js"></script>
     <script type="module" src="../js/theme.js"></script>
     <script src="../js/toggleLoginSignup.js"></script>
+    <script type="module" src="../js/recovery.js"></script>
   </body>
 </html>
