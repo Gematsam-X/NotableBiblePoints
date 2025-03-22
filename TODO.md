@@ -20,6 +20,6 @@
 - [X] Add a backup feature in the account page
 - [x] Add recovery methods
 - [x] Add a mini FindBiblePassages in the main page
-- [ ] Automatically sort the notes by verse
+- [x] Automatically sort the notes by verse
 - [ ] Change the color of the chapter if there aren't notes
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID

@@ -48,6 +48,8 @@ async function loadNotes() {
 
     // Se ci sono note, le visualizza
     if (Array.isArray(userNotes) && userNotes.length > 0) {
+      let allNotes = [];
+
       userNotes.forEach((noteObj) => {
         if (noteObj.NotablePoints && Array.isArray(noteObj.NotablePoints)) {
           noteObj.NotablePoints.forEach((note) => {
@@ -59,42 +61,48 @@ async function loadNotes() {
             ) {
               notesFound = true;
 
-              // Recupera le informazioni dalla nota
+              // Aggiungi la nota all'array delle note
               const { verse, title = "", content, id: noteId } = note;
-
-              // Crea un elemento HTML per la nota e aggiungi l'ID come attributo
-              const noteElement = document.createElement("div");
-              noteElement.classList.add("note");
-              noteElement.setAttribute("data-id", noteId);
-
-              // Cambia le immagini in base al tema
-              const deleteImageSrc = isDarkTheme
-                ? "../assets/notes/delete/dark.webp"
-                : "../assets/notes/delete/light.webp";
-              const editImageSrc = isDarkTheme
-                ? "../assets/notes/edit/dark.webp"
-                : "../assets/notes/edit/light.webp";
-              const shareImageSrc = isDarkTheme
-                ? "../assets/notes/share/dark.webp"
-                : "../assets/notes/share/light.webp";
-
-              noteElement.innerHTML = `
-                <div class="verse-number">
-                  <h4>Versetto ${verse}</h4>
-                </div>
-                <div class="note-body">
-                  <h2 class="note-title">${title}</h2>
-                  <h3>${content}</h3>
-                </div>
-                <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
-                <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
-                <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
-              `;
-
-              notesContainer.appendChild(noteElement);
+              allNotes.push({ verse, title, content, noteId });
             }
           });
         }
+      });
+
+      // Ordina le note in base al versetto
+      allNotes.sort((a, b) => a.verse - b.verse);
+
+      // Aggiungi le note ordinate al container
+      allNotes.forEach(({ verse, title, content, noteId }) => {
+        const noteElement = document.createElement("div");
+        noteElement.classList.add("note");
+        noteElement.setAttribute("data-id", noteId);
+
+        // Cambia le immagini in base al tema
+        const deleteImageSrc = isDarkTheme
+          ? "../assets/notes/delete/dark.webp"
+          : "../assets/notes/delete/light.webp";
+        const editImageSrc = isDarkTheme
+          ? "../assets/notes/edit/dark.webp"
+          : "../assets/notes/edit/light.webp";
+        const shareImageSrc = isDarkTheme
+          ? "../assets/notes/share/dark.webp"
+          : "../assets/notes/share/light.webp";
+
+        noteElement.innerHTML = `
+          <div class="verse-number">
+            <h4>Versetto ${verse}</h4>
+          </div>
+          <div class="note-body">
+            <h2 class="note-title">${title}</h2>
+            <h3>${content}</h3>
+          </div>
+          <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
+          <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
+          <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
+        `;
+
+        notesContainer.appendChild(noteElement);
       });
     }
 
