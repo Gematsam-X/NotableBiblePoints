@@ -19,8 +19,7 @@
 - [x] Improve the login page with two indipendent sections for the login and the signup
 - [X] Add a backup feature in the account page
 - [x] Add recovery methods
-- [ ] Add that if you click on the verse when the note is clicked, all the notes corresponding to that verse of that chapter of that book open
+- [x] Add a mini FindBiblePassages in the main page
 - [ ] Automatically sort the notes by verse
-- [ ] Add a mini FindBiblePassages in the main page
 - [ ] Change the color of the chapter if there aren't notes
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID

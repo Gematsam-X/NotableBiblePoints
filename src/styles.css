@@ -5,6 +5,7 @@
   --link-col: blue;
   --chapter-col: #90ee90;
   --btn-hover: black;
+  --placeholder-col: #ddd;
 
   --historical: #ffb6c1;
   --historical-hover: #d39da5;
@@ -29,6 +30,7 @@
   --link-col: #9f52f8;
   --chapter-col: #7dbf7d;
   --btn-hover: #d1d1d1;
+  --placeholder-col: #4b4b4b;
 
   --historical: #ff7675;
   --historical-hover: #d86565;
@@ -621,7 +623,7 @@ button.account {
 
 .search-container {
   position: fixed;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
   display: flex;
   align-items: center;
@@ -648,6 +650,10 @@ button.account {
   width: 40px;
   padding: 0;
   border-radius: 5px;
+}
+
+#search-input::placeholder {
+  color: var(--placeholder-col);
 }
 
 .legend {
