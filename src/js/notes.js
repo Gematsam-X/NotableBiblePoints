@@ -15,6 +15,12 @@ if (pageTitle) {
   window.document.title = `${title} - NotableBiblePoints`;
 }
 
+// Funzione per controllare se bisogna usare il server
+function shouldUseServer() {
+  const localNotes = localStorage.getItem("userNotes");
+  return !localNotes || localNotes === "null"; // Se non ci sono dati locali, usa il server
+}
+
 // Funzione per aprire la modale
 document.querySelector(".openModal").addEventListener("click", () => {
   document.querySelector(".modal").style.display = "block";
@@ -22,46 +28,48 @@ document.querySelector(".openModal").addEventListener("click", () => {
 
 // Funzione per chiudere la modale
 document.querySelector(".closeModal").addEventListener("click", () => {
+  document.querySelector("#noteContent").value = "";
+  document.querySelector("#noteTitle").value = "";
+  document.querySelector("#verseNumber").value = "";
   document.querySelector(".modal").style.display = "none";
 });
 
-// Funzione per caricare le note dal database
+// Funzione per caricare le note dal database o dal localStorage
 async function loadNotes() {
   const notesContainer = document.querySelector(".notesContainer");
   if (!notesContainer) return;
 
-  // Inizialmente mostra un messaggio di caricamento
   notesContainer.innerHTML = "<p>Caricamento in corso...</p>";
 
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Recupera tutte le note dell'autore (email dell'utente) dal database
-    const userNotes = await Backendless.Data.of("NotableBiblePoints").find({
-      condition: `owner = '${userEmail}'`, // Usa il campo "owner" per la ricerca
-    });
+    const userNotes = shouldUseServer()
+      ? await Backendless.Data.of("NotableBiblePoints").find({
+          condition: `owner = '${userEmail}'`,
+        })
+      : JSON.parse(localStorage.getItem("userNotes"));
 
     console.log("Note di", userEmail);
 
     notesContainer.innerHTML = ""; // Svuota il contenitore
     let notesFound = false;
+    let allNotes = [];
 
-    // Se ci sono note, le visualizza
     if (Array.isArray(userNotes) && userNotes.length > 0) {
-      let allNotes = [];
+      if (shouldUseServer()) {
+        localStorage.setItem("userNotes", JSON.stringify(userNotes)); // Salva nel localStorage
+      }
 
       userNotes.forEach((noteObj) => {
         if (noteObj.NotablePoints && Array.isArray(noteObj.NotablePoints)) {
           noteObj.NotablePoints.forEach((note) => {
-            // Verifica che la nota corrisponda al capitolo e libro selezionati
             if (
               note.book === selectedBook &&
               note.chapter === chapter &&
-              note.owner == userEmail
+              note.owner === userEmail
             ) {
               notesFound = true;
-
-              // Aggiungi la nota all'array delle note
               const { verse, title = "", content, id: noteId } = note;
               allNotes.push({ verse, title, content, noteId });
             }
@@ -69,16 +77,13 @@ async function loadNotes() {
         }
       });
 
-      // Ordina le note in base al versetto
       allNotes.sort((a, b) => a.verse - b.verse);
 
-      // Aggiungi le note ordinate al container
       allNotes.forEach(({ verse, title, content, noteId }) => {
         const noteElement = document.createElement("div");
         noteElement.classList.add("note");
         noteElement.setAttribute("data-id", noteId);
 
-        // Cambia le immagini in base al tema
         const deleteImageSrc = isDarkTheme
           ? "../assets/notes/delete/dark.webp"
           : "../assets/notes/delete/light.webp";
@@ -106,13 +111,11 @@ async function loadNotes() {
       });
     }
 
-    // Se non sono state trovate note per questo capitolo
     if (!notesFound) {
       notesContainer.innerHTML =
         "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
     }
   } catch (error) {
-    // Gestione degli errori
     console.error("Errore nel recupero delle note:", error);
     toast(`Errore: ${error.message}`);
     notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
@@ -126,91 +129,86 @@ async function loadNotes() {
 // Carica le note al caricamento della pagina
 window.addEventListener("load", loadNotes);
 
-// Funzione per salvare un nuovo punto notevole
 async function saveNote() {
   const noteTitle = document.querySelector("#noteTitle").value.trim();
   const verseNumber = parseInt(document.querySelector("#verseNumber").value);
   const noteContent = document.querySelector("#noteContent").value.trim();
 
-  // Controllo di validità dei campi
   if (isNaN(verseNumber) || !noteContent) {
-    toast(
-      "Inserisci il numero del versetto e il contenuto della nota per continuare.",
-      2300
-    );
+    toast("Compila tutti i campi correttamente!");
     return;
   }
-
-  console.log(verseNumber, noteContent);
 
   showGif();
 
   try {
     const userEmail = localStorage.getItem("userEmail");
-
-    if (!userEmail) {
-      console.error("Nessuna email trovata in localStorage.");
-      return;
-    }
-
-    // Cerca nel database un record dell'utente
-    let userNotesArray = await Backendless.Data.of("NotableBiblePoints").find({
-      condition: `owner = '${userEmail}'`, // Usa il campo "owner" per identificare l'utente
+    let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst({
+      condition: `email = '${userEmail}'`,
     });
 
-    let userNotes;
+    if (!userNotes) {
+      userNotes = { owner: userEmail, NotablePoints: "[]" };
+    }
 
-    if (userNotesArray.length > 0) {
-      userNotes = userNotesArray[0]; // Usa il record esistente
+    let notes = [];
+    try {
+      notes = userNotes.NotablePoints || [];
+    } catch (err) {
+      console.error("Errore nel parsing delle note:", err);
+      notes = [];
+    }
+
+    if (editingNoteId) {
+      // ✏️ MODIFICA NOTA ESISTENTE
+      const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+      if (noteIndex === -1) {
+        toast("Errore: impossibile trovare la nota da modificare.");
+        return;
+      }
+
+      notes[noteIndex] = {
+        ...notes[noteIndex],
+        ...(noteTitle && { title: noteTitle }),
+        verse: verseNumber,
+        content: noteContent,
+      };
     } else {
-      // Nessun record trovato → Creiamo un nuovo record per l'utente
-      userNotes = {
+      // ➕ CREAZIONE NUOVA NOTA
+      const newNote = {
+        id: Date.now().toString(),
+        title: noteTitle || " ",
+        verse: verseNumber,
+        content: noteContent,
+        chapter: parseInt(sessionStorage.getItem("selectedChapter")),
+        book: sessionStorage.getItem("selectedBook"),
         owner: userEmail,
-        NotablePoints: [], // Inizializza un array vuoto
       };
 
-      // Salva il nuovo record nel database e ottieni l'ID
-      userNotes = await Backendless.Data.of("NotableBiblePoints").save(
-        userNotes
-      );
+      notes.push(newNote);
     }
 
-    // Assicurati che NotablePoints sia un array
-    if (!Array.isArray(userNotes.NotablePoints)) {
-      userNotes.NotablePoints = [];
-    }
-
-    // Crea la nuova nota
-    const newNote = {
-      id: Date.now().toString(),
-      ...(noteTitle && { title: noteTitle }), // Aggiunge "title" solo se noteTitle esiste
-      verse: verseNumber,
-      content: noteContent,
-      chapter: chapter,
-      book: selectedBook,
-      owner: userEmail, // Associa l'email dell'utente come autore
-    };
-
-    // Aggiunge la nuova nota e salva
-    userNotes.NotablePoints.push(newNote);
-
-    // Salva le modifiche nel database
+    // Salva le note aggiornate
+    userNotes.NotablePoints = JSON.stringify(notes);
     await Backendless.Data.of("NotableBiblePoints").save(userNotes);
 
-    toast("Punto notevole salvato con successo.");
+    // Pulisce lo stato di modifica
+    editingNoteId = null;
     document.querySelector(".modal").style.display = "none";
+    localStorage.removeItem("userNotes");
     loadNotes();
   } catch (error) {
-    console.error("Errore durante il salvataggio:", error);
-    toast(
-      "Errore durante il salvataggio del punto notevole. Riprova più tardi."
-    );
+    console.error("Errore durante il salvataggio/modifica:", error);
+    toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
+    document.querySelector("#noteContent").value = "";
+    document.querySelector("#noteTitle").value = "";
+    document.querySelector("#verseNumber").value = "";
     hideGif();
   }
 }
 
-// Assegna l'evento al bottone di salvataggio
+// 🚀 Assegna un solo event listener fisso al pulsante SALVA
 document.querySelector("#saveNote").addEventListener("click", saveNote);
 
 document.addEventListener("click", (event) => {
@@ -342,97 +340,49 @@ document.addEventListener("keypress", (event) => {
   }
 });
 
-// Funzione per modificare una nota
+let editingNoteId = null; // Variabile globale per sapere se stiamo modificando
+
 async function editNote(noteElement) {
-  document.exitFullscreen();
-  const noteId = noteElement.getAttribute("data-id");
-  const noteTitle = noteElement.querySelector(".note-title").textContent;
-  const noteContent = noteElement.querySelector(".note-body h3").textContent;
+  console.log("Editing note...");
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+
+  // Salva l'ID della nota che stiamo modificando
+  editingNoteId = noteElement.getAttribute("data-id");
+
+  const noteTitle = noteElement.querySelector(".note-title").textContent.trim();
+  const noteContent = noteElement
+    .querySelector(".note-body h3")
+    .textContent.trim();
   const verseNumber = noteElement
     .querySelector(".verse-number h4")
     .textContent.replace("Versetto ", "")
     .trim();
 
-  if (!document.querySelector("#noteTitle").matches(":focus")) {
-    document.querySelector("#noteTitle").value = noteTitle;
-  }
-  if (!document.querySelector("#verseNumber").matches(":focus")) {
-    document.querySelector("#verseNumber").value = verseNumber;
-  }
-  if (!document.querySelector("#noteContent").matches(":focus")) {
-    document.querySelector("#noteContent").value = noteContent;
-  }
+  document.querySelector("#noteTitle").value = noteTitle;
+  document.querySelector("#verseNumber").value = verseNumber;
+  document.querySelector("#noteContent").value = noteContent;
 
   // Mostra la modale
-  document.querySelector(".modal").style.display = "block";
+  const modal = document.querySelector(".modal");
+  modal.style.display = "block";
 
-  // Risoluzione del problema: rimuovere gli event listener precedenti
-  const oldSaveButton = document.querySelector("#saveNote");
-  const newSaveButton = oldSaveButton.cloneNode(true);
-  oldSaveButton.parentNode.replaceChild(newSaveButton, oldSaveButton);
-
-  // Aggiungi il nuovo event listener
-  newSaveButton.addEventListener("click", async () => {
-    const updatedTitle =
-      document.querySelector("#noteTitle").value.trim() || " ";
-    const updatedVerse = parseInt(document.querySelector("#verseNumber").value);
-    const updatedContent = document.querySelector("#noteContent").value.trim();
-
-    // Controllo di validità dei campi
-    if (isNaN(updatedVerse) || !updatedContent) {
-      toast("Compila tutti i campi correttamente!");
-      return;
+  // Eventi per chiudere la modale
+  document.addEventListener("keydown", function escHandler(event) {
+    if (event.key === "Escape") {
+      modal.style.display = "none";
+      editingNoteId = null;
+      document.removeEventListener("keydown", escHandler);
     }
+  });
 
-    showGif();
-
-    try {
-      const userEmail = localStorage.getItem("userEmail");
-      // Carica tutte le note dell'utente
-      let userNotes = await Backendless.Data.of("NotableBiblePoints").findFirst(
-        {
-          condition: `email = '${userEmail}'`,
-        }
-      );
-
-      if (!userNotes) {
-        toast("Errore: impossibile trovare le note dell'utente.");
-        return;
-      }
-
-      let notes = [];
-      if (userNotes.NotablePoints) {
-        notes = userNotes.NotablePoints;
-      }
-
-      const noteIndex = notes.findIndex((note) => note.id === noteId);
-
-      if (noteIndex === -1) {
-        toast("Errore: impossibile trovare la nota da modificare.");
-        return;
-      }
-
-      notes[noteIndex] = {
-        ...notes[noteIndex],
-        ...(updatedTitle && { title: updatedTitle }),
-        verse: updatedVerse,
-        content: updatedContent,
-      };
-
-      userNotes.NotablePoints = JSON.stringify(notes);
-
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-      toast("Nota modificata con successo.");
-      document.querySelector(".modal").style.display = "none";
-      loadNotes(); // Aggiorna la lista delle note
-    } catch (error) {
-      console.error("Errore durante la modifica:", error);
-      toast("Errore durante la modifica della nota. Riprova più tardi.");
-    } finally {
-      document.querySelector("#noteContent").value = "";
-      document.querySelector("#noteTitle").value = "";
-      document.querySelector("#verseNumber").value = "";
-      hideGif();
+  modal.addEventListener("click", function outsideClickHandler(event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+      editingNoteId = null;
+      modal.removeEventListener("click", outsideClickHandler);
     }
   });
 }
@@ -450,4 +400,7 @@ observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
 
-document.querySelector(".refreshNotes").addEventListener("click", loadNotes);
+document.querySelector(".refreshNotes").addEventListener("click", () => {
+  localStorage.removeItem("userNotes"); // Elimina le note salvate in locale
+  loadNotes(); // Ricarica le note (ora il server verrà usato)
+});
