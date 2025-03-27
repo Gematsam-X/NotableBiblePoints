@@ -21,6 +21,6 @@
 - [x] Add recovery methods
 - [x] Add a mini FindBiblePassages in the main page
 - [x] Automatically sort the notes by verse
-- [ ] Change the color of the chapter if there aren't notes
+- [x] Change the color of the chapter if there aren't notes
 - [ ] Add a search bar within the notes' content
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID
