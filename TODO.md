@@ -17,9 +17,10 @@
 - [x] Add a quick redirect if the user is authenticated
 - [x] Use the CSS vars instead of a different style for each theme
 - [x] Improve the login page with two indipendent sections for the login and the signup
-- [X] Add a backup feature in the account page
+- [x] Add a backup feature in the account page
 - [x] Add recovery methods
 - [x] Add a mini FindBiblePassages in the main page
 - [x] Automatically sort the notes by verse
 - [ ] Change the color of the chapter if there aren't notes
+- [ ] Add a search bar within the notes' content
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID
