@@ -22,5 +22,6 @@
 - [x] Add a mini FindBiblePassages in the main page
 - [x] Automatically sort the notes by verse
 - [x] Change the color of the chapter if there aren't notes for that chapter
+- [x] Save the notes in the cache, improving the loading speed and avoiding too much API calls
 - [ ] Add a search bar within the notes' content
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID
