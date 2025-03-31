@@ -5,24 +5,19 @@ function verifyChapterNotes() {
     // Recupera i dati da localStorage
     const storedData = localStorage.getItem("userNotes");
 
-    // Controlla che i dati non siano nulli e siano in formato JSON valido
     if (storedData) {
-      const parsedData = JSON.parse(storedData);
+      let parsedData = JSON.parse(storedData);
 
-      // Verifica che parsedData sia un array e abbia almeno un elemento
-      if (
-        Array.isArray(parsedData) &&
-        parsedData.length > 0 &&
-        parsedData[0].NotablePoints
-      ) {
-        userNotes = parsedData[0].NotablePoints;
+      // Verifica che i dati siano un array valido
+      if (Array.isArray(parsedData) && parsedData.length > 0) {
+        userNotes = parsedData; // Usa direttamente l'array
       } else {
         console.warn("Dati in formato errato, ripristino array vuoto.");
       }
     }
   } catch (error) {
     console.error("Errore nel parsing di userNotes:", error);
-    return; // Evitiamo di eseguire il resto della funzione se i dati sono corrotti
+    return; // Evita di proseguire con dati corrotti
   }
 
   if (userNotes.length === 0) {
@@ -31,15 +26,25 @@ function verifyChapterNotes() {
   }
 
   const userEmail = localStorage.getItem("userEmail");
+  const selectedBook = sessionStorage.getItem("selectedBook");
+
+  if (!userEmail || !selectedBook) {
+    console.warn("Dati utente o libro selezionato mancanti.");
+    return;
+  }
+
+  console.log("User Notes Type:", typeof userNotes, userNotes);
 
   for (const note of userNotes) {
     if (
       note.owner === userEmail &&
-      note.book === sessionStorage.getItem("selectedBook")
+      note.book === selectedBook &&
+      note.chapter != null
     ) {
-      const chapter = note.chapter;
+      const chapter = String(note.chapter).trim(); // Assicura che sia stringa
+
       document.querySelectorAll(".chapter").forEach((ch) => {
-        if (ch.textContent == chapter) {
+        if (ch.textContent.trim() === chapter) {
           ch.classList.add("hasNotes");
         }
       });
@@ -47,4 +52,5 @@ function verifyChapterNotes() {
   }
 }
 
+// Avvia la funzione al caricamento della pagina
 window.addEventListener("load", verifyChapterNotes);

@@ -44,11 +44,27 @@ async function loadNotes() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    const userNotes = shouldUseServer()
-      ? await Backendless.Data.of("NotableBiblePoints").find({
-          condition: `owner = '${userEmail}'`,
-        })
+    const allRecords = shouldUseServer()
+      ? (await Backendless.Data.of("NotableBiblePoints").findFirst()).NotablePoints
       : JSON.parse(localStorage.getItem("userNotes"));
+
+    if (!allRecords) {
+      toast("Errore: dati non trovati.");
+      hideGif();
+      return;
+    }
+
+    console.log("Dati attuali:", allRecords);
+
+    // Filtra i dati per rimuovere quelli dell'utente
+    console.log(allRecords);
+    const userNotes = allRecords.filter(
+      (entry) => entry.owner == userEmail
+    );
+
+    console.log("Dati aggiornati:", userNotes);
+
+    localStorage.setItem("userNotes", JSON.stringify(userNotes));
 
     console.log("Note di", userEmail);
 
@@ -62,18 +78,16 @@ async function loadNotes() {
       }
 
       userNotes.forEach((noteObj) => {
-        if (noteObj.NotablePoints && Array.isArray(noteObj.NotablePoints)) {
-          noteObj.NotablePoints.forEach((note) => {
-            if (
-              note.book === selectedBook &&
-              note.chapter === chapter &&
-              note.owner === userEmail
-            ) {
-              notesFound = true;
-              const { verse, title = "", content, id: noteId } = note;
-              allNotes.push({ verse, title, content, noteId });
-            }
-          });
+        if (noteObj) {
+          if (
+            noteObj.book === selectedBook &&
+            noteObj.chapter === chapter &&
+            noteObj.owner === userEmail
+          ) {
+            notesFound = true;
+            const { verse, title = "", content, id: noteId } = noteObj;
+            allNotes.push({ verse, title, content, noteId });
+          }
         }
       });
 
