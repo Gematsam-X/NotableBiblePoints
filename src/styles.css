@@ -87,14 +87,6 @@ html.theme-loaded {
   visibility: visible;
 }
 
-.hidden {
-  display: none !important;
-}
-
-.no-click {
-  pointer-events: none !important;
-}
-
 img {
   pointer-events: none;
 }
