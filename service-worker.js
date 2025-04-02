@@ -59,15 +59,20 @@ const urlsToCache = [
 "./src/js/service-worker.js",
 ];
 
-// Installazione del service worker
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("Cache aperta e risorse salvate!");
-      return cache.addAll(urlsToCache);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const asset of ASSETS_TO_CACHE) {
+        try {
+          await cache.add(asset);
+        } catch (err) {
+          console.warn("Errore nel caching di:", asset, err);
+        }
+      }
     })
   );
 });
+
 
 // Attivazione del service worker
 self.addEventListener("activate", (event) => {
