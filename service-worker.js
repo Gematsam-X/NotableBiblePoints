@@ -62,7 +62,7 @@ const urlsToCache = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      for (const asset of ASSETS_TO_CACHE) {
+      for (const asset of urlsToCache) {
         try {
           await cache.add(asset);
         } catch (err) {
