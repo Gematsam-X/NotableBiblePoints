@@ -56,7 +56,6 @@ const urlsToCache = [
 "./src/js/recovery.js",
 "./src/js/searchbar.js",
 "./src/js/verifyChapterNotes.js",
-"./src/js/service-worker.js",
 ];
 
 self.addEventListener("install", (event) => {
