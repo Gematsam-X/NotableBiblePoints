@@ -33,8 +33,6 @@ function verifyChapterNotes() {
     return;
   }
 
-  console.log("User Notes Type:", typeof userNotes, userNotes);
-
   for (const note of userNotes) {
     if (
       note.owner === userEmail &&
