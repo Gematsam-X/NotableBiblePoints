@@ -56,6 +56,7 @@ const urlsToCache = [
   "./src/js/recovery.js",
   "./src/js/searchbar.js",
   "./src/js/verifyChapterNotes.js",
+  "./src/js/online.js",
 ];
 
 self.addEventListener("install", (event) => {
@@ -72,8 +73,10 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Attivazione del service worker
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -87,57 +90,17 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// === IndexedDB setup ===
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("NotableBibleDB", 1);
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains("userNotes")) {
-        db.createObjectStore("userNotes", { keyPath: "id" });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function getAllNotesFromDB() {
-  const db = await openDB();
-  return new Promise((resolve) => {
-    const tx = db.transaction("userNotes", "readonly");
-    const store = tx.objectStore("userNotes");
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => resolve([]);
-  });
-}
-
-async function clearNotesFromDB() {
-  const db = await openDB();
-  const tx = db.transaction("userNotes", "readwrite");
-  tx.objectStore("userNotes").clear();
-}
-
+// Fetch: recupera risorse dalla cache o dalla rete
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then(async (cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      } else {
-        if (navigator.onLine) {
-          return fetch(event.request);
-        } else {
-          const notes = await getAllNotesFromDB();
-          return new Response(JSON.stringify(notes), {
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-      }
+    caches.match(event.request).then((cachedResponse) => {
+      // Rispondi con la cache se trovata, altrimenti fai una richiesta di rete
+      return cachedResponse || fetch(event.request);
     })
   );
 });
 
+// Aggiornamenti automatici: controlla se ci sono nuove versioni del service worker
 self.addEventListener("message", (event) => {
   if (event.data.action === "skipWaiting") {
     self.skipWaiting();
