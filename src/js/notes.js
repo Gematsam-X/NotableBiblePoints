@@ -1,6 +1,7 @@
 import { isDarkTheme } from "./isDarkTheme.js";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");
@@ -16,11 +17,8 @@ if (pageTitle) {
 }
 
 // Funzione per controllare se bisogna usare il server
-
-function shouldUseServer() {
-  const localNotes = localStorage.getItem("userNotes");
-  // Se non ci sono dati locali oppure sono "null" e sei online, usa il server
-  return (!localNotes || localNotes === "null") && navigator.onLine;
+async function shouldUseServer() {
+  return !(navigator.onLine && (await getValue("userNotes")) !== "null");
 }
 
 // Funzione per aprire la modale
@@ -36,7 +34,7 @@ document.querySelector(".closeModal").addEventListener("click", () => {
   document.querySelector(".modal").style.display = "none";
 });
 
-// Funzione per caricare le note dal database o dal localStorage
+// Funzione per caricare le note dal database o da IndexedDB
 async function loadNotes() {
   const notesContainer = document.querySelector(".notesContainer");
   if (!notesContainer) return;
@@ -46,13 +44,11 @@ async function loadNotes() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Ottieni i dati dal server o dal localStorage
+    // Ottieni i dati dal server o IndexedDB
     const allRecords = shouldUseServer()
       ? (await Backendless.Data.of("NotableBiblePoints").findFirst())
           .NotablePoints
-      : JSON.parse(localStorage.getItem("userNotes"));
-
-    console.log(allRecords);
+      : await getValue("userNotes");
 
     // Verifica che allRecords sia un array
     if (!Array.isArray(allRecords)) {
@@ -63,12 +59,13 @@ async function loadNotes() {
 
     const notesArray = Object.values(allRecords).filter(
       (item) => typeof item === "object" && item.id
-    ); // prendi solo gli oggetti nota validi
+    );
     const userNotes = notesArray.filter((note) => note.owner === userEmail);
 
-    // Salvataggio delle note locali
-    localStorage.setItem("userNotes", JSON.stringify(userNotes));
-    console.log("localStorage aggiornato", userNotes);
+    console.log(allRecords, notesArray, userNotes);
+
+    // Salvataggio delle note locali in IndexedDB (aspettiamo il completamento)
+    await setValue("userNotes", userNotes);
 
     // Popola il contenitore con le note
     notesContainer.innerHTML = ""; // Svuota il contenitore
@@ -77,10 +74,10 @@ async function loadNotes() {
 
     if (Array.isArray(userNotes) && userNotes.length > 0) {
       if (shouldUseServer()) {
-        localStorage.setItem("userNotes", JSON.stringify(userNotes)); // Salva nel localStorage
-        console.log("localStorage aggiornato", userNotes);
+        await setValue("userNotes", userNotes);
       }
 
+      // Filtra e ordina le note
       userNotes.forEach((noteObj) => {
         if (noteObj) {
           if (
@@ -95,8 +92,10 @@ async function loadNotes() {
         }
       });
 
+      // Ordina per versetto
       allNotes.sort((a, b) => a.verse - b.verse);
 
+      // Aggiungi le note al contenitore
       allNotes.forEach(({ verse, title, content, noteId }) => {
         const noteElement = document.createElement("div");
         noteElement.classList.add("note");
@@ -129,6 +128,7 @@ async function loadNotes() {
       });
     }
 
+    // Messaggio se non ci sono note
     if (!notesFound) {
       notesContainer.innerHTML =
         "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
@@ -166,14 +166,13 @@ async function saveNote() {
     // Recupera il primo (e unico) record dal database che contiene tutte le note
     let userNotes = navigator.onLine
       ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : JSON.parse(localStorage.getItem("userNotes"));
+      : await getValue("userNotes");
 
     // Se non esiste un record, creiamo uno vuoto con un array di note
     if (!userNotes) {
       userNotes = { NotablePoints: [] };
     }
 
-    // 💡 Sempre prendi l’array di note correttamente
     let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
 
     // Se stai modificando una nota
@@ -206,18 +205,16 @@ async function saveNote() {
       notes.push(newNote);
     }
 
-    // Aggiorna il record principale (quello che contiene l'array NotablePoints)
+    // Aggiorna il record principale
     userNotes.NotablePoints = notes;
 
     if (navigator.onLine) {
-      // Salva solo un singolo record con l'array NotablePoints
       await Backendless.Data.of("NotableBiblePoints").save(userNotes);
       console.log("Nota salvata con successo sul server!");
     } else {
-      // Salva in locale (con l'array delle note)
-      localStorage.setItem(
+      await setValue(
         "userNotes",
-        JSON.stringify(notes.filter((note) => note.owner === userEmail))
+        notes.filter((note) => note.owner === userEmail)
       );
       console.log("Nota salvata con successo in locale!");
     }
@@ -225,12 +222,12 @@ async function saveNote() {
     // Resetta lo stato di editing
     editingNoteId = null;
     document.querySelector(".modal").style.display = "none";
+
     if (navigator.onLine) {
-      localStorage.removeItem("userNotes");
+      await deleteValue("userNotes");
       console.log("locale eliminato");
     }
 
-    // Ricarica tutte le note
     loadNotes();
   } catch (error) {
     console.error("Errore durante il salvataggio/modifica:", error);
@@ -301,7 +298,7 @@ async function deleteNote(noteElement) {
     // Recupera le note
     let userNotes = navigator.onLine
       ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : JSON.parse(localStorage.getItem("userNotes"));
+      : await getValue("userNotes");
 
     console.log(userNotes);
 
@@ -321,19 +318,17 @@ async function deleteNote(noteElement) {
     // Aggiorna l'oggetto
     navigator.onLine
       ? (userNotes.NotablePoints = updatedNotes)
-      : (userNotes = JSON.stringify(updatedNotes));
+      : (userNotes = updatedNotes);
 
-    let deletedNotes = JSON.parse(localStorage.getItem("deletedNotes")) || [];
+    let deletedNotes = (await getValue("deletedNotes")) || [];
     const noteToDelete = { id: noteId };
     deletedNotes.push(noteToDelete);
-    localStorage.setItem("deletedNotes", JSON.stringify(deletedNotes));
+    await setValue("deletedNotes", deletedNotes);
 
-    localStorage.setItem(
+    await setValue(
       "userNotes",
-      JSON.stringify(
-        updatedNotes.filter(
-          (note) => note.owner === localStorage.getItem("userEmail")
-        )
+      updatedNotes.filter(
+        (note) => note.owner === localStorage.getItem("userEmail")
       )
     );
 
@@ -445,11 +440,13 @@ async function editNote(noteElement) {
 }
 
 const observer = new MutationObserver(() => {
-  if (document.querySelector(".notesContainer").children.length === 0) {
-    console.log("Tutte le note sono state eliminate");
-    document.querySelector(".notesContainer").innerHTML =
-      "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
-  }
+  window.setTimeout(() => {
+    if (document.querySelector(".notesContainer").children.length === 0) {
+      console.log("Tutte le note sono state eliminate");
+      document.querySelector(".notesContainer").innerHTML =
+        "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
+    }
+  }, 500);
 });
 
 // Configura l'osservatore per rilevare aggiunte e rimozioni di nodi
@@ -457,7 +454,7 @@ observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
 
-document.querySelector(".refreshNotes").addEventListener("click", () => {
-  if (navigator.onLine) localStorage.removeItem("userNotes");
+document.querySelector(".refreshNotes").addEventListener("click", async () => {
+  if (navigator.onLine) await deleteValue("userNotes");
   loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
 });

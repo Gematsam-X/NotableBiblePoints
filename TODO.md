@@ -25,5 +25,7 @@
 - [x] Save the notes in the cache, improving the loading speed and avoiding too much API calls
 - [x] Make the app a PWA
 - [x] Support offline usage in the app
+- [x] Migrate from localStorage to IndexedDB
+- [ ] Fix the layout of the clicked note for mobile devices
 - [ ] Add a search bar within the notes' content
 - [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID

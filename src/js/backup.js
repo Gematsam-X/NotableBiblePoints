@@ -1,5 +1,6 @@
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import { getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 
 async function findUserRecords() {
   const databaseEntry = await Backendless.Data.of(
@@ -25,8 +26,10 @@ export async function createBackup() {
     return;
   }
 
+  const userEmail = await getValue("userEmail"); // Otteniamo l'email dall'IndexedDB
+
   const exportingRecords = previousRecords.filter(
-    (entry) => entry.owner == localStorage.getItem("userEmail")
+    (entry) => entry.owner == userEmail
   );
 
   if (!exportingRecords.length) {
@@ -44,9 +47,7 @@ export async function createBackup() {
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
 
-  let fileName = `NotableBiblePointsBACKUP_${localStorage.getItem(
-    "userEmail"
-  )}_${day}-${month}-${year}.json`;
+  let fileName = `NotableBiblePointsBACKUP_${userEmail}_${day}-${month}-${year}.json`;
 
   let a = document.createElement("a");
   a.href = url;
@@ -95,7 +96,7 @@ export async function restoreBackup() {
           return;
         }
 
-        const userEmail = localStorage.getItem("userEmail");
+        const userEmail = await getValue("userEmail"); // Otteniamo l'email dall'IndexedDB
 
         if (!userEmail) {
           toast("Utente non autenticato.");
@@ -127,7 +128,7 @@ export async function restoreBackup() {
 
         // Salva i dati aggiornati nel database
         await Backendless.Data.of("NotableBiblePoints").save(databaseEntry);
-        localStorage.removeItem("userNotes");
+        await setValue("userNotes", databaseEntry.NotablePoints); // Salviamo le note nella IndexedDB
 
         toast("Backup ripristinato con successo.");
       } catch (e) {
