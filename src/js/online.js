@@ -1,11 +1,11 @@
-import toast from "./toast.js";
+import { getValue, deleteValue, setValue } from "./indexedDButils.js";
 
 async function syncWithServer() {
   if (!navigator.onLine) return;
 
   try {
-    const userNotes = JSON.parse(localStorage.getItem("userNotes")) || [];
-    const deletedNotes = JSON.parse(localStorage.getItem("deletedNotes")) || [];
+    const userNotes = (await getValue("userNotes")) || [];
+    const deletedNotes = (await getValue("deletedNotes")) || [];
 
     if (userNotes.length === 0 && deletedNotes.length === 0) {
       console.log("Nessuna nota da sincronizzare.");
@@ -72,8 +72,8 @@ async function syncWithServer() {
     await Backendless.Data.of("NotableBiblePoints").save(serverRecord);
 
     // STEP 5: Aggiorna il locale
-    localStorage.removeItem("deletedNotes");
-    localStorage.setItem("userNotes", JSON.stringify(updatedNotes));
+    await deleteValue("deletedNotes");
+    await setValue("userNotes", updatedNotes);
 
     console.log("Sincronizzazione completata con successo!");
   } catch (error) {

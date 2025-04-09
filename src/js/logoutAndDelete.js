@@ -1,5 +1,6 @@
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import { getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 
 export async function deleteCurrentUser() {
   try {
@@ -22,8 +23,8 @@ export async function deleteCurrentUser() {
       return;
     }
 
-    // Recupera l'email dell'utente
-    const userEmail = localStorage.getItem("userEmail");
+    // Recupera l'email dell'utente da IndexedDB
+    const userEmail = await getValue("userEmail");
     if (!userEmail) {
       toast("Errore: email utente non trovata.");
       hideGif();
@@ -54,9 +55,10 @@ export async function deleteCurrentUser() {
     databaseEntry.NotablePoints = updatedNotablePoints;
     await Backendless.Data.of("NotableBiblePoints").save(databaseEntry);
 
-    // Elimina l'utente dalla tabella Users
+    // Rimuovi l'utente dalla tabella Users
     console.log("Eliminazione utente con ID:", currentUser.objectId);
     await Backendless.Data.of("Users").remove(currentUser.objectId);
+
     logoutUser(false);
   } catch (error) {
     console.error("Errore nella cancellazione dell'account:", error);
@@ -69,11 +71,18 @@ export async function deleteCurrentUser() {
 export async function logoutUser(showAlert = true) {
   if (showAlert) showGif();
   try {
-    // Logout the user
+    // Logout dell'utente
     await Backendless.UserService.logout();
-    localStorage.removeItem("isAuthenticated");
+
+    // Rimuoviamo i dati relativi all'utente da IndexedDB
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");
+    await deleteValue("userNotes");
+    await deleteValue("deletedNotes");
+
+    // Mantenere isAuthenticated in localStorage
+    localStorage.removeItem("userNotes");
+    localStorage.removeItem("deletedNotes");
     window.location.href = "login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
@@ -111,7 +120,9 @@ export async function redirectToOriginPage() {
     });
   }
 
-  if (localStorage.getItem("isAuthenticated") == "false") {
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+  if (isAuthenticated === "false") {
     window.location.href = "login.html";
     return;
   }
@@ -119,7 +130,6 @@ export async function redirectToOriginPage() {
   const previousPage = await findValidHistoryEntry();
 
   if (previousPage) {
-    localStorage.setItem("isAuthenticated", "true");
     console.log("Ritornando a " + previousPage);
     window.location.href = previousPage;
   } else {

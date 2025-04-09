@@ -1,12 +1,16 @@
-function verifyChapterNotes() {
+import { getValue } from "./indexedDButils.js";
+
+async function verifyChapterNotes() {
   let userNotes = [];
 
   try {
-    // Recupera i dati da localStorage
-    const storedData = localStorage.getItem("userNotes");
+    // Recupera i dati da IndexedDB
+    const storedData = await getValue("userNotes");
 
     if (storedData) {
-      let parsedData = JSON.parse(storedData);
+      let parsedData = storedData;
+
+      console.log(parsedData, typeof parsedData);
 
       // Verifica che i dati siano un array valido
       if (Array.isArray(parsedData) && parsedData.length > 0) {
