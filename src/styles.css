@@ -303,56 +303,51 @@ div.actions-row {
   display: flex;
   flex-direction: column;
   border: none;
+  overflow-y: auto;
 }
 
 #clicked-note .verse-number {
   margin-right: 0;
   font-size: larger;
   text-decoration: underline;
-  margin-bottom: 10rem;
+  margin-bottom: 10vh;
 }
 
-#clicked-note .note-body {
-  gap: 5rem;
+#clicked-note .note-title {
+  font-family: "Fira Sans Condensed Bold", Arial;
+  font-size: 150%;
+  margin-bottom: 6.7vh;
 }
 
-.delete,
-.share,
-.edit {
+.note-action-buttons button {
   position: fixed;
   visibility: hidden;
   display: none;
+  bottom: 5rem;
+  transform: translateX(-50%);
 }
 
+/* Buttons visible when the note is clicked */
+#clicked-note .note-action-buttons button {
+  visibility: visible;
+  display: block;
+}
+
+/* Landscape positioning */
 .share {
-  bottom: 10rem;
-  right: 30vh;
-}
-
-.delete {
-  bottom: 10rem;
-  left: 30vh;
+  left: 20%;
 }
 
 .edit {
-  bottom: 10rem;
+  left: 50%;
 }
 
-@media (min-width: 368px) and (max-width: 928px) {
-  .delete {
-    left: 2vh;
-  }
-
-  .share {
-    right: 2vh;
-  }
+.delete {
+  left: 80%;
 }
 
-#clicked-note .delete,
-#clicked-note .share,
-#clicked-note .edit {
-  visibility: visible;
-  display: block;
+#clicked-note .note-body {
+  margin-bottom: 10rem;
 }
 
 /* Modal styles */

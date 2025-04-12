@@ -18,7 +18,9 @@ if (pageTitle) {
 
 // Funzione per controllare se bisogna usare il server
 async function shouldUseServer() {
-  return !(navigator.onLine && (await getValue("userNotes")) !== "null");
+  if (!navigator.onLine) return false;
+  else if (await getValue("userNotes")) return false;
+  else if (!(await getValue("userNotes"))) return true;
 }
 
 // Funzione per aprire la modale
@@ -45,10 +47,12 @@ async function loadNotes() {
     const userEmail = localStorage.getItem("userEmail");
 
     // Ottieni i dati dal server o IndexedDB
-    const allRecords = shouldUseServer()
+    const allRecords = (await shouldUseServer())
       ? (await Backendless.Data.of("NotableBiblePoints").findFirst())
           .NotablePoints
       : await getValue("userNotes");
+
+    console.log(allRecords, "allRecords");
 
     // Verifica che allRecords sia un array
     if (!Array.isArray(allRecords)) {
@@ -73,7 +77,7 @@ async function loadNotes() {
     let allNotes = [];
 
     if (Array.isArray(userNotes) && userNotes.length > 0) {
-      if (shouldUseServer()) {
+      if (await shouldUseServer()) {
         await setValue("userNotes", userNotes);
       }
 
@@ -119,9 +123,12 @@ async function loadNotes() {
             <h2 class="note-title">${title}</h2>
             <h3>${content}</h3>
           </div>
+
+          <div class="note-action-buttons">
           <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
           <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
           <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
+          </div>
         `;
 
         notesContainer.appendChild(noteElement);
