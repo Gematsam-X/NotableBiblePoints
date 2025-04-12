@@ -19,6 +19,7 @@ async function syncWithServer() {
       ).findFirst();
     } catch (error) {
       console.error("Errore nel recupero del record dal server:", error);
+      window.setTimeout(syncWithServer, 3000);
       return;
     }
 
@@ -45,7 +46,9 @@ async function syncWithServer() {
     // STEP 3: Confronta ogni nota condivisa
     updatedNotes = updatedNotes.map((note) => {
       const localNote = userNotes.find((n) => n.id === note.id);
-      const serverNote = serverNotes.find((n) => n.id === note.id);
+      const serverNote = serverNotes.find(
+        (n) => n.id === note.id && n.owner === note.owner
+      );
 
       if (!localNote || !serverNote) return note;
 
@@ -78,7 +81,7 @@ async function syncWithServer() {
     console.log("Sincronizzazione completata con successo!");
   } catch (error) {
     console.error("Errore durante la sincronizzazione:", error);
-    toast("Errore nella sincronizzazione. Riprova più tardi.");
+    window.setTimeout(syncWithServer, 3000);
   }
 }
 
