@@ -164,7 +164,7 @@ async function saveNote() {
     toast("Compila tutti i campi correttamente!");
     return;
   }
-
+  document.querySelector(".modal").style.display = "none";
   showGif();
 
   try {
@@ -293,6 +293,7 @@ async function deleteNote(noteElement) {
   if (!confirm("Sei sicuro di voler eliminare questa nota?")) return;
 
   showGif();
+  document.querySelector(".modal").style.display = "none";
 
   try {
     const noteId = noteElement.getAttribute("data-id");

@@ -40,7 +40,6 @@ export async function getValue(key) {
   try {
     const db = await openDBInstance();
     const result = await db.get(STORE_NAME, key);
-    console.log(result, "questo è ciò che è uscito da getValue");
     return result ? result.value : null;
   } catch (error) {
     console.error("Errore nel recupero da IndexedDB:", error);
