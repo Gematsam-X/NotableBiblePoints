@@ -139,14 +139,40 @@
       </tr>
     </table>
     <div class="search-container">
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Scrivi qua il passo biblico..."
-      />
+      <input type="text" id="search-input" />
       <button id="search-button">
         <img width="40px" height="40px" id="lens_img" alt="Cerca" />
       </button>
+
+      <!-- Etichette per il checkbox -->
+      <label class="switch-label" for="toggleSearchMode">Passo biblico</label>
+      <label class="switch" for="toggleSearchMode">
+        <input
+          type="checkbox"
+          id="toggleSearchMode"
+          alt="Cambia modalità di ricerca"
+        />
+        <span class="slider"></span>
+      </label>
+      <label class="switch-label" for="toggleSearchMode">Occorrenze</label>
+    </div>
+
+    <!-- Modal for search results -->
+    <div id="results-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="close-modal" class="closeModal">&times;</span>
+          <h2>Risultati della ricerca</h2>
+        </div>
+        <hr />
+        <div class="modal-body">
+          <p id="results-content"></p>
+        </div>
+        <hr />
+        <div class="modal-footer">
+          <h3>NotableBiblePoints - Salva i punti notevoli</h3>
+        </div>
+      </div>
     </div>
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>

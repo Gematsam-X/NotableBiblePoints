@@ -17,3 +17,31 @@ if (
   sessionStorage.removeItem("selectedBook");
   window.location.href = "main.html";
 }
+
+if (
+  window.location.href.split("/").pop() === "notes.html" &&
+  sessionStorage.getItem("selectedNoteId")
+) {
+  const selectedId = sessionStorage.getItem("selectedNoteId");
+
+  const tryScroll = () => {
+    const note = document.querySelector(`.note[data-id="${selectedId}"]`);
+    if (note) {
+      const top = note.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: "smooth" });
+      sessionStorage.removeItem("selectedNoteId");
+      return true;
+    }
+    return false;
+  };
+
+  // Prima prova diretta
+  if (!tryScroll()) {
+    // Se non esiste ancora, osserva il DOM per cambiamenti
+    const observer = new MutationObserver(() => {
+      if (tryScroll()) observer.disconnect();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+}
