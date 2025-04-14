@@ -139,22 +139,25 @@
       </tr>
     </table>
     <div class="search-container">
-      <input type="text" id="search-input" />
-      <button id="search-button">
-        <img width="40px" height="40px" id="lens_img" alt="Cerca" />
-      </button>
-
-      <!-- Etichette per il checkbox -->
-      <label class="switch-label" for="toggleSearchMode">Passo biblico</label>
-      <label class="switch" for="toggleSearchMode">
-        <input
-          type="checkbox"
-          id="toggleSearchMode"
-          alt="Cambia modalità di ricerca"
-        />
-        <span class="slider"></span>
-      </label>
-      <label class="switch-label" for="toggleSearchMode">Occorrenze</label>
+      <div class="search-bar">
+        <input type="text" id="search-input" />
+        <button id="search-button">
+          <img width="40px" height="40px" id="lens_img" alt="Cerca" />
+        </button>
+      </div>
+      <div class="switch-container">
+        <!-- Etichette per il checkbox -->
+        <label class="switch-label" for="toggleSearchMode">Passo biblico</label>
+        <label class="switch" for="toggleSearchMode">
+          <input
+            type="checkbox"
+            id="toggleSearchMode"
+            alt="Cambia modalità di ricerca"
+          />
+          <span class="slider"></span>
+        </label>
+        <label class="switch-label" for="toggleSearchMode">Occorrenze</label>
+      </div>
     </div>
 
     <!-- Modal for search results -->
