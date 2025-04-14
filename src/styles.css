@@ -48,6 +48,15 @@
   --min-prophet-hover: #c98e81;
 }
 
+/* Tema chiaro */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #f4f4f9;
+    color: #1c1c1c;
+  }
+}
+
+/* Tema scuro */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1c1c1c;
@@ -95,7 +104,6 @@ img {
   pointer-events: all;
 }
 
-/* General styles for the light theme (default) */
 body {
   background-color: var(--bg);
   color: var(--primary-col);
@@ -228,6 +236,7 @@ div.actions-row {
   transition: background-color 0.5s ease;
   border-color: var(--primary-col);
   opacity: 0.67;
+  user-select: none;
 }
 
 .chapter.hasNotes {
@@ -617,10 +626,19 @@ button.account {
 
 .search-container {
   position: fixed;
-  bottom: 20px;
   right: 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+}
+
+.search-bar,
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 #search-input {

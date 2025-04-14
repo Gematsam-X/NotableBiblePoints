@@ -16,6 +16,7 @@ async function handleSearch() {
   if (toggleSearchMode.checked) {
     const searchTerm = searchInput.value.trim();
     if (!searchTerm) {
+      searchInput.blur();
       toast("Inserisci una parola o una frase da cercare.");
       resultsModal.style.display = "none";
       return;
@@ -23,6 +24,7 @@ async function handleSearch() {
 
     // Prevent XSS attacks
     if (/[<>&"']/.test(searchTerm)) {
+      searchInput.blur();
       toast("Inserisci un termine di ricerca valido.");
       resultsModal.style.display = "none";
       return;
@@ -36,6 +38,7 @@ async function handleSearch() {
       searchInput.blur();
     } else {
       // Se non ci sono occorrenze
+      searchInput.blur();
       toast(`Nessuna occorrenza trovata per "${searchTerm}".`);
       resultsModal.style.display = "none";
       return;
@@ -274,6 +277,7 @@ const bibleBooks = [
 
 function checkBibleBook() {
   if (!searchInput) {
+    searchInput.blur();
     toast(
       "Inserisci un riferimento biblico valido (es. Genesi 1:1 o Genesi 1 1)."
     );
@@ -291,6 +295,7 @@ function checkBibleBook() {
   );
 
   if (sanitizedInput === "") {
+    searchInput.blur();
     toast(
       "Digita il libro biblico ed eventualmente il capitolo nel campo in basso a destra. Puoi anche digitare solo le iniziali del libro (es. 'Gen' per 'Genesi').",
       4800
@@ -317,10 +322,12 @@ function checkBibleBook() {
       window.location.href = "chapters.html";
     }
   } else if (matches.length > 1) {
+    searchInput.blur();
     toast(
       `Il testo fornito non è univoco. Forse intendevi: ${matches.join(" - ")}`
     );
   } else {
+    searchInput.blur();
     toast(
       "Il libro non è stato trovato. Verifica di aver scritto correttamente il nome."
     );
