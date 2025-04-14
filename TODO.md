@@ -29,4 +29,4 @@
 - [x] Fix the layout of the clicked note for mobile devices
 - [x] Add a search bar within the notes' content
 - [x] Fix the search-container style for mobile devices
-- [ ] Improve the security of the app: add variables hiding the API_KEY and APP_ID
+- [ ] Add a redirecting for the verse in JW Library
