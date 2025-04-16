@@ -4,6 +4,7 @@
   --border-col: black;
   --link-col: blue;
   --chapter-col: #90ee90;
+  --chapter-hover: #6fa86f;
   --btn-hover: black;
   --placeholder-col: #ddd;
 
@@ -29,6 +30,7 @@
   --border-col: #bbb;
   --link-col: #9f52f8;
   --chapter-col: #7dbf7d;
+  --chapter-hover: #5d9c5d;
   --btn-hover: #d1d1d1;
   --placeholder-col: #4b4b4b;
 
@@ -134,7 +136,9 @@ footer {
   margin: 0 auto;
   width: 70%;
   margin-top: 17vh;
+  margin-bottom: 7vh;
   border-collapse: collapse;
+  position: relative;
 }
 
 .periodic-table td {
@@ -243,9 +247,22 @@ div.actions-row {
   opacity: 1;
 }
 
+.chapter:hover {
+  background-color: var(--chapter-hover);
+}
+
+#readBook,
+#readChapter {
+  position: fixed;
+  right: 50%;
+  bottom: 20px;
+  transform: translateX(50%);
+}
+
 .notes-page-title {
   text-align: center;
-  margin: 0 auto;
+  margin: 10vh auto;
+  margin-bottom: 0;
 }
 
 .note-title {
@@ -365,15 +382,6 @@ div.actions-row {
   text-align: center;
   justify-content: center;
   align-items: center;
-}
-
-.openModal {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  cursor: pointer;
-  font-size: 28px;
-  font-weight: bold;
 }
 
 .modal,
@@ -498,13 +506,23 @@ div.actions-row {
   }
 }
 
-.refreshNotes {
+.refreshNotes,
+.openModal {
   position: fixed;
+  width: 80px;
   bottom: 20px;
-  left: 20px;
   cursor: pointer;
   font-size: 28px;
   font-weight: bold;
+  font-size: 2rem;
+}
+
+.refreshNotes {
+  left: 10px;
+}
+
+.openModal {
+  right: 10px;
 }
 
 hr.dashed {
@@ -515,6 +533,7 @@ hr.dashed {
 
 td:hover {
   transform: scale(1.1);
+  z-index: 999;
 }
 
 .law {
@@ -609,24 +628,26 @@ button:hover {
 button.theme-toggle {
   position: fixed;
   top: 20px;
-  left: 20px;
+  left: 10px;
 }
 
 #return-btn {
   position: fixed;
   top: 20px;
-  right: 20px;
+  right: 10px;
 }
 
 button.account {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  z-index: 2;
+  bottom: 20px;
+  right: 10px;
 }
 
 .search-container {
   position: fixed;
-  right: 20px;
+  right: 10px;
+  top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -653,6 +674,12 @@ button.account {
   border: none;
   border-radius: 5px;
   font-family: "Fira Sans Condensed", Arial;
+}
+
+@media (max-width: 768px) {
+  #search-input {
+    width: max-content;
+  }
 }
 
 #search-button {
@@ -773,10 +800,6 @@ pre mark {
   overflow-wrap: break-word;
 }
 
-.legend {
-  background-color: transparent !important;
-}
-
 h2,
 h3,
 p {
@@ -787,6 +810,11 @@ p {
   word-wrap: break-word;
   white-space: normal;
   list-style-position: inside;
+}
+
+.home-page-title {
+  text-align: center;
+  margin: 17vh auto;
 }
 
 .toast {

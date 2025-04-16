@@ -466,3 +466,104 @@ document.querySelector(".refreshNotes").addEventListener("click", async () => {
   if (navigator.onLine) await deleteValue("userNotes");
   loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
 });
+
+// Sezione sul reindirizzamento alla Traduzione del Nuovo Mondo
+
+const bibleBooks = [
+  "Genesi",
+  "Esodo",
+  "Levitico",
+  "Numeri",
+  "Deuteronomio",
+  "Giosuè",
+  "Giudici",
+  "Rut",
+  "1 Samuele",
+  "2 Samuele",
+  "1 Re",
+  "2 Re",
+  "1 Cronache",
+  "2 Cronache",
+  "Esdra",
+  "Neemia",
+  "Ester",
+  "Giobbe",
+  "Salmi",
+  "Proverbi",
+  "Ecclesiaste",
+  "Cantico dei Cantici",
+  "Isaia",
+  "Geremia",
+  "Lamentazioni",
+  "Ezechiele",
+  "Daniele",
+  "Osea",
+  "Gioele",
+  "Amos",
+  "Abdia",
+  "Giona",
+  "Michea",
+  "Naum",
+  "Abacuc",
+  "Sofonia",
+  "Aggeo",
+  "Zaccaria",
+  "Malachia",
+  "Matteo",
+  "Marco",
+  "Luca",
+  "Giovanni",
+  "Atti",
+  "Romani",
+  "1 Corinti",
+  "2 Corinti",
+  "Galati",
+  "Efesini",
+  "Filippesi",
+  "Colossesi",
+  "1 Tessalonicesi",
+  "2 Tessalonicesi",
+  "1 Timoteo",
+  "2 Timoteo",
+  "Tito",
+  "Filemone",
+  "Ebrei",
+  "Giacomo",
+  "1 Pietro",
+  "2 Pietro",
+  "1 Giovanni",
+  "2 Giovanni",
+  "3 Giovanni",
+  "Giuda",
+  "Rivelazione",
+];
+
+const link = document.querySelector("#readChapter") || null;
+
+link?.addEventListener("click", () => {
+  // Ottieni il libro selezionato
+  const selectedBook = sessionStorage.getItem("selectedBook");
+  const selectedChapter = sessionStorage.getItem("selectedChapter");
+
+  // Cerca l'indice del libro selezionato nell'array bibleBooks
+  const bookIndex = bibleBooks.indexOf(selectedBook); // Restituisce l'indice del libro, o -1 se non trovato
+
+  if (bookIndex !== -1) {
+    // Converte l'indice in due cifre (ad esempio, 01 per il primo libro)
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+
+    // Costruisce il codice del riferimento (ad esempio, 01001001 per Genesi 1:1)
+    const referenceCode = `${bookCode}${selectedChapter.padStart(
+      3,
+      "0"
+    )}000-${bookCode}${selectedChapter.padStart(3, "0")}999}`;
+
+    // Costruisce l'URL con il riferimento completo
+    link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
+  } else {
+    // Se il libro non è trovato, puoi gestire l'errore
+    toast(
+      "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
+    );
+  }
+});
