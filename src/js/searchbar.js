@@ -285,7 +285,7 @@ function checkBibleBook() {
   }
 
   const parts = searchInput.value.split(/[\s:]+/); // Dividi su spazio o ":"
-  const bookInput = parts[0].trim(); // Libro
+  const bookInput = parts[0].trim(); // Libro 
   const chapterInput = parts[1]?.trim(); // Capitolo (se presente)
 
   // Normalizzazione dell'input
