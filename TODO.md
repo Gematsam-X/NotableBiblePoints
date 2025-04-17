@@ -30,3 +30,4 @@
 - [x] Add a search bar within the notes' content
 - [x] Fix the search-container style for mobile devices
 - [x] Add a redirecting for the verse/chapter in JW Library
+- [x] Add auto update when a new version is available

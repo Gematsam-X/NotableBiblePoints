@@ -97,6 +97,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       // Rispondi con la cache se trovata, altrimenti fai una richiesta di rete
+      console.log(cachedResponse || fetch(event.request));
       return cachedResponse || fetch(event.request);
     })
   );
