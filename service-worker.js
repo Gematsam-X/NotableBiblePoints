@@ -57,6 +57,8 @@ const urlsToCache = [
   "./src/js/searchbar.js",
   "./src/js/verifyChapterNotes.js",
   "./src/js/online.js",
+  "./src/js/idb.js",
+  "./src/js/indexedDButils.js",
 ];
 
 self.addEventListener("install", (event) => {
