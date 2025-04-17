@@ -57,6 +57,10 @@ Puoi visualizzare, modificare o eliminare i punti notevoli che hai salvato. Puoi
 
 I dati vengono sincronizzati con Backendless, quindi puoi accedervi da qualsiasi dispositivo e non ci sono rischi di perdita di dati.
 
+## Utilizzo offline:
+
+È possibile utilizzare l'applicazione anche offline. Appena si riaprira l'applicazione von una connessione a Internet, i dati salvati offline verranno sincronizzati con Backendless. In questo modo il progetto è fruibile in ogni circostanza.
+
 ## Licenza
 
 Il progetto è distribuito sotto una licenza MIT con obbligo di attribuizione all'autore originale. L'autore originale è **"Gionatan Venturi - Gematsam X"**. Vedi il file [LICENSE](LICENSE) per maggiori dettagli.
