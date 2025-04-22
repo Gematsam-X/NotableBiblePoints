@@ -1,12 +1,15 @@
 import toast from "./toast.js";
 import { showGif, hideGif } from "./loadingGif.js";
 
+const modal = document.querySelector(".modal");
+
 document.querySelector("#recovery").addEventListener("click", () => {
-  document.querySelector(".modal").style.display = "block";
+  modal.style.display = "block";
 });
 
 document.querySelector(".closeModal").addEventListener("click", () => {
-  document.querySelector(".modal").style.display = "none";
+  modal.style.display = "none";
+  document.querySelector("#emailForRecovery").value = ""; // Pulisce il campo email
 });
 
 document
@@ -27,8 +30,6 @@ async function recoveryPassword() {
     return;
   }
 
-  console.log("Controlli superati per la mail " + email);
-
   showGif();
 
   try {
@@ -39,6 +40,8 @@ async function recoveryPassword() {
     const users = await Backendless.Data.of("Users").find(queryBuilder);
 
     if (!users || users.length === 0) {
+      modal.style.display = "none";
+      document.querySelector("#emailForRecovery").value = ""; // Pulisce il campo email
       toast(
         "Nessun utente trovato con questa email. Puoi registrarti accedendo all'apposita sezione chiudendo questa finestra.",
         3400
@@ -51,6 +54,8 @@ async function recoveryPassword() {
 
     // Invio dell'email per il recupero della password
     await Backendless.UserService.restorePassword(email);
+    modal.style.display = "none";
+    document.querySelector("#emailForRecovery").value = ""; // Pulisce il campo email
     toast(
       "Ti è stata inviata un'email per il recupero della password. Clicca sul link contenuto nella mail per procedere."
     );
