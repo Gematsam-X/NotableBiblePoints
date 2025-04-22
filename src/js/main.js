@@ -29,21 +29,4 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-async function hardRefresh() {
-  if ("caches" in window) {
-    try {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map((cache) => caches.delete(cache)));
-      console.log("Cache eliminata! Ora ricarico la pagina...");
-      window.location.reload();
-    } catch (err) {
-      console.error("Errore nella cancellazione cache:", err);
-      window.location.reload();
-    }
-  } else {
-    console.warn("Il browser non supporta le cache. Faccio solo il reload.");
-    window.location.reload();
-  }
-}
-
 checkVersion();
