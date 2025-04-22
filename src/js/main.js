@@ -1,3 +1,5 @@
+import checkVersion from "./checkVersion.js";
+
 document
   .querySelector(".account")
   .addEventListener("click", () => (window.location.href = "account.html"));
@@ -25,29 +27,6 @@ if ("serviceWorker" in navigator) {
         console.log("Errore nella registrazione del Service Worker: ", error);
       });
   });
-}
-
-async function checkVersion() {
-  try {
-    const response = await fetch("../../version.json", { cache: "no-store" });
-    const data = await response.json();
-    const latestVersion = data.version;
-    const currentVersion = localStorage.getItem("appVersion");
-
-    if (currentVersion && currentVersion !== latestVersion) {
-      console.log(
-        `🚨 Nuova versione disponibile! (${currentVersion} → ${latestVersion})`
-      );
-      localStorage.setItem("appVersion", latestVersion);
-      await hardRefresh();
-    } else if (!currentVersion) {
-      localStorage.setItem("appVersion", latestVersion);
-    } else {
-      console.log("✅ Versione aggiornata, nessuna azione necessaria");
-    }
-  } catch (err) {
-    console.error("💥 Errore durante il controllo della versione:", err);
-  }
 }
 
 async function hardRefresh() {
