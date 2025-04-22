@@ -31,3 +31,4 @@
 - [x] Fix the search-container style for mobile devices
 - [x] Add a redirecting for the verse/chapter in JW Library
 - [x] Add auto update when a new version is available
+- [ ] Disable the refresh button while the syncing is going
