@@ -23,9 +23,11 @@ async function shouldUseServer() {
   else if (!(await getValue("userNotes"))) return true;
 }
 
+const modal = document.querySelector(".modal");
+
 // Funzione per aprire la modale
 document.querySelector(".openModal").addEventListener("click", () => {
-  document.querySelector(".modal").style.display = "block";
+  modal.style.display = "block";
 });
 
 // Funzione per chiudere la modale
@@ -33,7 +35,7 @@ document.querySelector(".closeModal").addEventListener("click", () => {
   document.querySelector("#noteContent").value = "";
   document.querySelector("#noteTitle").value = "";
   document.querySelector("#verseNumber").value = "";
-  document.querySelector(".modal").style.display = "none";
+  modal.style.display = "none";
 });
 
 // Funzione per caricare le note dal database o da IndexedDB
@@ -164,7 +166,7 @@ async function saveNote() {
     toast("Compila tutti i campi correttamente!");
     return;
   }
-  document.querySelector(".modal").style.display = "none";
+  modal.style.display = "none";
   showGif();
 
   try {
@@ -228,7 +230,7 @@ async function saveNote() {
 
     // Resetta lo stato di editing
     editingNoteId = null;
-    document.querySelector(".modal").style.display = "none";
+    modal.style.display = "none";
 
     if (navigator.onLine) {
       await deleteValue("userNotes");
@@ -293,7 +295,7 @@ async function deleteNote(noteElement) {
   if (!confirm("Sei sicuro di voler eliminare questa nota?")) return;
 
   showGif();
-  document.querySelector(".modal").style.display = "none";
+  modal.style.display = "none";
 
   try {
     const noteId = noteElement.getAttribute("data-id");
@@ -426,26 +428,25 @@ async function editNote(noteElement) {
   document.querySelector("#noteContent").value = noteContent;
 
   // Mostra la modale
-  const modal = document.querySelector(".modal");
   modal.style.display = "block";
-
-  // Eventi per chiudere la modale
-  document.addEventListener("keydown", function escHandler(event) {
-    if (event.key === "Escape") {
-      modal.style.display = "none";
-      editingNoteId = null;
-      document.removeEventListener("keydown", escHandler);
-    }
-  });
-
-  modal.addEventListener("click", function outsideClickHandler(event) {
-    if (event.target === modal) {
-      modal.style.display = "none";
-      editingNoteId = null;
-      modal.removeEventListener("click", outsideClickHandler);
-    }
-  });
 }
+
+// Eventi per chiudere la modale
+document.addEventListener("keydown", function escHandler(event) {
+  if (event.key === "Escape") {
+    modal.style.display = "none";
+    editingNoteId = null;
+    document.removeEventListener("keydown", escHandler);
+  }
+});
+
+modal.addEventListener("click", function outsideClickHandler(event) {
+  if (event.target === modal) {
+    modal.style.display = "none";
+    editingNoteId = null;
+    modal.removeEventListener("click", outsideClickHandler);
+  }
+});
 
 const observer = new MutationObserver(() => {
   window.setTimeout(() => {
