@@ -285,7 +285,7 @@ function checkBibleBook() {
   }
 
   const parts = searchInput.value.split(/[\s:]+/); // Dividi su spazio o ":"
-  const bookInput = parts[0].trim(); // Libro 
+  const bookInput = parts[0].trim(); // Libro
   const chapterInput = parts[1]?.trim(); // Capitolo (se presente)
 
   // Normalizzazione dell'input
@@ -347,12 +347,12 @@ document.addEventListener("keypress", (event) => {
 // Cambia il placeholder in base alla modalità di ricerca
 function addEventListenerToSwitch() {
   searchInput.placeholder = toggleSearchMode.checked
-    ? "Cerca un'occorrenza nelle tue note..."
+    ? "Cerca nelle tue note..."
     : "Cerca un passo biblico...";
 
   toggleSearchMode.addEventListener("change", () => {
     searchInput.placeholder = toggleSearchMode.checked
-      ? "Cerca un'occorrenza nelle tue note..."
+      ? "Cerca nelle tue note..."
       : "Cerca un passo biblico...";
   });
 }
@@ -362,7 +362,7 @@ addEventListenerToSwitch();
 // Funzione per aggiornare il placeholder dinamicamente
 function updatePlaceholder() {
   searchInput.placeholder = toggleSearchMode.checked
-    ? "Cerca un'occorrenza nelle tue note..."
+    ? "Cerca nelle tue note..."
     : "Cerca un passo biblico...";
 }
 
@@ -379,7 +379,7 @@ toggleSearchMode.addEventListener("change", () => {
 const savedSearchMode = localStorage.getItem("searchMode");
 if (savedSearchMode !== null) {
   toggleSearchMode.checked = savedSearchMode === "true";
-  updatePlaceholder(); //Richiama dopo aver aggiornato lo stato
+  updatePlaceholder(); // Richiama dopo aver aggiornato lo stato
 }
 closeModalButton.addEventListener("click", () => {
   resultsModal.style.display = "none";
