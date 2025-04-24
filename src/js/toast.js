@@ -10,8 +10,12 @@ export default function toast(message, duration = 3000) {
     function isOnPage(page) {
       return window.location.href.split("/").pop() === page;
     }
-
-    if (isOnPage("notes.html")) {
+    if (
+      isOnPage("notes.html") &&
+      document.querySelector(".modal").style.display == "block"
+    ) {
+      document.querySelector(".modal").appendChild(toast);
+    } else if (isOnPage("notes.html")) {
       document.querySelector(".notesContainer")?.appendChild(toast);
     } else if (isOnPage("login.html")) {
       document.querySelector(".container")?.appendChild(toast);

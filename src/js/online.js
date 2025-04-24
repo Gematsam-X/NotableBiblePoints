@@ -1,17 +1,26 @@
 import { getValue, deleteValue, setValue } from "./indexedDButils.js";
+import toast from "./toast.js";
 
+const refreshBtn = document.querySelector(".refreshNotes");
+
+// Funzione principale per sincronizzare i dati con il server
 async function syncWithServer() {
-  if (!navigator.onLine) return;
+  // Controlla se siamo online prima di tentare la sincronizzazione
+  if (!navigator.onLine) return false; // Restituisce false se non siamo online
 
   try {
+    // Recupera le note utente e le note eliminate dal local storage
     const userNotes = (await getValue("userNotes")) || [];
     const deletedNotes = (await getValue("deletedNotes")) || [];
 
+    // Se non ci sono note da sincronizzare, termina la funzione
     if (userNotes.length === 0 && deletedNotes.length === 0) {
       console.log("Nessuna nota da sincronizzare.");
-      return;
+      toast("Sincronizzazione completata!", 2000);
+      return true; // Restituisce true quando la sincronizzazione è completata
     }
 
+    // Recupera il record dal server
     let serverRecord;
     try {
       serverRecord = await Backendless.Data.of(
@@ -19,13 +28,23 @@ async function syncWithServer() {
       ).findFirst();
     } catch (error) {
       console.error("Errore nel recupero del record dal server:", error);
-      window.setTimeout(syncWithServer, 3000);
-      return;
+      toast(
+        `Errore nel recupero delle tue note dal cloud, continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
+        4500
+      );
+      window.setTimeout(syncWithServer, 3000); // Riprova la sincronizzazione
+      return false; // Restituisce false in caso di errore
     }
 
     if (!serverRecord || !serverRecord.NotablePoints) {
       console.log("Nessun record o punti notevoli trovati nel database.");
-      return;
+      toast(
+        "Errore: database non trovato. Non riproveremo. Rivolgiti allo sviluppatore se il problema persiste.",
+        3500
+      );
+      throw new Error(
+        "Nessun record trovato nel database, o campo NotablePoints inesistente."
+      );
     }
 
     const serverNotes = serverRecord.NotablePoints;
@@ -79,14 +98,33 @@ async function syncWithServer() {
     await setValue("userNotes", updatedNotes);
 
     console.log("Sincronizzazione completata con successo!");
+    toast("Sincronizzazione completata!", 2000);
+    return true;
   } catch (error) {
     console.error("Errore durante la sincronizzazione:", error);
-    window.setTimeout(syncWithServer, 3000);
+    window.setTimeout(syncWithServer, 1500); // Riprova la sincronizzazione
   }
 }
 
 // Aggiungi un event listener per rilevare quando l'app torna online
 window.addEventListener("online", () => {
   console.log("Connessione ripristinata. Sincronizzo i dati...");
-  window.setTimeout(syncWithServer, 3000);
+  toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
+  sessionStorage.setItem("canRefresh", "false");
+  if (!refreshBtn.classList.contains("disabled"))
+    refreshBtn.classList.add("disabled");
+
+  // Usa un setInterval per monitorare se la sincronizzazione è completata
+  const syncInterval = window.setInterval(async () => {
+    // Controlla se la sincronizzazione è completa
+    const syncSuccess = await syncWithServer();
+
+    if (syncSuccess) {
+      sessionStorage.setItem("canRefresh", "true");
+      refreshBtn.classList.remove("disabled");
+
+      window.clearInterval(syncInterval); // Ferma l'intervallo una volta completata la sincronizzazione
+      return;
+    }
+  }, 3000); // Controlla ogni 3 secondi
 });

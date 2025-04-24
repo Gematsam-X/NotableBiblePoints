@@ -15,6 +15,7 @@ export default async function checkVersion() {
       window.location.reload();
     }
   }
+
   document.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch("../../version.json", { cache: "no-store" });
@@ -27,7 +28,7 @@ export default async function checkVersion() {
           `Nuova versione disponibile! (${currentVersion} → ${latestVersion})`
         );
         localStorage.setItem("appVersion", latestVersion);
-        await hardRefresh();
+        window.setTimeout(hardRefresh, 1000);
       } else if (!currentVersion) {
         localStorage.setItem("appVersion", latestVersion);
       } else {
