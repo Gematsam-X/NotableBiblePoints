@@ -396,8 +396,17 @@ function copyToClipboard(text) {
   toast("Il testo della nota è stato copiato negli appunti!");
 }
 
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 document.addEventListener("keypress", (event) => {
-  if (event.key === "Enter" && event.target.id === "noteContent") {
+  if (
+    event.key === "Enter" &&
+    event.target.id === "noteContent" &&
+    !isMobile()
+  ) {
+    event.preventDefault();
     saveNote();
   }
 });
@@ -440,14 +449,6 @@ document.addEventListener("keydown", function escHandler(event) {
   }
 });
 
-modal.addEventListener("click", function outsideClickHandler(event) {
-  if (event.target === modal) {
-    modal.style.display = "none";
-    editingNoteId = null;
-    modal.removeEventListener("click", outsideClickHandler);
-  }
-});
-
 const observer = new MutationObserver(() => {
   window.setTimeout(() => {
     if (document.querySelector(".notesContainer").children.length === 0) {
@@ -464,8 +465,10 @@ observer.observe(document.querySelector(".notesContainer"), {
 });
 
 document.querySelector(".refreshNotes").addEventListener("click", async () => {
-  if (navigator.onLine) await deleteValue("userNotes");
-  loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
+  if (sessionStorage.getItem("canRefresh") !== "false") {
+    if (navigator.onLine) await deleteValue("userNotes");
+    loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
+  }
 });
 
 // Sezione sul reindirizzamento alla Traduzione del Nuovo Mondo

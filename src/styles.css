@@ -609,7 +609,6 @@ td:hover {
   background-color: #c97a1f;
 }
 
-
 button {
   text-align: center;
   font-family: "Fira Sans Condensed", Arial;
@@ -625,6 +624,14 @@ button {
 }
 
 button:hover {
+  background-color: var(--btn-hover);
+}
+
+button.disabled {
+  background-color: var(--btn-hover);
+}
+
+button.disabled:hover {
   background-color: var(--btn-hover);
 }
 
