@@ -32,3 +32,4 @@
 - [x] Add a redirecting for the verse/chapter in JW Library
 - [x] Add auto update when a new version is available
 - [x] Disable the refresh button while the syncing is going
+- [x] Add an onboarding page

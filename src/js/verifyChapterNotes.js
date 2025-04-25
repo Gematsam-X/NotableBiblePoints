@@ -1,14 +1,23 @@
-import { getValue } from "./indexedDButils.js";
+import { getValue, setValue } from "./indexedDButils.js";
 
 async function verifyChapterNotes() {
   let userNotes = [];
 
   try {
     // Recupera i dati da IndexedDB
-    const storedData = await getValue("userNotes");
+    let data = await getValue("userNotes");
 
-    if (storedData) {
-      let parsedData = storedData;
+    if (!data) {
+      data = (
+        await Backendless.Data.of("NotableBiblePoints").findFirst()
+      ).NotablePoints.filter(
+        (n) => n.owner === localStorage.getItem("userEmail")
+      );
+      await setValue("userNotes", data); // Salva i dati in IndexedDB
+    }
+
+    if (data) {
+      let parsedData = data;
 
       console.log(parsedData, typeof parsedData);
 
@@ -20,7 +29,7 @@ async function verifyChapterNotes() {
       }
     }
   } catch (error) {
-    console.error("Errore nel parsing di userNotes:", error);
+    console.error("Errore nel recupero dei dati:", error);
     return; // Evita di proseguire con dati corrotti
   }
 

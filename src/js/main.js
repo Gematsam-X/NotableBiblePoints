@@ -3,6 +3,11 @@ import checkVersion from "./checkVersion.js";
 document
   .querySelector(".account")
   .addEventListener("click", () => (window.location.href = "account.html"));
+
+document
+  .querySelector(".help")
+  .addEventListener("click", () => (window.location.href = "onboarding.html"));
+
 document.addEventListener("DOMContentLoaded", () => {
   const booksCells = document.querySelectorAll(".periodic-table td");
 

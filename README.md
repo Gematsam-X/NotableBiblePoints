@@ -59,7 +59,7 @@ I dati vengono sincronizzati con Backendless, quindi puoi accedervi da qualsiasi
 
 ## Utilizzo offline:
 
-È possibile utilizzare l'applicazione anche offline. Appena si riaprira l'applicazione von una connessione a Internet, i dati salvati offline verranno sincronizzati con Backendless. In questo modo il progetto è fruibile in ogni circostanza.
+È possibile utilizzare l'applicazione anche offline. Appena si riaprira l'applicazione con una connessione a Internet, i dati salvati offline verranno sincronizzati con Backendless. In questo modo il progetto è fruibile in ogni circostanza.
 
 ## Licenza
 

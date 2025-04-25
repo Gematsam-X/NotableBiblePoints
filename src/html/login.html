@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>NotableBiblePoints login</title>
+    <title>NotableBiblePoints - Accedi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="../login.css" />
@@ -31,6 +31,9 @@
     />
     <meta property="og:type" content="website" />
   </head>
+  <button class="help">
+    <img width="40px" height="40px" id="help_img" />
+  </button>
   <body class="centered-body login-form">
     <button class="theme-toggle">Cambia tema</button>
     <h1><span id="keyword">Accedi a</span> NotableBiblePoints</h1>
@@ -96,9 +99,18 @@
     <script type="module" src="../js/theme.js"></script>
     <script src="../js/toggleLoginSignup.js"></script>
     <script type="module" src="../js/recovery.js"></script>
+    <script type="module" src="../js/legend.js"></script>
     <script type="module">
       import checkVersion from "../js/checkVersion.js";
       checkVersion();
+    </script>
+    <script>
+      document
+        .querySelector(".help")
+        .addEventListener(
+          "click",
+          () => (window.location.href = "onboarding.html")
+        );
     </script>
   </body>
 </html>
