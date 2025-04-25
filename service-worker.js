@@ -2,7 +2,6 @@ const CACHE_NAME = "notablebiblepoints-cache-v1";
 const urlsToCache = [
   "./",
   "./index.html",
-  "./src/login.css",
   "./src/styles.css",
   "./src/assets/favicon.ico",
   "./src/assets/avatar/dark.webp",
@@ -32,7 +31,6 @@ const urlsToCache = [
   "./src/html/accessRestricted.html",
   "./src/html/account.html",
   "./src/html/chapters.html",
-  "./src/html/login.html",
   "./src/html/main.html",
   "./src/html/notes.html",
   "./src/js/backendlessInit.js",
