@@ -63,7 +63,7 @@ const urlsToCache = [
   "./src/js/indexedDButils.js",
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function updateCache(event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
       for (const asset of urlsToCache) {
@@ -108,5 +108,7 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("message", (event) => {
   if (event.data.action === "skipWaiting") {
     self.skipWaiting();
+  } else if (event.data.action === "updateCache") {
+    updateCache();
   }
 });
