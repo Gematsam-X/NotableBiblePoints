@@ -4,7 +4,9 @@ export default async function checkVersion() {
       try {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map((cache) => caches.delete(cache)));
-        console.log("Cache eliminata! Ora ricarico la pagina...");
+        console.log("Cache eliminata! Ora la ripristino...");
+        navigator.serviceWorker.controller.postMessage("updateCache");
+        console.log("Cache ripristinata! Ricarico la pagina...");
         window.location.reload();
       } catch (err) {
         console.error("Errore nella cancellazione cache:", err);
