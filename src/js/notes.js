@@ -1,6 +1,7 @@
 import { isDarkTheme } from "./isDarkTheme.js";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
@@ -143,6 +144,11 @@ async function loadNotes() {
         "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
     }
   } catch (error) {
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+      return;
+    }
     console.error("Errore nel recupero delle note:", error);
     toast(`Errore: ${error.message}`);
     notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
