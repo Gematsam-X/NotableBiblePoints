@@ -63,52 +63,56 @@ const urlsToCache = [
   "./src/js/indexedDButils.js",
 ];
 
-self.addEventListener("install", function updateCache(event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const asset of urlsToCache) {
-        try {
-          await cache.add(asset);
-        } catch (err) {
-          console.warn("Errore nel caching di:", asset, err);
-        }
-      }
-    })
+// Funzione riutilizzabile per aggiornare la cache
+async function cacheAssets() {
+  const start = performance.now();
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(
+    urlsToCache.map((asset) =>
+      cache.add(asset).catch((err) => {
+        console.warn("Errore nel caching di:", asset, err);
+      })
+    )
   );
+  const end = performance.now();
+  console.log(`Caching completato in ${Math.round(end - start)} ms`);
+}
+
+// Install
+self.addEventListener("install", (event) => {
+  event.waitUntil(cacheAssets());
 });
 
-// Attivazione del service worker
+// Activate: pulizia delle vecchie cache
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
-
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
         cacheNames.map((cacheName) => {
           if (!cacheWhitelist.includes(cacheName)) {
             return caches.delete(cacheName);
           }
         })
-      );
-    })
+      )
+    )
   );
 });
 
-// Fetch: recupera risorse dalla cache o dalla rete
+// Fetch: rete o cache
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Rispondi con la cache se trovata, altrimenti fai una richiesta di rete
       return cachedResponse || fetch(event.request);
     })
   );
 });
 
-// Aggiornamenti automatici: controlla se ci sono nuove versioni del service worker
+// Message: aggiorna cache o forza skipWaiting
 self.addEventListener("message", (event) => {
-  if (event.data.action === "skipWaiting") {
+  if (event.data?.action === "skipWaiting") {
     self.skipWaiting();
-  } else if (event.data.action === "updateCache") {
-    updateCache();
+  } else if (event.data?.action === "updateCache") {
+    cacheAssets();
   }
 });
