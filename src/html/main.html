@@ -33,13 +33,39 @@
   </head>
   <body>
     <h1 class="home-page-title">NotableBiblePoints - Salva i punti notevoli</h1>
+
     <button class="theme-toggle">Cambia tema</button>
+
     <button class="account">
       <img width="40px" height="40px" id="avatar_img" />
     </button>
+
     <button class="help">
       <img width="40px" height="40px" id="help_img" />
     </button>
+
+    <div class="search-container">
+      <div class="search-bar">
+        <input type="text" id="search-input" />
+        <button id="search-button">
+          <img width="40px" height="40px" id="lens_img" alt="Cerca" />
+        </button>
+      </div>
+      <div class="switch-container">
+        <!-- Etichette per il checkbox -->
+        <label class="switch-label" for="toggleSearchMode">Passo biblico</label>
+        <label class="switch" for="toggleSearchMode">
+          <input
+            type="checkbox"
+            id="toggleSearchMode"
+            alt="Cambia modalità di ricerca"
+          />
+          <span class="slider"></span>
+        </label>
+        <label class="switch-label" for="toggleSearchMode">Occorrenze</label>
+      </div>
+    </div>
+
     <table class="periodic-table">
       <tr>
         <td class="law" data-name="Genesi">Genesi</td>
@@ -136,27 +162,17 @@
         <td class="other" data-name="Rivelazione">Rivelazione</td>
       </tr>
     </table>
-    <div class="search-container">
-      <div class="search-bar">
-        <input type="text" id="search-input" />
-        <button id="search-button">
-          <img width="40px" height="40px" id="lens_img" alt="Cerca" />
-        </button>
-      </div>
-      <div class="switch-container">
-        <!-- Etichette per il checkbox -->
-        <label class="switch-label" for="toggleSearchMode">Passo biblico</label>
-        <label class="switch" for="toggleSearchMode">
-          <input
-            type="checkbox"
-            id="toggleSearchMode"
-            alt="Cambia modalità di ricerca"
-          />
-          <span class="slider"></span>
-        </label>
-        <label class="switch-label" for="toggleSearchMode">Occorrenze</label>
-      </div>
-    </div>
+
+    <footer>
+      <p>Copyright &copy;2025. Gionatan Venturi - Gematsam X. Tutti i diritti riservati.</p>
+      <a href="https://github.com/Gematsam-X/NotableBiblePoints" target="_blank"
+        ><img
+          width="40px"
+          height="40px"
+          id="github_img"
+          alt="GitHub logo"
+      /></a>
+    </footer>
 
     <!-- Modal for search results -->
     <div id="results-modal" class="modal">
@@ -175,6 +191,7 @@
         </div>
       </div>
     </div>
+
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>
     <script type="module" src="../js/theme.js"></script>
