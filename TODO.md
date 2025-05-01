@@ -34,3 +34,4 @@
 - [x] Disable the refresh button while the syncing is going
 - [x] Add an onboarding page
 - [x] Fix the files chaching when updating the version
+- [x] Add a footer

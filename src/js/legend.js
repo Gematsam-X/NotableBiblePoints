@@ -39,6 +39,7 @@ const categories = {
   ],
   lens: ["../assets/lens/light.webp", "../assets/lens/dark.webp"],
   help: ["../assets/help/light.webp", "../assets/help/dark.webp"],
+  github: ["../assets/github/light.webp", "../assets/github/dark.webp"],
 };
 
 let index = localStorage.getItem("theme") === "dark" ? 1 : 0;

@@ -106,10 +106,6 @@ a {
   color: var(--link-col);
 }
 
-#github_img {
-  pointer-events: all;
-}
-
 body {
   background-color: var(--bg);
   color: var(--primary-col);
@@ -140,6 +136,10 @@ footer {
   text-align: center;
   margin-top: 20px;
   color: var(--primary-col);
+}
+
+#github_img {
+  pointer-events: "click";
 }
 
 .periodic-table {
@@ -855,6 +855,8 @@ p {
   padding: 10px;
   width: 90vw;
 }
+
+/* Toast styles */
 
 .toast {
   position: fixed;
