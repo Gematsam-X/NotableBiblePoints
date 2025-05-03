@@ -138,8 +138,9 @@ footer {
   color: var(--primary-col);
 }
 
-#github_img {
-  pointer-events: "click";
+footer img {
+  pointer-events: all;
+  margin-left: 30px;
 }
 
 .periodic-table {
@@ -171,6 +172,11 @@ footer {
 #linkToOriginPage {
   margin-top: 20px;
   color: var(--link-col);
+}
+
+.standard-title {
+  text-align: center;
+  margin: 10vh auto;
 }
 
 .action {
