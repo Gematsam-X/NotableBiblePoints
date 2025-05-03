@@ -37,3 +37,4 @@
 - [x] Add a footer
 - [x] Add a mentioning to JW.ORG in the footer
 - [ ] Add the ability to tag notes
+- [ ] Improve the search function, splitting the search term into single words and searching also only single words, instead of the whole search term
