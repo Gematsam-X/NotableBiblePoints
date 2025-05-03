@@ -35,5 +35,5 @@
 - [x] Add an onboarding page
 - [x] Fix the files chaching when updating the version
 - [x] Add a footer
-- [ ] Add a mentioning to JW.ORG in the footer
+- [x] Add a mentioning to JW.ORG in the footer
 - [ ] Add the ability to tag notes
