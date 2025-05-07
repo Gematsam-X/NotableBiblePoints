@@ -4,6 +4,8 @@ import toast from "./toast.js";
 import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
 
+const refreshBtn = document.querySelector(".refreshNotes");
+
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");
 const chapter = parseInt(sessionStorage.getItem("selectedChapter"));
@@ -45,6 +47,7 @@ async function loadNotes() {
   if (!notesContainer) return;
 
   notesContainer.innerHTML = "<p>Caricamento in corso...</p>";
+  refreshBtn.classList.add("disabled");
 
   try {
     const userEmail = localStorage.getItem("userEmail");
@@ -156,6 +159,7 @@ async function loadNotes() {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
+    refreshBtn.classList.remove("disabled");
   }
 }
 
@@ -470,7 +474,7 @@ observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
 
-document.querySelector(".refreshNotes").addEventListener("click", async () => {
+refreshBtn.addEventListener("click", async () => {
   if (sessionStorage.getItem("canRefresh") !== "false") {
     if (navigator.onLine) await deleteValue("userNotes");
     loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)

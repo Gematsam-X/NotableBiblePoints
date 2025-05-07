@@ -1,10 +1,6 @@
-import { themeToggleButton } from "./theme.js";
+import { themeToggleSwitch } from "./theme.js";
 
-if (!themeToggleButton) {
-  console.error("Theme toggle button not found");
-} else {
-  themeToggleButton.addEventListener("click", toggleImages);
-}
+themeToggleSwitch?.addEventListener("click", toggleImages);
 
 const categories = {
   avatar: ["../assets/avatar/light.webp", "../assets/avatar/dark.webp"],
@@ -40,22 +36,38 @@ const categories = {
   lens: ["../assets/lens/light.webp", "../assets/lens/dark.webp"],
   help: ["../assets/help/light.webp", "../assets/help/dark.webp"],
   github: ["../assets/github/light.webp", "../assets/github/dark.webp"],
+  openDrawer: ["../assets/drawer/open/light.webp", "../assets/drawer/open/dark.webp"],
+  otherApps: [
+    "../assets/drawer/otherApps/light.webp",
+    "../assets/drawer/otherApps/dark.webp",
+  ],
+  rightArrow: [
+    "../assets/drawer/rightArrow/light.webp",
+    "../assets/drawer/rightArrow/dark.webp",
+  ],
 };
 
 let index = localStorage.getItem("theme") === "dark" ? 1 : 0;
 
 function updateImgs() {
   for (const [category, images] of Object.entries(categories)) {
-    const imgElementsById = document.getElementById(`${category}_img`);
-    if (imgElementsById) {
-      imgElementsById.src = images[index];
+    // Gestione dell'immagine per ID (singolo elemento)
+    const imgElementById = document.getElementById(`${category}_img`);
+    if (imgElementById) {
+      // Controllo se c'è l'attributo data-flipped-src e se è true
+      const flipped =
+        imgElementById.getAttribute("data-flipped-src") === "true";
+      // Se è flipped, usiamo un'immagine diversa
+      imgElementById.src = flipped ? images[1 - index] : images[index];
     }
 
+    // Gestione delle immagini per classe (potrebbero essere più elementi)
     const imgElementsByClass = document.getElementsByClassName(
       `${category}_img`
     );
     for (const imgElement of imgElementsByClass) {
-      imgElement.src = images[index];
+      const flipped = imgElement.getAttribute("data-flipped-src") === "true";
+      imgElement.src = flipped ? images[1 - index] : images[index];
     }
   }
 }
@@ -65,8 +77,8 @@ function toggleImages() {
   updateImgs();
 }
 
-if (themeToggleButton) {
-  themeToggleButton.addEventListener("click", toggleImages);
+if (themeToggleSwitch) {
+  themeToggleSwitch.addEventListener("click", toggleImages);
 }
 
 document.addEventListener("DOMContentLoaded", updateImgs);

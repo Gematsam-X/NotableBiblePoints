@@ -9,6 +9,7 @@
       content="NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
     />
     <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../drawer.css" />
     <link rel="icon" href="../assets/favicon.ico" />
     <link rel="manifest" href="../../manifest.json" />
 
@@ -34,11 +35,13 @@
   <body>
     <h1 class="home-page-title">NotableBiblePoints - Salva i punti notevoli</h1>
 
-    <button class="theme-toggle">Cambia tema</button>
-
-    <button class="account">
-      <img width="40px" height="40px" id="avatar_img" />
-    </button>
+    <span class="openDrawer"
+      ><img
+        width="40px"
+        height="40px"
+        id="openDrawer_img"
+        src="../assets/drawer/open/dark.webp"
+    /></span>
 
     <button class="help">
       <img width="40px" height="40px" id="help_img" />
@@ -163,29 +166,6 @@
       </tr>
     </table>
 
-    <footer>
-      <p>
-        Copyright &copy;2025. Gionatan Venturi - Gematsam X. Tutti i diritti
-        riservati.
-      </p>
-      <p>
-        La <i>Traduzione del Nuovo Mondo delle Sacre Scritture</i> è offerta
-        dalla <i>Watch Tower Bible and Tract Society of Pennsylvania</i> ed è
-        disponibile sul sito <i><a href="jw.org" target="_blank">jw.org</a></i
-        >.
-      </p>
-      <a href="https://github.com/Gematsam-X/NotableBiblePoints" target="_blank"
-        ><img width="40px" height="40px" id="github_img" alt="GitHub logo"
-      /></a>
-      <a href="https://jw.org" target="_blank"
-        ><img
-          width="40px"
-          height="40px"
-          alt="JW.ORG logo"
-          src="../assets/jw.org.webp"
-      /></a>
-    </footer>
-
     <!-- Modal for search results -->
     <div id="results-modal" class="modal">
       <div class="modal-content">
@@ -204,6 +184,87 @@
       </div>
     </div>
 
+    <div class="drawer">
+      <div class="drawer-content">
+        <h2>Il tuo account</h2>
+        <div class="drawer-horizontal-align" id="drawer-account">
+          <img
+            width="40px"
+            height="40px"
+            id="avatar_img"
+            data-flipped-src="true"
+          />
+          <h3 id="username"></h3>
+          <img
+            width="20px"
+            height="20px"
+            id="rightArrow_img"
+          />
+        </div>
+        <hr />
+        <h2>Tema</h2>
+        <div class="switch-container">
+          <!-- Etichette per il checkbox -->
+          <label class="switch-label" for="themeToggle">Chiaro</label>
+          <label class="switch" for="themeToggle">
+            <input type="checkbox" id="themeToggle" alt="Cambia tema" />
+            <span class="slider"></span>
+          </label>
+          <label class="switch-label" for="themeToggle">Scuro</label>
+        </div>
+        <hr />
+        <div class="drawer-horizontal-align" id="share-app">
+          <img
+            width="40px"
+            height="40px"
+            class="share_img"
+            data-flipped-src="true"
+          />
+          <h2>Condividi l'app</h2>
+        </div>
+        <hr />
+        <div class="drawer-horizontal-align" id="other-apps">
+          <img width="40px" height="40px" id="otherApps_img" />
+          <h2>Altre app</h2>
+        </div>
+        <hr />
+        <div class="drawer-footer">
+          <hr />
+          <p>
+            Copyright &copy;2025 Gionatan Venturi - Gematsam X. Tutti i diritti
+            riservati.
+          </p>
+          <p>
+            La <i>Traduzione del Nuovo Mondo delle Sacre Scritture</i> è offerta
+            dalla <i>Watch Tower Bible and Tract Society of Pennsylvania</i> ed
+            è disponibile sul sito <a href="jw.org" target="_blank">jw.org</a>.
+          </p>
+
+          <div class="drawer-footer-links">
+            <a
+              href="https://github.com/Gematsam-X/NotableBiblePoints"
+              target="_blank"
+              ><img
+                width="40px"
+                height="40px"
+                id="github_img"
+                alt="GitHub logo"
+            /></a>
+            <a href="https://jw.org" target="_blank"
+              ><img
+                width="40px"
+                height="40px"
+                alt="JW.ORG logo"
+                src="../assets/jw.org.webp"
+            /></a>
+          </div>
+          <h4 id="drawer-footer-version">
+            NotableBiblePoints versione <span id="appVersion"></span>
+          </h4>
+        </div>
+      </div>
+    </div>
+
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script src="../js/backendlessInit.js"></script>
     <script type="module" src="../js/theme.js"></script>
@@ -214,6 +275,7 @@
     <script type="module" src="../js/main.js"></script>
     <script type="module" src="../js/searchbar.js"></script>
     <script type="module" src="../js/online.js"></script>
+    <script type="module" src="../js/drawer.js"></script>
     <script type="module">
       import toast from "../js/toast.js";
       document.addEventListener("DOMContentLoaded", () => {
