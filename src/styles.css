@@ -646,22 +646,9 @@ button.disabled:hover {
   background-color: var(--btn-hover);
 }
 
-button.theme-toggle {
-  position: fixed;
-  top: 20px;
-  left: 10px;
-}
-
 #return-btn {
   position: fixed;
   top: 20px;
-  right: 10px;
-}
-
-button.account {
-  position: fixed;
-  z-index: 2;
-  bottom: 20px;
   right: 10px;
 }
 
@@ -669,11 +656,12 @@ button.help {
   position: fixed;
   z-index: 2;
   bottom: 20px;
-  left: 10px;
+  right: 10px;
 }
 
 .search-container {
   position: fixed;
+  z-index: 2;
   right: 10px;
   top: 10px;
   display: flex;

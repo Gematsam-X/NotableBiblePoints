@@ -36,5 +36,7 @@
 - [x] Fix the files chaching when updating the version
 - [x] Add a footer
 - [x] Add a mentioning to JW.ORG in the footer
+- [x] Add a drawer
+- [x] Remove the button for the theme in each page and implement a switch (like the toggleSearchMode switch) toggling the theme
 - [ ] Add the ability to tag notes
 - [ ] Improve the search function, splitting the search term into single words and searching also only single words, instead of the whole search term
