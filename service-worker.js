@@ -71,7 +71,6 @@ const urlsToCache = [
 
 // Funzione riutilizzabile per aggiornare la cache
 async function cacheAssets() {
-  const start = performance.now();
   const cache = await caches.open(CACHE_NAME);
   await Promise.all(
     urlsToCache.map((asset) =>
@@ -80,8 +79,6 @@ async function cacheAssets() {
       })
     )
   );
-  const end = performance.now();
-  console.log(`Caching completato in ${Math.round(end - start)} ms`);
 }
 
 // Install
