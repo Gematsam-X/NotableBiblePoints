@@ -20,6 +20,14 @@ function closeDrawer() {
   }, 500); // Tempo corrispondente alla durata della transizione
 }
 
+function handleOpenDrawerClick() {
+  if (drawer.style.display === "block") {
+    closeDrawer();
+  } else {
+    showDrawer();
+  }
+}
+
 document.addEventListener("click", (e) => {
   if (e.target === drawer && drawer.style.display === "block") {
     closeDrawer();
@@ -30,7 +38,9 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeDrawer();
 });
 
-document.querySelector(".openDrawer").addEventListener("click", showDrawer);
+document
+  .querySelector(".openDrawer")
+  .addEventListener("click", handleOpenDrawerClick);
 
 document.querySelector("#username").innerText =
   localStorage.getItem("userEmail");
