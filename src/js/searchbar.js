@@ -30,7 +30,7 @@ async function handleSearch() {
       return;
     }
     const matches = await searchInJson(searchTerm); // Attende il risultato della ricerca
-    if (matches.length) {
+    if (matches?.length) {
       // Se ci sono occorrenze
       resultsContent.innerHTML = `<h2>Occorrenze trovate:</h2>${matches.join(
         "<br>"
@@ -50,6 +50,13 @@ async function handleSearch() {
 
 // Funzione per cercare nel file JSON
 async function searchInJson(searchTerm) {
+  if (searchTerm.length < 3) {
+    searchInput.blur();
+    toast("Inserisci almeno 3 caratteri per la ricerca.");
+    resultsModal.style.display = "none";
+    return;
+  }
+
   if (!notesData || !notesData.length) {
     if (navigator.onLine) {
       showGif();
@@ -59,7 +66,6 @@ async function searchInJson(searchTerm) {
         (note) => note.owner === localStorage.getItem("userEmail")
       );
       await setValue("userNotes", notesData);
-      console.log(await getValue("userNotes"));
       hideGif();
     } else {
       alert("Connettersi a Internet.");
@@ -68,69 +74,111 @@ async function searchInJson(searchTerm) {
   }
 
   const results = [];
+  const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean);
 
-  const searchTermEscaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const searchTermRegex = new RegExp(`\\b${searchTermEscaped}`, "gi");
+  // Se è un solo termine, abilita anche la ricerca della frase intera
+  const useFullSearch = searchWords.length === 1;
+  const termEscaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Regex per la frase intera (substring, senza \b)
+  const fullRegex = useFullSearch
+    ? new RegExp(`\\b${termEscaped}`, "gi") // match solo inizio parola
+    : null;
+
+  // Regex per ogni parola (substring)
+  const wordRegexes = searchWords.map((w) => {
+    const esc = w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`\\b${esc}`, "gi"); // match solo inizio parola
+  });
 
   for (const entry of notesData) {
-    // Match nel contenuto e nel titolo
-    const contentMatches = [...entry.content.matchAll(searchTermRegex)];
-    const titleMatches = [...entry.title.matchAll(searchTermRegex)];
-
-    const contentCount = contentMatches.length;
-    const titleCount = titleMatches.length;
-    const totalMatches = contentCount + titleCount;
-
-    if (totalMatches === 0) continue;
-
-    const highlightedTitle = entry.title.replace(
-      searchTermRegex,
-      (match) => `<mark>${match}</mark>`
-    );
-
-    const matchedContexts = [];
-
-    // Contesto se ci sono match nel contenuto
-    if (contentCount > 0) {
-      const lines = entry.content.split("\n");
-      for (let i = 0; i < lines.length; i++) {
-        if (searchTermRegex.test(lines[i])) {
-          const context = [
-            lines[i - 2] || "",
-            lines[i - 1] || "",
-            lines[i].replace(
-              searchTermRegex,
-              (match) => `<mark>${match}</mark>`
-            ),
-            lines[i + 1] || "",
-            lines[i + 2] || "",
-          ]
-            .map((line) => line.trim())
-            .filter((line) => line.length > 0)
-            .join("<br>");
-          matchedContexts.push(context);
-        }
-      }
+    // Conteggio match della frase intera
+    let phraseContentMatches = [];
+    let phraseTitleMatches = [];
+    if (useFullSearch && fullRegex) {
+      phraseContentMatches = [...entry.content.matchAll(fullRegex)];
+      phraseTitleMatches = [...entry.title.matchAll(fullRegex)];
     }
 
-    // Anteprima se solo titolo matcha
+    // Conteggio match delle singole parole
+    let wordContentCount = 0;
+    let wordTitleCount = 0;
+    for (const rx of wordRegexes) {
+      wordContentCount += [...entry.content.matchAll(rx)].length;
+      wordTitleCount += [...entry.title.matchAll(rx)].length;
+    }
+
+    const totalPhraseMatches =
+      phraseContentMatches.length + phraseTitleMatches.length;
+    const totalWordMatches = wordContentCount + wordTitleCount;
+    if (totalPhraseMatches + totalWordMatches === 0) continue;
+
+    // Evidenzia titolo: prima la frase (se abilitata), poi le parole
+    let highlightedTitle = entry.title;
+    if (useFullSearch && fullRegex) {
+      highlightedTitle = highlightedTitle.replace(
+        fullRegex,
+        (m) => `<mark>${m}</mark>`
+      );
+    }
+    for (const rx of wordRegexes) {
+      highlightedTitle = highlightedTitle.replace(
+        rx,
+        (m) => `<mark>${m}</mark>`
+      );
+    }
+
+    // Costruzione dei contesti nel contenuto
+    const matchedContexts = [];
+    const lines = entry.content.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // verifica match su frase o parole
+      const hasPhrase = useFullSearch && fullRegex && fullRegex.test(line);
+      const hasWord = wordRegexes.some((rx) => rx.test(line));
+      if (!hasPhrase && !hasWord) continue;
+
+      // Evidenzia la linea originale
+      let markedLine = line;
+      if (useFullSearch && fullRegex) {
+        markedLine = markedLine.replace(fullRegex, (m) => `<mark>${m}</mark>`);
+      }
+      for (const rx of wordRegexes) {
+        markedLine = markedLine.replace(rx, (m) => `<mark>${m}</mark>`);
+      }
+
+      // Prendi fino a 2 righe di contesto sopra e sotto
+      const context = [
+        lines[i - 2] || "",
+        lines[i - 1] || "",
+        markedLine,
+        lines[i + 1] || "",
+        lines[i + 2] || "",
+      ]
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0)
+        .join("<br>");
+      matchedContexts.push(context);
+    }
+
+    // Se non ci sono contesti, usa anteprima
     let contentPreview = "";
     if (matchedContexts.length === 0) {
-      const previewLines = entry.content
+      const preview = entry.content
         .split("\n")
-        .slice(0, 5) // prime 3 righe
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0)
+        .slice(0, 5)
+        .map((l) => l.trim())
+        .filter((l) => l)
         .join("<br>");
-      contentPreview = `<div class="content-preview">${previewLines}</div>`;
+      contentPreview = `<div class="content-preview">${preview}</div>`;
     }
 
-    // Costruzione HTML
+    // HTML del risultato
     const resultHtml = `
       <div class="search-result">
-        <a class="redirect-link" data-book="${entry.book}" data-chapter="${
-      entry.chapter
-    }" data-id="${entry.id}">
+        <a class="redirect-link"
+           data-book="${entry.book}"
+           data-chapter="${entry.chapter}"
+           data-id="${entry.id}">
           <h2><strong>${entry.book} ${entry.chapter}:${
       entry.verse
     }</strong></h2>
@@ -147,26 +195,26 @@ async function searchInJson(searchTerm) {
       <br><hr class="normal"><br>
     `;
 
-    // Priorità
+    // Priorità: 3 = frase+parole, 2 = frase sola, 1 = parole sole
     let priority = 0;
-    if (titleCount > 0 && contentCount > 0) priority = 2;
-    else if (titleCount > 0) priority = 1;
+    if (totalPhraseMatches > 0 && totalWordMatches > 0) priority = 3;
+    else if (totalPhraseMatches > 0) priority = 2;
+    else if (totalWordMatches > 0) priority = 1;
 
     results.push({
       html: resultHtml,
-      matchScore: totalMatches,
-      priority: priority,
+      matchScore: totalPhraseMatches + totalWordMatches,
+      priority,
     });
   }
 
+  // Ordina e restituisci
   results.sort((a, b) => {
     if (b.priority !== a.priority) return b.priority - a.priority;
     return b.matchScore - a.matchScore;
   });
-
-  const matches = results.map((r) => r.html);
   resultsModal.style.display = "block";
-  return matches;
+  return results.map((r) => r.html);
 }
 
 function redirectToNote(book, chapter, id) {
@@ -303,7 +351,7 @@ function checkBibleBook() {
     return;
   }
 
-  if (matches.length === 1 || sanitizedInput === "salmo") {
+  if (matches?.length === 1 || sanitizedInput === "salmo") {
     const bookName = sanitizedInput === "salmo" ? "Salmi" : matches[0];
 
     // Salvataggio del nome del libro nel sessionStorage
@@ -321,7 +369,7 @@ function checkBibleBook() {
       // Se solo il libro, reindirizza a chapters.html
       window.location.href = "chapters.html";
     }
-  } else if (matches.length > 1) {
+  } else if (matches?.length > 1) {
     searchInput.blur();
     toast(
       `Il testo fornito non è univoco. Forse intendevi: ${matches.join(" - ")}`
@@ -384,4 +432,17 @@ if (savedSearchMode !== null) {
 closeModalButton.addEventListener("click", () => {
   resultsModal.style.display = "none";
   searchInput.blur();
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target === resultsModal) {
+    resultsModal.style.display = "none";
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    resultsModal.style.display = "none";
+    searchInput.blur();
+  }
 });
