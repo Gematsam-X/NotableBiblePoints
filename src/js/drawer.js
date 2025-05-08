@@ -52,6 +52,10 @@ document.querySelector("#share-app").addEventListener("click", () => {
   });
 });
 
+document.querySelector("#other-apps").addEventListener("click", () => {
+  window.location.href = "https://gematsamx.webnode.it/alcuni-miei-progetti/";
+});
+
 document.querySelector("#appVersion").innerText =
   localStorage.getItem("appVersion");
 
