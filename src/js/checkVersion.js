@@ -1,4 +1,7 @@
-export default async function checkVersion() {
+import toast from "./toast.js";
+
+export default async function checkVersion(refresh = true, showToast = false) {
+  console.log("refresh", refresh, "showToast", showToast);
   async function hardRefresh() {
     if ("caches" in window) {
       try {
@@ -18,26 +21,31 @@ export default async function checkVersion() {
     }
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const response = await fetch("../../version.json", { cache: "no-store" });
-      const data = await response.json();
-      const latestVersion = data.version;
-      const currentVersion = localStorage.getItem("appVersion");
+  try {
+    const response = await fetch("../../version.json", { cache: "no-store" });
+    const data = await response.json();
+    const latestVersion = data.version;
+    const currentVersion = localStorage.getItem("appVersion");
 
-      if (currentVersion && currentVersion !== latestVersion) {
-        console.log(
-          `Nuova versione disponibile! (${currentVersion} → ${latestVersion})`
+    if (currentVersion && currentVersion !== latestVersion) {
+      console.log(
+        `Nuova versione disponibile! (${currentVersion} → ${latestVersion})`
+      );
+      if (showToast)
+        toast(
+          `Nuova versione disponibile (${currentVersion} → ${latestVersion}). Per aggiornare, ricarica la pagina.`,
+          2000
         );
-        localStorage.setItem("appVersion", latestVersion);
-        window.setTimeout(hardRefresh, 1000);
-      } else if (!currentVersion) {
-        localStorage.setItem("appVersion", latestVersion);
-      } else {
-        console.log("Versione aggiornata, nessuna azione necessaria");
-      }
-    } catch (err) {
-      console.error("Errore durante il controllo della versione:", err);
+      localStorage.setItem("appVersion", latestVersion);
+      if (refresh) window.setTimeout(hardRefresh, 1000);
+    } else if (!currentVersion) {
+      localStorage.setItem("appVersion", latestVersion);
+    } else {
+      if (showToast) toast(`La versione corrente (${localStorage.getItem("appVersion")}) è già aggiornata.`, 2000);
+
+      console.log("Versione aggiornata, nessuna azione necessaria");
     }
-  });
+  } catch (err) {
+    console.error("Errore durante il controllo della versione:", err);
+  }
 }
