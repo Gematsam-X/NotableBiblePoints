@@ -72,5 +72,6 @@ document.querySelector("#appVersion").innerText =
 document
   .querySelector("#drawer-footer-version")
   .addEventListener("click", () => {
+    closeDrawer();
     checkVersion(false, true);
   });
