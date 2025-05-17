@@ -122,6 +122,7 @@ async function loadNotes() {
           : "../assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
+        <span class="closeNote">&times;</span>
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
           </div>
@@ -284,19 +285,15 @@ document.querySelector(".notesContainer").addEventListener("click", (event) => {
 
   if (closestNote) {
     // Gestione del bottone "Elimina"
-    if (event.target.classList.contains("delete")) {
-      deleteNote(closestNote);
-    }
+    if (event.target.classList.contains("delete")) deleteNote(closestNote);
 
     // Gestione del bottone "Condividi"
-    if (event.target.classList.contains("share")) {
-      shareNote(closestNote);
-    }
+    if (event.target.classList.contains("share")) shareNote(closestNote);
 
     // Gestione del bottone "Modifica"
-    if (event.target.classList.contains("edit")) {
-      editNote(closestNote);
-    }
+    if (event.target.classList.contains("edit")) editNote(closestNote);
+
+    if (event.target.classList.contains("closeNote")) document.exitFullscreen();
   }
 });
 

@@ -373,6 +373,22 @@ div.actions-row {
   transform: translateX(-50%);
 }
 
+.closeNote {
+  position: fixed;
+  font-size: 300%;
+  display: none;
+  visibility: hidden;
+  top: 2rem;
+  right: 2rem;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+#clicked-note .closeNote {
+  display: block;
+  visibility: visible;
+}
+
 /* Buttons visible when the note is clicked */
 #clicked-note .note-action-buttons button {
   visibility: visible;
