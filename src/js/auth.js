@@ -66,7 +66,7 @@ async function loginUser(email, password) {
     // Salva l'utente corrente sul localStorage per mantenerlo loggato
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
-    window.location.href = "main.html"; // Reindirizza alla pagina principale
+    window.location.href = "../index.html"; // Reindirizza alla pagina principale
   } catch (error) {
     console.error("Errore nel login:", error);
     const errMsg = error.message.toLowerCase();
