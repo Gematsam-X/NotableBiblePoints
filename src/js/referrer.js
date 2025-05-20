@@ -2,7 +2,7 @@ const referrer = document.referrer;
 const allowedPages = [
   "login.html",
   "accessRestricted.html",
-  "main.html",
+  "index.html",
   "chapters.html",
   "account.html",
 ];
@@ -18,7 +18,7 @@ if (localStorage.getItem("isAuthenticated") != "true") {
   let shouldRedirect = null;
 
   if (
-    window.location.href === "main.html" &&
+    window.location.href === "index.html" &&
     document.referrer === "chapters.html"
   ) {
     shouldRedirect = false;

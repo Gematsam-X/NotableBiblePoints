@@ -11,12 +11,12 @@ if (loc === "notes.html") {
 } else if (loc === "chapters.html") {
   returnButton.addEventListener(
     "click",
-    () => (window.location.href = "main.html")
+    () => (window.location.href = "../index.html")
   );
 } else if (loc === "account.html") {
   returnButton.addEventListener(
     "click",
-    () => (window.location.href = "main.html")
+    () => (window.location.href = "../index.html")
   );
 } else {
   returnButton.addEventListener("click", redirectToOriginPage);

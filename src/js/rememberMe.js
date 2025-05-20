@@ -13,7 +13,7 @@ if (userEmail && userToken) {
       console.log("Utente già autenticato:", userEmail);
       // Se l'utente sta effettuando il login ma è già autenticato, salta il login e reindirizza alla home
       if (window.location.pathname.split("/").pop() === "login.html")
-        window.location.href = "main.html";
+        window.location.href = "../index.html";
     } else {
       console.log("Utente non autenticato o token non valido.");
       // Se l'utente non è autenticato, esegui il logout e reindirizza
