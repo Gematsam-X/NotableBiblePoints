@@ -1,6 +1,7 @@
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
+import isOnline from "./isOnline.js";
 
 async function findUserRecords() {
   const databaseEntry =
@@ -105,7 +106,7 @@ export async function restoreBackup() {
         }
 
         // Recupera il primo (e unico) record dal database che contiene tutte le note
-        let userNotes = navigator.onLine
+        let userNotes = await isOnline()
           ? await Backendless.Data.of("NotableBiblePoints").findFirst()
           : await getValue("userNotes");
 
@@ -113,7 +114,7 @@ export async function restoreBackup() {
           userNotes = { NotablePoints: [] };
         }
 
-        let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
+        let notes = await isOnline ? userNotes.NotablePoints : userNotes;
 
         // Aggiungi i nuovi record o aggiorna quelli esistenti
         for (const newRecord of jsonData) {
@@ -141,7 +142,7 @@ export async function restoreBackup() {
         // Salva i dati nel database
         userNotes.NotablePoints = notes;
 
-        if (navigator.onLine) {
+        if (await isOnline()) {
           await Backendless.Data.of("NotableBiblePoints").save(userNotes);
           console.log("Backup ripristinato con successo sul server!");
         } else {

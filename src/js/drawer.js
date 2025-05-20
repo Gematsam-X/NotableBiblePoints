@@ -46,7 +46,7 @@ document.querySelector("#username").innerText =
   localStorage.getItem("userEmail");
 
 document.querySelector("#drawer-account").addEventListener("click", () => {
-  window.location.href = "account.html";
+  window.location.href = "./html/account.html";
 });
 
 document.querySelector("#share-app").addEventListener("click", () => {

@@ -3,6 +3,7 @@ import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
+import isOnline from "./isOnline.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -21,7 +22,7 @@ if (pageTitle) {
 
 // Funzione per controllare se bisogna usare il server
 async function shouldUseServer() {
-  if (!navigator.onLine) return false;
+  if (!(await isOnline())) return false;
   else if (await getValue("userNotes")) return false;
   else if (!(await getValue("userNotes"))) return true;
 }
@@ -183,7 +184,7 @@ async function saveNote() {
     const userEmail = localStorage.getItem("userEmail");
 
     // Recupera il primo (e unico) record dal database che contiene tutte le note
-    let userNotes = navigator.onLine
+    let userNotes = (await isOnline())
       ? await Backendless.Data.of("NotableBiblePoints").findFirst()
       : await getValue("userNotes");
 
@@ -192,7 +193,7 @@ async function saveNote() {
       userNotes = { NotablePoints: [] };
     }
 
-    let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
+    let notes = (await isOnline()) ? userNotes.NotablePoints : userNotes;
 
     // Se stai modificando una nota
     if (editingNoteId) {
@@ -227,7 +228,7 @@ async function saveNote() {
     // Aggiorna il record principale
     userNotes.NotablePoints = notes;
 
-    if (navigator.onLine) {
+    if (await isOnline()) {
       await Backendless.Data.of("NotableBiblePoints").save(userNotes);
       console.log("Nota salvata con successo sul server!");
     } else {
@@ -242,7 +243,7 @@ async function saveNote() {
     editingNoteId = null;
     modal.style.display = "none";
 
-    if (navigator.onLine) {
+    if (await isOnline()) {
       await deleteValue("userNotes");
       console.log("locale eliminato");
     }
@@ -316,27 +317,27 @@ async function deleteNote(noteElement) {
     }
 
     // Recupera le note
-    let userNotes = navigator.onLine
+    let userNotes = (await isOnline())
       ? await Backendless.Data.of("NotableBiblePoints").findFirst()
       : await getValue("userNotes");
 
     console.log(userNotes);
 
     if (
-      (navigator.onLine && !userNotes.NotablePoints) ||
-      (!navigator.onLine && !userNotes)
+      ((await isOnline()) && !userNotes.NotablePoints) ||
+      (!(await isOnline()) && !userNotes)
     ) {
       toast("Errore: impossibile trovare le note dell'utente.");
       return;
     }
 
     // Filtra le note eliminando quella con l'id corrispondente
-    const updatedNotes = navigator.onLine
+    const updatedNotes = (await isOnline())
       ? userNotes.NotablePoints.filter((note) => note.id !== noteId)
       : userNotes.filter((note) => note.id !== noteId);
 
     // Aggiorna l'oggetto
-    navigator.onLine
+    (await isOnline())
       ? (userNotes.NotablePoints = updatedNotes)
       : (userNotes = updatedNotes);
 
@@ -353,7 +354,7 @@ async function deleteNote(noteElement) {
     );
 
     // Salva di nuovo
-    if (navigator.onLine) {
+    if (await isOnline()) {
       await Backendless.Data.of("NotableBiblePoints").save(userNotes);
     }
 
@@ -476,7 +477,7 @@ observer.observe(document.querySelector(".notesContainer"), {
 
 refreshBtn.addEventListener("click", async () => {
   if (sessionStorage.getItem("canRefresh") !== "false") {
-    if (navigator.onLine) await deleteValue("userNotes");
+    if (await isOnline()) await deleteValue("userNotes");
     loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
   }
 });

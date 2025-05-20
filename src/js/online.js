@@ -1,12 +1,12 @@
 import { getValue, deleteValue, setValue } from "./indexedDButils.js";
 import toast from "./toast.js";
+import isOnline from "./isOnline.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
 // Funzione principale per sincronizzare i dati con il server
 async function syncWithServer() {
   // Controlla se siamo online prima di tentare la sincronizzazione
-  if (!navigator.onLine) return false; // Restituisce false se non siamo online
 
   try {
     // Recupera le note utente e le note eliminate dal local storage
@@ -106,25 +106,42 @@ async function syncWithServer() {
   }
 }
 
-// Aggiungi un event listener per rilevare quando l'app torna online
-window.addEventListener("online", () => {
-  console.log("Connessione ripristinata. Sincronizzo i dati...");
-  toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
-  sessionStorage.setItem("canRefresh", "false");
-  if (!refreshBtn.classList.contains("disabled"))
-    refreshBtn.classList.add("disabled");
+// Funzione che fa il controllo continuo di stato online/offline
+function monitorOnlineAndSync() {
+  let wasOnline = false; // stato precedente
 
-  // Usa un setInterval per monitorare se la sincronizzazione è completata
-  const syncInterval = window.setInterval(async () => {
-    // Controlla se la sincronizzazione è completa
-    const syncSuccess = await syncWithServer();
+  setInterval(async () => {
+    const currentlyOnline = await isOnline();
 
-    if (syncSuccess) {
-      sessionStorage.setItem("canRefresh", "true");
-      refreshBtn.classList.remove("disabled");
+    // Se eravamo offline e ora siamo online -> partiamo con la sincronizzazione
+    if (!wasOnline && currentlyOnline) {
+      console.log("Connessione ripristinata. Sincronizzo i dati...");
+      toast(
+        "Sincronizzazione in corso. Non chiudere o ricaricare l'app.",
+        2000
+      );
+      sessionStorage.setItem("canRefresh", "false");
 
-      window.clearInterval(syncInterval); // Ferma l'intervallo una volta completata la sincronizzazione
-      return;
+      if (!refreshBtn.classList.contains("disabled")) {
+        refreshBtn.classList.add("disabled");
+      }
+
+      // Aspettiamo la sincronizzazione con il server
+      const syncSuccess = await syncWithServer();
+
+      if (syncSuccess) {
+        sessionStorage.setItem("canRefresh", "true");
+        refreshBtn.classList.remove("disabled");
+        console.log("Sincronizzazione completata con successo!");
+      } else {
+        console.log("Sincronizzazione fallita, riprovo al prossimo ciclo.");
+      }
     }
-  }, 3000); // Controlla ogni 3 secondi
-});
+
+    // Aggiorna lo stato per il prossimo controllo
+    wasOnline = currentlyOnline;
+  }, 3000); // ogni 3 secondi
+}
+
+// Avvia il monitoraggio
+monitorOnlineAndSync();

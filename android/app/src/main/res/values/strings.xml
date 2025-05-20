@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NotableBiblePoints</string>
+    <string name="title_activity_main">NotableBiblePoints</string>
+    <string name="package_name">it.gematsamx.notablebiblepoints</string>
+    <string name="custom_url_scheme">it.gematsamx.notablebiblepoints</string>
+</resources>
