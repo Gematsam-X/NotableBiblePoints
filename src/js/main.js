@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cell.addEventListener("click", () => {
       const bookName = cell.dataset.name; // Prendiamo il nome dal data-name
       sessionStorage.setItem("selectedBook", bookName); // Salviamo in sessionStorage
-      window.location.href = "chapters.html"; // Reindirizziamo alla pagina dei capitoli
+      window.location.href = "./html/chapters.html"; // Reindirizziamo alla pagina dei capitoli
     });
   });
 });
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("../../service-worker.js")
+      .register("./service-worker.js")
       .then((registration) => {
         console.log("Service Worker registrato con successo: ", registration);
       })

@@ -1,0 +1,1 @@
+import{themeToggleSwitch as e}from"./theme.js";let t=!1;function c(){return"dark"===localStorage.getItem("theme")&&document.body.classList.contains("dark-theme")?(t=!0,e&&(e.checked=!0)):(t=!1,e&&(e.checked=!1)),t}e&&e.addEventListener("click",c),c();export{t as isDarkTheme};
