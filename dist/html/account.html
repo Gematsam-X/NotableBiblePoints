@@ -1,1 +1,107 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>NotableBiblePoints - Account</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../styles.css"><link rel="icon" href="../assets/favicon.ico"><meta property="og:title" content="NotableBiblePoints - Salva i punti notevoli"><meta property="og:description" content="NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."><meta property="og:image" content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"><meta property="og:url" content="https://gematsam-x.github.io/NotableBiblePoints/src/index.html"><meta property="og:type" content="website"></head><body><button id="return-btn">Indietro</button><h1 class="standard-title">Impostazioni account - NotableBiblePoints</h1><br><hr><br><h1 id="userEmail"></h1><br><br><br><div class="actions-row"><div class="action" id="logout"><div class="img-container"><img id="logout_img"></div><div class="text-container"><h2>Logout</h2><h3>Esci dal tuo account. I tuoi dati non verranno eliminati, ma per accedervi dovrai effettuare di nuovo il login.</h3></div></div><div class="action" id="delete"><div class="img-container"><img id="deleteAccount_img"></div><div class="text-container"><h2>Elimina account</h2><h3>Elimina per sempre il tuo account. Questa operazione rimuove permanentemente tutti i tuoi dati associati al tuo profilo su questa applicazione.</h3></div></div></div><div class="actions-row"><div class="action" id="createBackup"><div class="img-container"><img id="createBackup_img"></div><div class="text-container"><h2>Crea un backup</h2><h3>Esporta tutte le tue note attuali. Quello che hai già scritto non sarà cancellato e le note che scriverai dalla creazione del backup in poi non saranno riportate in esso. Puoi importare le tue note su un altro account/dispositivo utilizzando il tasto qua accanto "Importa backup".</h3></div></div><div class="action" id="restoreBackup"><div class="img-container"><img id="restoreBackup_img"></div><div class="text-container"><h2>Importa un backup</h2><h3>Importa le note che hai salvato tramite un backup creato in precedenza attraverso il tasto qua accanto. Le note già scritte saranno rimpiazzate dal contenuto del backup.</h3></div></div><input type="file" id="fileInput" accept=".json" style="display:none"></div><script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script><script src="../js/backendlessInit.js"></script><script type="module" src="../js/rememberMe.js"></script><script type="module" src="../js/referrer.js"></script><script type="module" src="../js/accountEventListeners.js"></script><script type="module" src="../js/theme.js"></script><script type="module" src="../js/legend.js"></script><script type="module" src="../js/return.js"></script><script type="module" src="../js/loadingGif.js"></script><script type="module" src="../js/online.js"></script></body></html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>NotableBiblePoints - Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <!-- Meta tag Open Graph -->
+    <meta
+      property="og:title"
+      content="NotableBiblePoints - Salva i punti notevoli"
+    />
+    <meta
+      property="og:description"
+      content="NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
+    />
+    <meta
+      property="og:image"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"
+    />
+    <meta
+      property="og:url"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/index.html"
+    />
+    <meta property="og:type" content="website" />
+    <script type="module" crossorigin src="../assets/account-SfT-3Xom.js"></script>
+    <link rel="modulepreload" crossorigin href="../assets/logoutAndDelete-BbBpbIfv.js">
+    <link rel="modulepreload" crossorigin href="../assets/backendlessInit-B5pPYHic.js">
+    <link rel="modulepreload" crossorigin href="../assets/rememberMe-CGivb9vf.js">
+    <link rel="modulepreload" crossorigin href="../assets/online-4aw1ZRUX.js">
+    <link rel="modulepreload" crossorigin href="../assets/legend-CwojYNNk.js">
+    <link rel="modulepreload" crossorigin href="../assets/return-Bv7-WjaQ.js">
+    <link rel="stylesheet" crossorigin href="../assets/logoutAndDelete-Cv8pclpt.css">
+  </head>
+  <body>
+    <button id="return-btn">Indietro</button>
+    <h1 class="standard-title">Impostazioni account - NotableBiblePoints</h1>
+    <br />
+    <hr />
+    <br />
+    <h1 id="userEmail"></h1>
+    <br />
+    <br />
+    <br />
+    <div class="actions-row">
+      <div class="action" id="logout">
+        <div class="img-container">
+          <img id="logout_img" />
+        </div>
+        <div class="text-container">
+          <h2>Logout</h2>
+          <h3>
+            Esci dal tuo account. I tuoi dati non verranno eliminati, ma per
+            accedervi dovrai effettuare di nuovo il login.
+          </h3>
+        </div>
+      </div>
+      <div class="action" id="delete">
+        <div class="img-container">
+          <img id="deleteAccount_img" />
+        </div>
+        <div class="text-container">
+          <h2>Elimina account</h2>
+          <h3>
+            Elimina per sempre il tuo account. Questa operazione rimuove
+            permanentemente tutti i tuoi dati associati al tuo profilo su questa
+            applicazione.
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="actions-row">
+      <div class="action" id="createBackup">
+        <div class="img-container">
+          <img id="createBackup_img" />
+        </div>
+        <div class="text-container">
+          <h2>Crea un backup</h2>
+          <h3>
+            Esporta tutte le tue note attuali. Quello che hai già scritto non
+            sarà cancellato e le note che scriverai dalla creazione del backup
+            in poi non saranno riportate in esso. Puoi importare le tue note su
+            un altro account/dispositivo utilizzando il tasto qua accanto
+            "Importa backup".
+          </h3>
+        </div>
+      </div>
+
+      <div class="action" id="restoreBackup">
+        <div class="img-container">
+          <img id="restoreBackup_img" />
+        </div>
+        <div class="text-container">
+          <h2>Importa un backup</h2>
+          <h3>
+            Importa le note che hai salvato tramite un backup creato in
+            precedenza attraverso il tasto qua accanto. Le note già scritte
+            saranno rimpiazzate dal contenuto del backup.
+          </h3>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept=".json" style="display: none" />
+    </div>
+    <!-- Scripts -->
+    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+  </body>
+</html>

@@ -1,5 +1,4 @@
 rm -rf ./dist
-node minify.mjs ./src
+npm run build
 npx cap copy
 npx cap sync
-npx cap open android

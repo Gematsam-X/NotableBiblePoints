@@ -3,7 +3,12 @@ import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
-import isOnline from "./isOnline.js";
+import { Network } from "@capacitor/network";
+
+async function isOnline() {
+  const status = await Network.getStatus();
+  return status.connected;
+}
 
 const refreshBtn = document.querySelector(".refreshNotes");
 

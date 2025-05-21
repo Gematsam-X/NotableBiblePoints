@@ -36,6 +36,6 @@ if (localStorage.getItem("isAuthenticated") != "true") {
   if (!isAllowed || localStorage.getItem("isAuthenticated") !== "true") {
     // Se il referrer non è tra quelli consentiti, reindirizza alla pagina di errore
     console.warn("Referrer non valido o utente non autenticato.");
-    window.location.href = "accessRestricted.html";
+    window.location.href = "./html/accessRestricted.html";
   }
 }
