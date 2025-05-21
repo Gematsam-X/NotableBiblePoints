@@ -1,2 +1,109 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>NotableBiblePoints - Accedi</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../login.css"><link rel="icon" href="../assets/favicon.ico"><script>"true"===localStorage.getItem("isAuthenticated")&&(window.location.href="../index.html")</script><meta property="og:title" content="NotableBiblePoints - Salva i punti notevoli"><meta property="og:description" content="NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."><meta property="og:image" content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"><meta property="og:url" content="https://gematsam-x.github.io/NotableBiblePoints/src/index.html"><meta property="og:type" content="website"></head><button class="help"><img width="40px" height="40px" id="help_img"></button><body class="centered-body login-form"><h1><span id="keyword">Accedi a</span> NotableBiblePoints</h1><div class="container"><div class="nav"><a id="loginTab" class="active">Accedi</a> <a id="signupTab">Registrati</a></div><form id="loginForm" class="form-container active"><label for="email">Email</label> <input type="text" id="email" name="email"> <label for="password">Password</label> <input type="password" id="password" name="password"> <button type="submit" id="signIn">Accedi</button><br><br><br><br><ins id="recovery">Hai dimenticato la password? Recuperala.</ins></form><form id="signupForm" class="form-container"><label for="newEmail">Email</label> <input type="text" id="newEmail" name="newEmail"> <label for="newPassword">Password</label> <input type="password" id="newPassword" name="newPassword"> <button type="submit" id="signUp">Registrati</button></form></div><div class="modal centeredModal"><div class="modal-content"><div class="modal-header"><span class="closeModal">&times;</span><h2>Recupera la tua password</h2></div><hr><div class="modal-body"><form><label for="emailForRecovery">La tua email di registrazione</label> <input type="email" id="emailForRecovery"> <button type="submit" id="recoveryBtn">Avanti</button></form></div><hr><div class="modal-footer"><h3>NotableBiblePoints - Salva i punti notevoli</h3></div></div></div><script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script><script src="../js/backendlessInit.js"></script><script type="module" src="../js/auth.js"></script><script type="module" src="../js/rememberMe.js"></script><script type="module" src="../js/loadingGif.js"></script><script type="module" src="../js/theme.js"></script><script src="../js/toggleLoginSignup.js"></script><script type="module" src="../js/recovery.js"></script><script type="module" src="../js/legend.js"></script><script type="module">import checkVersion from "../js/checkVersion.js";
-      checkVersion();</script><script>document.querySelector(".help").addEventListener("click",()=>window.location.href="onboarding.html")</script></body></html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>NotableBiblePoints - Accedi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <script>
+      if (localStorage.getItem("isAuthenticated") === "true") {
+        window.location.href = "../index.html";
+      }
+    </script>
+    <!-- Meta tag Open Graph -->
+    <meta
+      property="og:title"
+      content="NotableBiblePoints - Salva i punti notevoli"
+    />
+    <meta
+      property="og:description"
+      content="NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
+    />
+    <meta
+      property="og:image"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"
+    />
+    <meta
+      property="og:url"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/index.html"
+    />
+    <meta property="og:type" content="website" />
+    <script type="module" crossorigin src="../assets/login-CKJH07UE.js"></script>
+    <link rel="modulepreload" crossorigin href="../assets/logoutAndDelete-BbBpbIfv.js">
+    <link rel="modulepreload" crossorigin href="../assets/backendlessInit-B5pPYHic.js">
+    <link rel="modulepreload" crossorigin href="../assets/rememberMe-CGivb9vf.js">
+    <link rel="modulepreload" crossorigin href="../assets/legend-CwojYNNk.js">
+    <link rel="modulepreload" crossorigin href="../assets/checkVersion-CA4Yiqy7.js">
+    <link rel="stylesheet" crossorigin href="../assets/logoutAndDelete-Cv8pclpt.css">
+    <link rel="stylesheet" crossorigin href="../assets/login-CO6bKEpP.css">
+  </head>
+  <button class="help">
+    <img width="40px" height="40px" id="help_img" />
+  </button>
+  <body class="centered-body login-form">
+    <h1><span id="keyword">Accedi a</span> NotableBiblePoints</h1>
+
+    <div class="container">
+      <!-- Link per cambiare sezione -->
+      <div class="nav">
+        <a id="loginTab" class="active">Accedi</a>
+        <a id="signupTab">Registrati</a>
+      </div>
+
+      <!-- Modulo Login -->
+      <form id="loginForm" class="form-container active">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" />
+        <button type="submit" id="signIn">Accedi</button>
+        <br />
+        <br />
+        <br />
+        <br />
+        <ins id="recovery">Hai dimenticato la password? Recuperala.</ins>
+      </form>
+
+      <!-- Modulo Signup -->
+      <form id="signupForm" class="form-container">
+        <label for="newEmail">Email</label>
+        <input type="text" id="newEmail" name="newEmail" />
+        <label for="newPassword">Password</label>
+        <input type="password" id="newPassword" name="newPassword" />
+        <button type="submit" id="signUp">Registrati</button>
+      </form>
+    </div>
+
+    <div class="modal centeredModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="closeModal">&times;</span>
+          <h2>Recupera la tua password</h2>
+        </div>
+        <hr />
+        <div class="modal-body">
+          <form>
+            <label for="emailForRecovery">La tua email di registrazione</label>
+            <input type="email" id="emailForRecovery" />
+            <button type="submit" id="recoveryBtn">Avanti</button>
+          </form>
+        </div>
+        <hr />
+        <div class="modal-footer">
+          <h3>NotableBiblePoints - Salva i punti notevoli</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Includi il Backendless SDK dal CDN -->
+    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+    <script>
+      document
+        .querySelector(".help")
+        .addEventListener(
+          "click",
+          () => (window.location.href = "onboarding.html")
+        );
+    </script>
+  </body>
+</html>

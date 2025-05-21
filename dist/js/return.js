@@ -1,1 +1,0 @@
-import{redirectToOriginPage as t}from"./logoutAndDelete.js";const e=document.getElementById("return-btn"),n=document.location.href.split("/").pop();"notes.html"===n?e.addEventListener("click",(()=>window.location.href="chapters.html")):"chapters.html"===n||"account.html"===n?e.addEventListener("click",(()=>window.location.href="main.html")):e.addEventListener("click",t);
