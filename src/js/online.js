@@ -122,8 +122,8 @@ function monitorOnlineAndSync() {
       );
       sessionStorage.setItem("canRefresh", "false");
 
-      if (!refreshBtn.classList.contains("disabled")) {
-        refreshBtn.classList.add("disabled");
+      if (!refreshBtn?.classList.contains("disabled")) {
+        refreshBtn?.classList.add("disabled");
       }
 
       // Aspettiamo la sincronizzazione con il server
@@ -131,7 +131,7 @@ function monitorOnlineAndSync() {
 
       if (syncSuccess) {
         sessionStorage.setItem("canRefresh", "true");
-        refreshBtn.classList.remove("disabled");
+        refreshBtn?.classList.remove("disabled");
         console.log("Sincronizzazione completata con successo!");
       } else {
         console.log("Sincronizzazione fallita, riprovo al prossimo ciclo.");

@@ -2,48 +2,72 @@ import { themeToggleSwitch } from "./theme.js";
 
 themeToggleSwitch?.addEventListener("click", toggleImages);
 
+const isIndex =
+  location.pathname.endsWith("index.html") ||
+  location.pathname === "/" ||
+  location.pathname === "/index"; // compatibilità extra
+const fixPath = (path) => (isIndex ? path.replace(/^\.\.\//, "") : path);
+
 const categories = {
-  avatar: ["../assets/avatar/light.webp", "../assets/avatar/dark.webp"],
+  avatar: [
+    fixPath("../assets/avatar/light.webp"),
+    fixPath("../assets/avatar/dark.webp"),
+  ],
   deleteAccount: [
-    "../assets/account/delete/light.webp",
-    "../assets/account/delete/dark.webp",
+    fixPath("../assets/account/delete/light.webp"),
+    fixPath("../assets/account/delete/dark.webp"),
   ],
   deleteNote: [
-    "../assets/notes/delete/light.webp",
-    "../assets/notes/delete/dark.webp",
+    fixPath("../assets/notes/delete/light.webp"),
+    fixPath("../assets/notes/delete/dark.webp"),
   ],
-  edit: ["../assets/notes/edit/light.webp", "../assets/notes/edit/dark.webp"],
+  edit: [
+    fixPath("../assets/notes/edit/light.webp"),
+    fixPath("../assets/notes/edit/dark.webp"),
+  ],
   share: [
-    "../assets/notes/share/light.webp",
-    "../assets/notes/share/dark.webp",
+    fixPath("../assets/notes/share/light.webp"),
+    fixPath("../assets/notes/share/dark.webp"),
   ],
   logout: [
-    "../assets/account/logout/light.webp",
-    "../assets/account/logout/dark.webp",
+    fixPath("../assets/account/logout/light.webp"),
+    fixPath("../assets/account/logout/dark.webp"),
   ],
   refreshNotes: [
-    "../assets/notes/refresh/light.webp",
-    "../assets/notes/refresh/dark.webp",
+    fixPath("../assets/notes/refresh/light.webp"),
+    fixPath("../assets/notes/refresh/dark.webp"),
   ],
   restoreBackup: [
-    "../assets/account/backup/restore/light.webp",
-    "../assets/account/backup/restore/dark.webp",
+    fixPath("../assets/account/backup/restore/light.webp"),
+    fixPath("../assets/account/backup/restore/dark.webp"),
   ],
   createBackup: [
-    "../assets/account/backup/create/light.webp",
-    "../assets/account/backup/create/dark.webp",
+    fixPath("../assets/account/backup/create/light.webp"),
+    fixPath("../assets/account/backup/create/dark.webp"),
   ],
-  lens: ["../assets/lens/light.webp", "../assets/lens/dark.webp"],
-  help: ["../assets/help/light.webp", "../assets/help/dark.webp"],
-  github: ["../assets/github/light.webp", "../assets/github/dark.webp"],
-  openDrawer: ["../assets/drawer/open/light.webp", "../assets/drawer/open/dark.webp"],
+  lens: [
+    fixPath("../assets/lens/light.webp"),
+    fixPath("../assets/lens/dark.webp"),
+  ],
+  help: [
+    fixPath("../assets/help/light.webp"),
+    fixPath("../assets/help/dark.webp"),
+  ],
+  github: [
+    fixPath("../assets/github/light.webp"),
+    fixPath("../assets/github/dark.webp"),
+  ],
+  openDrawer: [
+    fixPath("../assets/drawer/open/light.webp"),
+    fixPath("../assets/drawer/open/dark.webp"),
+  ],
   otherApps: [
-    "../assets/drawer/otherApps/light.webp",
-    "../assets/drawer/otherApps/dark.webp",
+    fixPath("../assets/drawer/otherApps/light.webp"),
+    fixPath("../assets/drawer/otherApps/dark.webp"),
   ],
   rightArrow: [
-    "../assets/drawer/rightArrow/light.webp",
-    "../assets/drawer/rightArrow/dark.webp",
+    fixPath("../assets/drawer/rightArrow/light.webp"),
+    fixPath("../assets/drawer/rightArrow/dark.webp"),
   ],
 };
 

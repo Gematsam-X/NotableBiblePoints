@@ -22,7 +22,10 @@ export default async function checkVersion(refresh = true, showToast = false) {
   }
 
   try {
-    const response = await fetch("../../version.json", { cache: "no-store" });
+    const response = await fetch(
+      "https://gematsam-x.github.io/NotableBiblePoints/version.json",
+      { cache: "no-store" }
+    );
     const data = await response.json();
     const latestVersion = data.version;
     const currentVersion = localStorage.getItem("appVersion");
@@ -41,7 +44,13 @@ export default async function checkVersion(refresh = true, showToast = false) {
     } else if (!currentVersion) {
       localStorage.setItem("appVersion", latestVersion);
     } else {
-      if (showToast) toast(`La versione corrente (${localStorage.getItem("appVersion")}) è già aggiornata.`, 2000);
+      if (showToast)
+        toast(
+          `La versione corrente (${localStorage.getItem(
+            "appVersion"
+          )}) è già aggiornata.`,
+          2000
+        );
 
       console.log("Versione aggiornata, nessuna azione necessaria");
     }
