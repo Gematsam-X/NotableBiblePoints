@@ -13,18 +13,18 @@
     <p>
       Per accedere a questa pagina devi essere autenticato. Puoi effettuare
       l'accesso o la registrazione da
-      <ins id="linkToOriginPage">questo link</ins>.
+      <ins id="linkToLoginPage">questo link</ins>.
     </p>
     <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
     <script type="module" src="../js/backendlessInit.js"></script>
     <script type="module" src="../js/theme.js"></script>
     <script type="module" src="../js/logoutAndDelete.js"></script>
     <script type="module">
-      import { redirectToOriginPage } from "../js/logoutAndDelete.js";
       document
-        .querySelector("#linkToOriginPage")
-        .addEventListener("click", redirectToOriginPage);
+        .querySelector("#linkToLoginPage")
+        .addEventListener("click", () => {
+          window.location.href = "login.html";
+        });
     </script>
-    <script type="module" src="../js/online.js"></script>
   </body>
 </html>

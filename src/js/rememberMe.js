@@ -34,7 +34,7 @@ if (userEmail && userToken) {
     window.location.pathname.split("/").pop() !== "login.html" &&
     window.location.pathname.split("/").pop() !== "accessRestricted.html"
   )
-    window.location.href = "login.html";
+    window.location.href = "./html/login.html";
 }
 
 sessionStorage.setItem("scriptExecuted", "true");

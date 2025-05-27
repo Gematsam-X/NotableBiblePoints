@@ -1,0 +1,1 @@
+import"./styles-iwqOMWir.js";import"./backendlessInit-BuO4q2Rv.js";import"./theme-CIxG1vPZ.js";import"./logoutAndDelete-TpS2wTiU.js";import"./loadingGif-CLxvH4cC.js";import"./toast-BIaIkxlU.js";import"./indexedDButils-TR8NEaRF.js";import"./idb-nMDuyRcf.js";document.querySelector("#linkToLoginPage").addEventListener("click",(()=>{window.location.href="login.html"}));

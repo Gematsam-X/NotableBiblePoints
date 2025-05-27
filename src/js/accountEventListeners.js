@@ -5,7 +5,9 @@ function addSpecificEventListener(id, callback) {
   return document.getElementById(id).addEventListener("click", callback);
 }
 
-addSpecificEventListener("logout", logoutUser);
+addSpecificEventListener("logout", () => {
+  logoutUser(true);
+});
 addSpecificEventListener("delete", deleteCurrentUser);
 addSpecificEventListener("createBackup", createBackup);
 addSpecificEventListener("restoreBackup", restoreBackup);

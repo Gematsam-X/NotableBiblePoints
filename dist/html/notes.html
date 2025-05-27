@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <!-- Meta tag Open Graph -->
+    <meta
+      property="og:title"
+      content="NotableBiblePoints - Salva i punti notevoli"
+    />
+    <meta
+      property="og:description"
+      content="NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
+    />
+    <meta
+      property="og:image"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"
+    />
+    <meta
+      property="og:url"
+      content="https://gematsam-x.github.io/NotableBiblePoints/src/index.html"
+    />
+    <meta property="og:type" content="website" />
+    <script type="module" crossorigin src="../assets/styles-iwqOMWir.js"></script>
+    <script type="module" crossorigin src="../assets/backendlessInit-BuO4q2Rv.js"></script>
+    <script type="module" crossorigin src="../assets/theme-CIxG1vPZ.js"></script>
+    <script type="module" crossorigin src="../assets/chaptersAndNotesReferrer-BqaEKXFE.js"></script>
+    <script type="module" crossorigin src="../assets/isDarkTheme-DnSvkQ-N.js"></script>
+    <script type="module" crossorigin src="../assets/loadingGif-CLxvH4cC.js"></script>
+    <script type="module" crossorigin src="../assets/toast-BIaIkxlU.js"></script>
+    <script type="module" crossorigin src="../assets/idb-nMDuyRcf.js"></script>
+    <script type="module" crossorigin src="../assets/indexedDButils-TR8NEaRF.js"></script>
+    <script type="module" crossorigin src="../assets/logoutAndDelete-TpS2wTiU.js"></script>
+    <script type="module" crossorigin src="../assets/notes-DqICu2W3.js"></script>
+    <script type="module" crossorigin src="../assets/legend-CeuJvX-a.js"></script>
+    <script type="module" crossorigin src="../assets/return-BSYCtNac.js"></script>
+    <script type="module" crossorigin src="../assets/isOnline-DgpNA9Wq.js"></script>
+    <script type="module" crossorigin src="../assets/online-rCPIplBC.js"></script>
+    <link rel="stylesheet" crossorigin href="../assets/styles-GMntIk8k.css">
+  </head>
+  <body>
+    <div class="notes-page-title-container">
+      <button id="return-btn">Indietro</button>
+      <h1 class="notes-page-title"></h1>
+    </div>
+    <br />
+    <br />
+    <button class="openModal">&#43;</button>
+    <a id="readChapter">
+      <button>Leggi dalla Traduzione del Nuovo mondo</button>
+    </a>
+    <button class="refreshNotes">
+      <img width="40px" height="40px" id="refreshNotes_img" />
+    </button>
+
+    <div class="notesContainer"></div>
+
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="closeModal">&times;</span>
+          <h2>Nuova nota o punto notevole</h2>
+        </div>
+        <hr />
+        <div class="modal-body">
+          <div class="note-form-body">
+            <label for="noteTitle">Titolo (Opzionale)</label>
+            <input
+              type="text"
+              id="noteTitle"
+              autocomplete="off"
+              placeholder="Titolo della nota..."
+            />
+            <label for="verseNumber">Versetto</label>
+            <input
+              id="verseNumber"
+              type="number"
+              autocomplete="off"
+              placeholder="Versetto di riferimento..."
+            />
+            <label for="note-content">Contenuto</label>
+            <textarea
+              id="noteContent"
+              autocomplete="off"
+              placeholder="Contenuto della nota..."
+            ></textarea>
+          </div>
+          <button id="saveNote">Salva</button>
+        </div>
+        <hr />
+        <div class="modal-footer">
+          <h3>NotableBiblePoints - Salva i punti notevoli</h3>
+        </div>
+      </div>
+    </div>
+    <script src="https://api.backendless.com/sdk/js/latest/backendless.js"></script>
+  </body>
+</html>
