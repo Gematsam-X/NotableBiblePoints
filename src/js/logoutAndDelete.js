@@ -68,25 +68,29 @@ export async function deleteCurrentUser() {
   }
 }
 
-export async function logoutUser(showAlert = true) {
+export async function logoutUser(isFromAccountPage = false, showAlert = true) {
   if (showAlert) showGif();
   try {
     // Logout dell'utente
     await Backendless.UserService.logout();
 
-    // Rimuoviamo i dati relativi all'utente da IndexedDB
+    // Rimuoviamo i dati relativi all'utente
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userToken");
     await deleteValue("userNotes");
     await deleteValue("deletedNotes");
-
-    // Mantenere isAuthenticated in localStorage
     localStorage.removeItem("userNotes");
     localStorage.removeItem("deletedNotes");
-    window.location.href =
-      window.location.href.split("/").pop() == "index.html"
-        ? "./html/login.html"
-        : "login.html";
+
+    console.log(
+      `reindirizzo a ${
+        !isFromAccountPage ? "./html/login.html" : "./login.html"
+      }`
+    );
+
+    window.location.href = !isFromAccountPage
+      ? "./html/login.html"
+      : "./login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
     toast("Errore durante il logout: " + error.message, 4000);

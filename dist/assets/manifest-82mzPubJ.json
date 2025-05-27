@@ -1,0 +1,16 @@
+{
+    "name": "NotableBiblePoints",
+    "short_name": "NotableBiblePoints",
+    "description": "NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi.",
+    "start_url": "./src/html/main.html",
+    "display": "standalone",
+    "background_color": "#1c1c1c",
+    "theme_color": "#1c1c1c",
+    "icons": [
+        {
+            "src": "./src/assets/favicon.ico",
+            "sizes": "500x500",
+            "type": "image/x-icon"
+        }
+    ]
+}
