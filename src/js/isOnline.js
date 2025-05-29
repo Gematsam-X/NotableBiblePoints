@@ -1,33 +1,60 @@
-export default async function isOnline() {
-  const start = performance.now();
+// networkUtils.js
+import { Capacitor } from "@capacitor/core";
 
-  const testUrl = "https://gematsam-x.github.io/NotableBiblePoints/ping.txt";
+let Network;
 
-  // Costruzione della promessa con timeout
-  const controller = new AbortController(); // Serve per poter "uccidere" la fetch se ci mette troppo
-  const timeout = setTimeout(() => {
-    controller.abort(); // KILL!
-  }, 3000); // 3 secondi di timeout
-  // Se non si usa il timeout, la fetch può rimanere bloccata per un tempo indefinito
+/**
+ * Carica dinamicamente il plugin Capacitor Network solo se siamo su piattaforma nativa
+ */
+async function loadNetworkPlugin() {
+  if (Capacitor.isNativePlatform()) {
+    Network = (await import("@capacitor/network")).Network;
+  }
+}
 
-  try {
-    const response = await fetch(testUrl, {
-      method: "HEAD",
-      cache: "no-store",
-      signal: controller.signal, // Colleghiamo il controller
+/**
+ * Controlla se la connessione di rete è attiva
+ * Funziona sia su mobile nativo (Capacitor) sia su browser (fallback)
+ * @returns {Promise<boolean>} true se online, false se offline
+ */
+export async function isOnline() {
+  if (!Network) await loadNetworkPlugin();
+
+  if (Capacitor.isNativePlatform()) {
+    const status = await Network.getStatus();
+    console.log("Network status nativo:", status);
+    return status.connected;
+  } else {
+    console.log("Network status browser:", navigator.onLine);
+    return navigator.onLine;
+  }
+}
+
+/**
+ * Registra un listener che esegue callback quando l'app torna online
+ * Gestisce sia ambiente nativo Capacitor sia browser
+ * @param {function} callback Funzione da chiamare quando si torna online
+ * @returns {function} Funzione per rimuovere il listener
+ */
+export async function onNetworkOnline(callback) {
+  if (!Network) await loadNetworkPlugin();
+
+  if (Capacitor.isNativePlatform()) {
+    const listener = Network.addListener("networkStatusChange", (status) => {
+      if (status.connected) {
+        console.log("📶 App è tornata online (nativo)");
+        callback();
+      }
     });
-
-    return response.ok;
-  } catch (err) {
-    return false;
-  } finally {
-    clearTimeout(timeout); // Puliamo il timeout
-    const end = performance.now();
-    const duration = end - start;
-    console.log(
-      "Finito il controllo della connessione in " +
-        Math.round(duration) +
-        " millisecondi."
-    );
+    // Ritorna funzione per rimuovere il listener
+    return () => listener.remove();
+  } else {
+    const handler = () => {
+      console.log("📶 App è tornata online (browser)");
+      callback();
+    };
+    window.addEventListener("online", handler);
+    // Ritorna funzione per rimuovere il listener
+    return () => window.removeEventListener("online", handler);
   }
 }

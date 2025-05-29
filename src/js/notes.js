@@ -3,12 +3,8 @@ import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
-import { Network } from "@capacitor/network";
-
-async function isOnline() {
-  const status = await Network.getStatus();
-  return status.connected;
-}
+import { Share } from "@capacitor/share";
+import { isOnline } from "./isOnline.js"; // Importa la funzione per verificare la connessione
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -375,7 +371,7 @@ async function deleteNote(noteElement) {
   }
 }
 
-function shareNote(noteElement) {
+async function shareNote(noteElement) {
   const noteTitle = noteElement.querySelector(".note-title").textContent;
   const noteContent = noteElement.querySelector(".note-body h3").textContent;
   const verseNumber = noteElement
@@ -385,17 +381,14 @@ function shareNote(noteElement) {
 
   const shareText = `Ho trovato un punto notevole interessante in ${selectedBook} ${chapter}:${verseNumber}: ${noteContent}`;
 
-  if (navigator.share) {
-    navigator
-      .share({
-        title: `Punto notevole: ${noteTitle}`,
-        text: shareText,
-      })
-      .then(() => console.log("Condivisione avvenuta con successo!"))
-      .catch((error) =>
-        console.error("Errore durante la condivisione:", error)
-      );
-  } else {
+  try {
+    await Share.share({
+      title: `Punto notevole: ${noteTitle}`,
+      text: shareText,
+      dialogTitle: "Condividi con",
+    });
+  } catch (err) {
+    console.error("Errore durante la condivisione:", err);
     copyToClipboard(shareText);
   }
 }
