@@ -1,7 +1,7 @@
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
-import isOnline from "./isOnline.js";
+import { isOnline } from "./isOnline.js";
 
 async function findUserRecords() {
   const databaseEntry =
