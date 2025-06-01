@@ -16,6 +16,7 @@
     "@capacitor/core": "^7.2.0",
     "@capacitor/network": "^7.0.1",
     "@capacitor/share": "^7.0.1",
+    "backendless": "^7.4.6",
     "fs-extra": "^11.3.0",
     "globby": "^14.1.0",
     "html-minifier": "^4.0.0",
