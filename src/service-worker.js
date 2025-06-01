@@ -1,9 +1,6 @@
 const CACHE_NAME = "notablebiblepoints-cache-v1";
 const urlsToCache = [
   "./",
-  "./index.html",
-  "./styles.css",
-  "./drawer.css",
   "./assets/favicon.ico",
   "./assets/avatar/dark.webp",
   "./assets/avatar/light.webp",
@@ -39,33 +36,46 @@ const urlsToCache = [
   "./assets/drawer/rightArrow/dark.webp",
   "./assets/drawer/open/light.webp",
   "./assets/drawer/open/dark.webp",
+  "./drawer.css",
+  "./index.html",
+  "./login.css",
+  "./manifest.json",
+  "./service-worker.js",
+  "./styles.css",
   "./html/accessRestricted.html",
   "./html/account.html",
   "./html/chapters.html",
+  "./html/login.html",
   "./html/notes.html",
   "./html/onboarding.html",
-  "./js/injectInstructions.js",
-  "./js/backendlessInit.js",
-  "./js/referrer.js",
-  "./js/rememberMe.js",
-  "./js/legend.js",
-  "./js/theme.js",
-  "./js/backup.js",
-  "./js/main.js",
   "./js/accountEventListeners.js",
-  "./js/isDarkTheme.js",
-  "./js/injectChapters.js",
-  "./js/notes.js",
+  "./js/auth.js",
+  "./js/backendlessInit.js",
+  "./js/backup.js",
   "./js/chaptersAndNotesReferrer.js",
-  "./js/return.js",
-  "./js/toast.js",
-  "./js/loadingGif.js",
-  "./js/searchbar.js",
-  "./js/verifyChapterNotes.js",
-  "./js/online.js",
+  "./js/checkVersion.js",
+  "./js/drawer.js",
   "./js/idb.js",
   "./js/indexedDButils.js",
-  "./js/drawer.js"
+  "./js/injectChapters.js",
+  "./js/injectInstructions.js",
+  "./js/isDarkTheme.js",
+  "./js/isOnline.js",
+  "./js/legend.js",
+  "./js/loadingGif.js",
+  "./js/logoutAndDelete.js",
+  "./js/main-ok.js",
+  "./js/notes.js",
+  "./js/online.js",
+  "./js/recovery.js",
+  "./js/referrer.js",
+  "./js/rememberMe.js",
+  "./js/return.js",
+  "./js/searchbar.js",
+  "./js/theme.js",
+  "./js/toast.js",
+  "./js/toggleLoginSignup.js",
+  "./js/verifyChapterNotes.js",
 ];
 
 // Funzione riutilizzabile per aggiornare la cache
@@ -114,7 +124,5 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("message", (event) => {
   if (event.data?.action === "skipWaiting") {
     self.skipWaiting();
-  } else if (event.data?.action === "updateCache") {
-    cacheAssets();
   }
 });

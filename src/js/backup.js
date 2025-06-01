@@ -1,8 +1,8 @@
-import Backendless from 'backendless';
-import { hideGif, showGif } from "./loadingGif.js";
-import toast from "./toast.js";
+import Backendless from "backendless";
 import { getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { isOnline } from "./isOnline.js";
+import { hideGif, showGif } from "./loadingGif.js";
+import toast from "./toast.js";
 
 async function findUserRecords() {
   const databaseEntry =
@@ -107,7 +107,7 @@ export async function restoreBackup() {
         }
 
         // Recupera il primo (e unico) record dal database che contiene tutte le note
-        let userNotes = await isOnline()
+        let userNotes = (await isOnline())
           ? await Backendless.Data.of("NotableBiblePoints").findFirst()
           : await getValue("userNotes");
 
@@ -115,7 +115,7 @@ export async function restoreBackup() {
           userNotes = { NotablePoints: [] };
         }
 
-        let notes = await isOnline ? userNotes.NotablePoints : userNotes;
+        let notes = (await isOnline) ? userNotes.NotablePoints : userNotes;
 
         // Aggiungi i nuovi record o aggiorna quelli esistenti
         for (const newRecord of jsonData) {

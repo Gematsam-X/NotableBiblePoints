@@ -184,6 +184,8 @@ link?.addEventListener("click", () => {
   } else {
     // Se il libro non è trovato, puoi gestire l'errore
     console.error("Libro non trovato!");
-    toast("C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi.");
+    toast(
+      "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
+    );
   }
 });

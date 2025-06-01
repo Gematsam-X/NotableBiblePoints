@@ -182,16 +182,18 @@
 
     <div class="drawer">
       <div class="drawer-content">
-        <h2>Il tuo account</h2>
-        <div class="drawer-horizontal-align" id="drawer-account">
-          <img
-            width="40px"
-            height="40px"
-            id="avatar_img"
-            data-flipped-src="true"
-          />
-          <h3 id="username"></h3>
-          <img width="20px" height="20px" id="rightArrow_img" />
+        <div id="drawer-account">
+          <h2>Il tuo account</h2>
+          <div class="drawer-horizontal-align">
+            <img
+              width="40px"
+              height="40px"
+              id="avatar_img"
+              data-flipped-src="true"
+            />
+            <h3 id="username"></h3>
+            <img width="20px" height="20px" id="rightArrow_img" />
+          </div>
         </div>
         <hr />
         <h2>Tema</h2>
@@ -250,14 +252,10 @@
                 src="./assets/jw.org.webp"
             /></a>
           </div>
-          <h4 id="drawer-footer-version">
-            NotableBiblePoints versione <span id="appVersion"></span>
-          </h4>
         </div>
       </div>
     </div>
 
-    
     <script type="module" src="js/backendlessInit.js"></script>
     <script type="module" src="js/theme.js"></script>
     <script type="module" src="js/referrer.js"></script>
