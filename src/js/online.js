@@ -126,7 +126,7 @@ async function startNetworkSync() {
   }
 
   // Ascolta evento di ritorno online con onNetworkOnline(callback)
-  onNetworkOnline(onOnlineHandler);
+  await onNetworkOnline(onOnlineHandler);
 }
 
 // Avvia tutto
