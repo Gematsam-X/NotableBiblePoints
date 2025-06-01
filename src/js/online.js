@@ -1,137 +1,148 @@
-import Backendless from "backendless";
 import { getValue, deleteValue, setValue } from "./indexedDButils.js";
 import toast from "./toast.js";
-import { isOnline, onNetworkOnline } from "./isOnline.js";
-import { logoutUser } from "./logoutAndDelete.js";
+import { Network } from "@capacitor/network"; // Plugin Network di Capacitor
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
-async function startNetworkSync() {
-  /**
-   * 🔁 Sincronizza i dati locali con Backendless
-   */
-  async function syncWithServer() {
-    try {
-      const userNotes = (await getValue("userNotes")) || [];
-      const deletedNotes = (await getValue("deletedNotes")) || [];
+// Variabile per tenere traccia dello stato offline precedente
+let wasOffline = false;
 
-      if (userNotes.length === 0 && deletedNotes.length === 0) {
-        console.log("Nessuna nota da sincronizzare.");
-        toast("Sincronizzazione completata!", 2000);
-        return true;
-      }
+// Funzione principale per sincronizzare i dati con il server
+async function syncWithServer() {
+  if (!navigator.onLine) return false;
 
-      let serverRecord;
-      try {
-        serverRecord = await Backendless.Data.of(
-          "NotableBiblePoints"
-        ).findFirst();
-      } catch (error) {
-        console.error("Errore nel recupero del record dal server:", error);
-        if (error.message.toLowerCase().includes("relogin user")) logoutUser();
-        toast(
-          `Errore nel recupero delle tue note dal cloud. Continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
-          4500
-        );
-        window.setTimeout(syncWithServer, 3000);
-        return false;
-      }
+  try {
+    const userNotes = (await getValue("userNotes")) || [];
+    const deletedNotes = (await getValue("deletedNotes")) || [];
 
-      if (!serverRecord?.NotablePoints) {
-        toast(
-          "Errore: database non trovato. Non riproveremo. Rivolgiti allo sviluppatore.",
-          3500
-        );
-        throw new Error("Record o campo NotablePoints mancante.");
-      }
-
-      const serverNotes = serverRecord.NotablePoints;
-
-      // Rimuovi note eliminate
-      let updatedNotes = serverNotes.filter(
-        (note) => !deletedNotes.some((deleted) => deleted.id === note.id)
-      );
-
-      // Aggiungi nuove note locali
-      const newNotes = userNotes.filter(
-        (localNote) =>
-          !serverNotes.some((serverNote) => serverNote.id === localNote.id)
-      );
-      updatedNotes.push(...newNotes);
-
-      // Risolvi conflitti sulle note condivise
-      updatedNotes = updatedNotes.map((note) => {
-        const localNote = userNotes.find((n) => n.id === note.id);
-        const serverNote = serverNotes.find(
-          (n) => n.id === note.id && n.owner === note.owner
-        );
-
-        if (!localNote || !serverNote) return note;
-
-        const localTime = localNote.updatedAt;
-        const serverTime = serverNote.updatedAt;
-
-        if (!localTime && !serverTime) return serverNote;
-        if (localTime && !serverTime) return localNote;
-        if (!localTime && serverTime) return serverNote;
-
-        return localTime > serverTime ? localNote : serverNote;
-      });
-
-      // Salva tutto
-      serverRecord.NotablePoints = updatedNotes;
-      await Backendless.Data.of("NotableBiblePoints").save(serverRecord);
-
-      // Aggiorna locale
-      await deleteValue("deletedNotes");
-      await setValue("userNotes", updatedNotes);
-
-      console.log("✅ Sincronizzazione completata!");
+    if (userNotes.length === 0 && deletedNotes.length === 0) {
+      console.log("Nessuna nota da sincronizzare.");
       toast("Sincronizzazione completata!", 2000);
       return true;
+    }
+
+    let serverRecord;
+    try {
+      serverRecord = await Backendless.Data.of(
+        "NotableBiblePoints"
+      ).findFirst();
     } catch (error) {
-      console.error("❌ Errore durante la sincronizzazione:", error);
-      window.setTimeout(syncWithServer, 1500);
+      console.error("Errore nel recupero del record dal server:", error);
+      toast(
+        `Errore nel recupero delle tue note dal cloud, continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
+        4500
+      );
+      window.setTimeout(syncWithServer, 3000);
       return false;
     }
-  }
 
-  /**
-   * 🔂 Avvia la sincronizzazione se non è già stata fatta in questa sessione
-   */
-  async function onOnlineHandler() {
-    if (sessionStorage.getItem("hasSynced") === "true") {
-      console.log("🔁 Sync già eseguita in questa sessione.");
-      return;
+    if (!serverRecord || !serverRecord.NotablePoints) {
+      console.log("Nessun record o punti notevoli trovati nel database.");
+      toast(
+        "Errore: database non trovato. Non riproveremo. Rivolgiti allo sviluppatore se il problema persiste.",
+        3500
+      );
+      throw new Error(
+        "Nessun record trovato nel database, o campo NotablePoints inesistente."
+      );
     }
 
-    console.log("📶 Online: avvio sincronizzazione...");
-    toast("Sincronizzazione in corso. Non chiudere l'app!", 2000);
-    sessionStorage.setItem("canRefresh", "false");
-    refreshBtn?.classList.add("disabled");
+    const serverNotes = serverRecord.NotablePoints;
 
-    const success = await syncWithServer();
+    // STEP 1: Rimuovi le note eliminate
+    let updatedNotes = serverNotes.filter(
+      (note) => !deletedNotes.some((deleted) => deleted.id === note.id)
+    );
 
-    if (success) {
-      sessionStorage.setItem("hasSynced", "true");
-      sessionStorage.setItem("canRefresh", "true");
-      refreshBtn?.classList.remove("disabled");
-    }
+    // STEP 2: Aggiungi le nuove note locali
+    const newNotes = userNotes.filter(
+      (localNote) =>
+        !serverNotes.some((serverNote) => serverNote.id === localNote.id)
+    );
+    updatedNotes.push(...newNotes);
+
+    // STEP 3: Confronta le note con lo stesso ID
+    updatedNotes = updatedNotes.map((note) => {
+      const localNote = userNotes.find((n) => n.id === note.id);
+      const serverNote = serverNotes.find(
+        (n) => n.id === note.id && n.owner === note.owner
+      );
+
+      if (!localNote || !serverNote) return note;
+
+      const localHasTime = localNote.updatedAt !== undefined;
+      const serverHasTime = serverNote.updatedAt !== undefined;
+
+      if (!localHasTime && !serverHasTime) return serverNote;
+      if (localHasTime && !serverHasTime) return localNote;
+      if (!localHasTime && serverHasTime) return serverNote;
+
+      return localNote.updatedAt > serverNote.updatedAt
+        ? localNote
+        : serverNote;
+    });
+
+    // STEP 4: Salva sul server
+    serverRecord.NotablePoints = updatedNotes;
+    await Backendless.Data.of("NotableBiblePoints").save(serverRecord);
+
+    // STEP 5: Aggiorna localmente
+    await deleteValue("deletedNotes");
+    await setValue("userNotes", updatedNotes);
+
+    console.log("Sincronizzazione completata con successo!");
+    toast("Sincronizzazione completata!", 2000);
+    return true;
+  } catch (error) {
+    console.error("Errore durante la sincronizzazione:", error);
+    window.setTimeout(syncWithServer, 1500);
   }
-
-  /**
-   * 🧠 Controlla se serve sincronizzare subito all'avvio
-   */
-  const wasOfflineBefore =
-    localStorage.getItem("lastNetworkStatus") === "offline";
-  const nowOnline = await isOnline();
-
-  if (wasOfflineBefore && nowOnline) {
-    await onOnlineHandler(); // all’avvio: se eravamo offline e ora online, sync
-  }
-
-  // 🔌 Rimani in ascolto: se torni online mentre usi l’app ➜ sync
-  await onNetworkOnline(onOnlineHandler);
 }
 
-startNetworkSync();
+/**
+ * Funzione per gestire il ritorno online con Capacitor Network plugin.
+ */
+function setupCapacitorOnlineListener() {
+  // Inizializza lo stato offline all'avvio
+  Network.getStatus().then((status) => {
+    wasOffline = !status.connected;
+  });
+
+  Network.addListener("networkStatusChange", (status) => {
+    const isNowOnline = status.connected;
+
+    // Se ERI offline e ORA sei online -> esegui sincronizzazione
+    if (wasOffline && isNowOnline) {
+      triggerSyncProcess();
+    }
+
+    // Aggiorna lo stato per la prossima volta
+    wasOffline = !isNowOnline;
+  });
+}
+
+/**
+ * Gestisce il processo di sincronizzazione con feedback UI.
+ */
+function triggerSyncProcess() {
+  console.log("Connessione ripristinata. Sincronizzo i dati...");
+  toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
+  sessionStorage.setItem("canRefresh", "false");
+
+  if (!refreshBtn?.classList.contains("disabled")) {
+    refreshBtn.classList.add("disabled");
+  }
+
+  const syncInterval = setInterval(async () => {
+    const syncSuccess = await syncWithServer();
+
+    if (syncSuccess) {
+      sessionStorage.setItem("canRefresh", "true");
+      refreshBtn.classList.remove("disabled");
+      clearInterval(syncInterval);
+    }
+  }, 3000);
+}
+
+// Attiva listener online/offline con Capacitor
+setupCapacitorOnlineListener();
