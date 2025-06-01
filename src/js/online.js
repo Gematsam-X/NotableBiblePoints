@@ -1,6 +1,7 @@
 import { getValue, deleteValue, setValue } from "./indexedDButils.js";
 import toast from "./toast.js";
 import { isOnline, onNetworkOnline } from "./isOnline.js";
+import { logoutUser } from "./logoutAndDelete.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -24,6 +25,7 @@ async function startNetworkSync() {
         ).findFirst();
       } catch (error) {
         console.error("Errore nel recupero del record dal server:", error);
+        if (error.message.toLowerCase().includes("relogin user")) logoutUser();
         toast(
           `Errore nel recupero delle tue note dal cloud, continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
           4500

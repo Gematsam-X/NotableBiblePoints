@@ -2,7 +2,7 @@
   "name": "notablebiblepoints",
   "version": "1.0.0",
   "description": "NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi.",
-  "main": "src/js/main.js",
+  "main": "src/js/main-ok.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
