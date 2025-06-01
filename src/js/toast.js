@@ -1,45 +1,58 @@
+// Coda dei toast in attesa
+const toastQueue = [];
+let isToastVisible = false;
+
 export default function toast(message, duration = 3000) {
-  // Controlla se c'è già un toast visibile nel DOM
-  if (!document.querySelector(".toast")) {
-    console.log("Toast chiamato con il messaggio:", message);
+  toastQueue.push({ message, duration });
+  processQueue();
+}
 
-    const toast = document.createElement("div");
-    toast.classList.add("toast");
-    toast.textContent = message;
+function processQueue() {
+  if (isToastVisible || toastQueue.length === 0) return;
 
-    function isOnPage(page) {
-      return window.location.href.split("/").pop() === page;
-    }
-    if (
-      isOnPage("notes.html") &&
-      document.querySelector(".modal").style.display == "block"
-    ) {
-      document.querySelector(".modal").appendChild(toast);
-    } else if (isOnPage("notes.html")) {
-      document.querySelector(".notesContainer")?.appendChild(toast);
-    } else if (isOnPage("login.html")) {
-      document.querySelector(".container")?.appendChild(toast);
-    } else {
-      document.body.appendChild(toast);
-    }
+  const { message, duration } = toastQueue.shift();
+  isToastVisible = true;
 
-    // Aggiungiamo la classe per la transizione dopo un breve ritardo
-    setTimeout(() => toast.classList.add("show"), 10);
+  console.log("Toast in arrivo:", message);
 
-    // Funzione per nascondere il toast
-    const hideToast = () => {
-      toast.classList.remove("show"); // Animazione di uscita
-      setTimeout(() => toast.remove(), 500); // Attendi la transizione CSS prima di rimuoverlo
-    };
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.textContent = message;
 
-    const timeout = setTimeout(hideToast, duration);
-
-    // Rimuove il toast immediatamente se cliccato
-    toast.addEventListener("click", () => {
-      clearTimeout(timeout);
-      hideToast();
-    });
-  } else {
-    console.log("Toast non mostrato perchè c'è già un altro toast attivo.");
+  function isOnPage(page) {
+    return window.location.href.split("/").pop() === page;
   }
+
+  if (
+    isOnPage("notes.html") &&
+    document.querySelector(".modal")?.style.display == "block"
+  ) {
+    document.querySelector(".modal")?.appendChild(toast);
+  } else if (isOnPage("notes.html")) {
+    document.querySelector(".notesContainer")?.appendChild(toast);
+  } else if (isOnPage("login.html")) {
+    document.querySelector(".container")?.appendChild(toast);
+  } else {
+    document.body.appendChild(toast);
+  }
+
+  // Aggiunge la classe per farlo comparire con animazione
+  setTimeout(() => toast.classList.add("show"), 10);
+
+  // Funzione per nasconderlo
+  const hideToast = () => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+      isToastVisible = false;
+      processQueue(); // Procede con il prossimo toast in coda
+    }, 500); // attende la transizione di uscita
+  };
+
+  const timeout = setTimeout(hideToast, duration);
+
+  toast.addEventListener("click", () => {
+    clearTimeout(timeout);
+    hideToast();
+  });
 }
