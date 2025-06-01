@@ -372,10 +372,23 @@ div.actions-row {
   transform: translateX(-50%);
 }
 
+.close-note {
+  display: none;
+}
+
 /* Buttons visible when the note is clicked */
 #clicked-note .note-action-buttons button {
   visibility: visible;
   display: block;
+}
+
+#clicked-note .close-note {
+  display: block;
+  cursor: pointer;
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  font-size: 300%;
 }
 
 /* Landscape positioning */

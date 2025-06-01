@@ -124,6 +124,7 @@ async function loadNotes() {
           : "../assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
+        <span class="close-note">&times;</span>
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
           </div>
@@ -298,6 +299,10 @@ document.querySelector(".notesContainer").addEventListener("click", (event) => {
     // Gestione del bottone "Modifica"
     if (event.target.classList.contains("edit")) {
       editNote(closestNote);
+    }
+
+    if (event.target.classList.contains("close-note")) {
+      document.exitFullscreen();
     }
   }
 });
