@@ -1,4 +1,4 @@
-import Backendless from 'backendless';
+import Backendless from "backendless";
 import { getValue, deleteValue, setValue } from "./indexedDButils.js";
 import toast from "./toast.js";
 import { isOnline, onNetworkOnline } from "./isOnline.js";
@@ -7,7 +7,9 @@ import { logoutUser } from "./logoutAndDelete.js";
 const refreshBtn = document.querySelector(".refreshNotes");
 
 async function startNetworkSync() {
-  // Funzione per sincronizzare con il server
+  /**
+   * 🔁 Sincronizza i dati locali con Backendless
+   */
   async function syncWithServer() {
     try {
       const userNotes = (await getValue("userNotes")) || [];
@@ -28,21 +30,19 @@ async function startNetworkSync() {
         console.error("Errore nel recupero del record dal server:", error);
         if (error.message.toLowerCase().includes("relogin user")) logoutUser();
         toast(
-          `Errore nel recupero delle tue note dal cloud, continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
+          `Errore nel recupero delle tue note dal cloud. Continueremo a provare. Non chiudere o ricaricare l'app. Dettagli: ${error}`,
           4500
         );
         window.setTimeout(syncWithServer, 3000);
         return false;
       }
 
-      if (!serverRecord || !serverRecord.NotablePoints) {
+      if (!serverRecord?.NotablePoints) {
         toast(
-          "Errore: database non trovato. Non riproveremo. Rivolgiti allo sviluppatore se il problema persiste.",
+          "Errore: database non trovato. Non riproveremo. Rivolgiti allo sviluppatore.",
           3500
         );
-        throw new Error(
-          "Nessun record trovato nel database, o campo NotablePoints inesistente."
-        );
+        throw new Error("Record o campo NotablePoints mancante.");
       }
 
       const serverNotes = serverRecord.NotablePoints;
@@ -52,14 +52,14 @@ async function startNetworkSync() {
         (note) => !deletedNotes.some((deleted) => deleted.id === note.id)
       );
 
-      // Aggiungi note nuove locali
+      // Aggiungi nuove note locali
       const newNotes = userNotes.filter(
         (localNote) =>
           !serverNotes.some((serverNote) => serverNote.id === localNote.id)
       );
       updatedNotes.push(...newNotes);
 
-      // Confronta note condivise
+      // Risolvi conflitti sulle note condivise
       updatedNotes = updatedNotes.map((note) => {
         const localNote = userNotes.find((n) => n.id === note.id);
         const serverNote = serverNotes.find(
@@ -68,19 +68,17 @@ async function startNetworkSync() {
 
         if (!localNote || !serverNote) return note;
 
-        const localHasTime = localNote.updatedAt !== undefined;
-        const serverHasTime = serverNote.updatedAt !== undefined;
+        const localTime = localNote.updatedAt;
+        const serverTime = serverNote.updatedAt;
 
-        if (!localHasTime && !serverHasTime) return serverNote;
-        if (localHasTime && !serverHasTime) return localNote;
-        if (!localHasTime && serverHasTime) return serverNote;
+        if (!localTime && !serverTime) return serverNote;
+        if (localTime && !serverTime) return localNote;
+        if (!localTime && serverTime) return serverNote;
 
-        return localNote.updatedAt > serverNote.updatedAt
-          ? localNote
-          : serverNote;
+        return localTime > serverTime ? localNote : serverNote;
       });
 
-      // Salva nel server
+      // Salva tutto
       serverRecord.NotablePoints = updatedNotes;
       await Backendless.Data.of("NotableBiblePoints").save(serverRecord);
 
@@ -88,47 +86,52 @@ async function startNetworkSync() {
       await deleteValue("deletedNotes");
       await setValue("userNotes", updatedNotes);
 
-      console.log("Sincronizzazione completata con successo!");
+      console.log("✅ Sincronizzazione completata!");
       toast("Sincronizzazione completata!", 2000);
       return true;
     } catch (error) {
-      console.error("Errore durante la sincronizzazione:", error);
+      console.error("❌ Errore durante la sincronizzazione:", error);
       window.setTimeout(syncWithServer, 1500);
       return false;
     }
   }
 
-  // Funzione chiamata quando torni online
+  /**
+   * 🔂 Avvia la sincronizzazione se non è già stata fatta in questa sessione
+   */
   async function onOnlineHandler() {
-    console.log("Connessione ripristinata. Sincronizzo i dati...");
-    toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
-    sessionStorage.setItem("canRefresh", "false");
-
-    if (!refreshBtn?.classList.contains("disabled")) {
-      refreshBtn?.classList.add("disabled");
+    if (sessionStorage.getItem("hasSynced") === "true") {
+      console.log("🔁 Sync già eseguita in questa sessione.");
+      return;
     }
+
+    console.log("📶 Online: avvio sincronizzazione...");
+    toast("Sincronizzazione in corso. Non chiudere l'app!", 2000);
+    sessionStorage.setItem("canRefresh", "false");
+    refreshBtn?.classList.add("disabled");
 
     const success = await syncWithServer();
 
     if (success) {
+      sessionStorage.setItem("hasSynced", "true");
       sessionStorage.setItem("canRefresh", "true");
       refreshBtn?.classList.remove("disabled");
-      console.log("Sincronizzazione completata con successo!");
-    } else {
-      console.log(
-        "Sincronizzazione fallita, riprovo al prossimo evento online."
-      );
     }
   }
 
-  // Check iniziale se già online: se sì, sync subito
-  if (await isOnline()) {
-    await onOnlineHandler();
+  /**
+   * 🧠 Controlla se serve sincronizzare subito all'avvio
+   */
+  const wasOfflineBefore =
+    localStorage.getItem("lastNetworkStatus") === "offline";
+  const nowOnline = await isOnline();
+
+  if (wasOfflineBefore && nowOnline) {
+    await onOnlineHandler(); // all’avvio: se eravamo offline e ora online, sync
   }
 
-  // Ascolta evento di ritorno online con onNetworkOnline(callback)
+  // 🔌 Rimani in ascolto: se torni online mentre usi l’app ➜ sync
   await onNetworkOnline(onOnlineHandler);
 }
 
-// Avvia tutto
 startNetworkSync();
