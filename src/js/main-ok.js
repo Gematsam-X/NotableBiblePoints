@@ -1,8 +1,9 @@
-import checkVersion from "./checkVersion.js";
-
 document
   .querySelector(".help")
-  .addEventListener("click", () => (window.location.href = "./html/onboarding.html"));
+  .addEventListener(
+    "click",
+    () => (window.location.href = "./html/onboarding.html")
+  );
 
 document.addEventListener("DOMContentLoaded", () => {
   const booksCells = document.querySelectorAll(".periodic-table td");
@@ -29,5 +30,3 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
-
-checkVersion();

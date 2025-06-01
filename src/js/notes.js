@@ -1,11 +1,11 @@
-import Backendless from 'backendless';
-import { isDarkTheme } from "./isDarkTheme.js";
-import { hideGif, showGif } from "./loadingGif.js";
-import toast from "./toast.js";
-import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
-import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
 import { Share } from "@capacitor/share";
+import Backendless from "backendless";
+import { deleteValue, getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
+import { isDarkTheme } from "./isDarkTheme.js";
 import { isOnline } from "./isOnline.js"; // Importa la funzione per verificare la connessione
+import { hideGif, showGif } from "./loadingGif.js";
+import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
+import toast from "./toast.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 

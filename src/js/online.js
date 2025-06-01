@@ -1,6 +1,6 @@
-import { getValue, deleteValue, setValue } from "./indexedDButils.js";
-import toast from "./toast.js";
 import { Network } from "@capacitor/network"; // Plugin Network di Capacitor
+import { deleteValue, getValue, setValue } from "./indexedDButils.js";
+import toast from "./toast.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 

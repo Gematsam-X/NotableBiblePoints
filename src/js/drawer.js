@@ -1,5 +1,5 @@
-import checkVersion from "./checkVersion.js";
 import toast from "./toast.js";
+import { Share } from "@capacitor/share";
 
 const drawer = document.querySelector(".drawer");
 const drawerContent = document.querySelector(".drawer-content");
@@ -49,29 +49,16 @@ document.querySelector("#drawer-account").addEventListener("click", () => {
   window.location.href = "./html/account.html";
 });
 
-document.querySelector("#share-app").addEventListener("click", () => {
+document.querySelector("#share-app").addEventListener("click", async () => {
   const shareData = {
     title: "NotableBiblePoints - Salva i punti notevoli",
     text: "NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi. Provala subito!",
     url: "https://gematsam-x.github.io/NotableBiblePoints/",
   };
 
-  navigator.share(shareData).catch((e) => {
-    console.error("Errore durante la condivisione:", e);
-    toast(`Errore durante la condivisione: ${e.message}`);
-  });
+  await Share.share(shareData);
 });
 
 document.querySelector("#other-apps").addEventListener("click", () => {
   window.location.href = "https://gematsamx.webnode.it/alcuni-miei-progetti/";
 });
-
-document.querySelector("#appVersion").innerText =
-  localStorage.getItem("appVersion");
-
-document
-  .querySelector("#drawer-footer-version")
-  .addEventListener("click", () => {
-    closeDrawer();
-    checkVersion(false, true);
-  });

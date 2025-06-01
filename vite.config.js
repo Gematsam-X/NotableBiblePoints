@@ -10,7 +10,6 @@ const jsFiles = [
   "auth",
   "backup",
   "chaptersAndNotesReferrer",
-  "checkVersion",
   "drawer",
   "idb",
   "indexedDButils",

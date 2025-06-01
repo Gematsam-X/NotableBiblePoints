@@ -1,7 +1,7 @@
-import Backendless from 'backendless';
+import Backendless from "backendless";
+import { deleteValue, getValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
-import { getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 
 export async function deleteCurrentUser() {
   try {
