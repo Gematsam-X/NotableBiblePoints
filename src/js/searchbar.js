@@ -1,3 +1,4 @@
+import Backendless from 'backendless';
 import toast from "./toast.js";
 import { getValue, setValue } from "./indexedDButils.js";
 import { showGif, hideGif } from "./loadingGif.js";

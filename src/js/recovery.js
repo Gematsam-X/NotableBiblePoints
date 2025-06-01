@@ -1,3 +1,4 @@
+import Backendless from 'backendless';
 import toast from "./toast.js";
 import { showGif, hideGif } from "./loadingGif.js";
 
