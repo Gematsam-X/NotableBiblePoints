@@ -69,6 +69,10 @@ const categories = {
     fixPath("../assets/drawer/rightArrow/light.webp"),
     fixPath("../assets/drawer/rightArrow/dark.webp"),
   ],
+  update: [
+    fixPath("../assets/drawer/update/light.webp"),
+    fixPath("../assets/drawer/update/dark.webp"),
+  ]
 };
 
 console.log("categories", categories);
