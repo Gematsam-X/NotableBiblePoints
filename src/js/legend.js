@@ -51,7 +51,7 @@ const categories = {
   ],
   help: [
     fixPath("../assets/help/light.webp"),
-    fixPath("assets/help/dark.webp"),
+    fixPath("../assets/help/dark.webp"),
   ],
   github: [
     fixPath("../assets/github/light.webp"),
