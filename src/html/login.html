@@ -5,6 +5,7 @@
     <title>NotableBiblePoints - Accedi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../icons.css" />
     <link rel="stylesheet" href="../login.css" />
     <link rel="icon" href="../assets/favicon.ico" />
     <script>
@@ -49,13 +50,16 @@
         <label for="email">Email</label>
         <input type="text" id="email" name="email" />
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" />
+        <div class="password-wrapper">
+          <input type="password" id="password" name="password" />
+          <i class="fi-sr-eye" id="loginPwdVisible"></i>
+        </div>
         <button type="submit" id="signIn">Accedi</button>
         <br />
         <br />
         <br />
         <br />
-        <ins id="recovery">Hai dimenticato la password? Recuperala.</ins>
+        <ins id="recovery">Hai dimenticato la password? Clicca qui.</ins>
       </form>
 
       <!-- Modulo Signup -->
@@ -63,7 +67,10 @@
         <label for="newEmail">Email</label>
         <input type="text" id="newEmail" name="newEmail" />
         <label for="newPassword">Password</label>
-        <input type="password" id="newPassword" name="newPassword" />
+        <div class="password-wrapper">
+          <input type="password" id="newPassword" name="newPassword" />
+          <i class="fi-sr-eye" id="signupPwdVisible"></i>
+        </div>
         <button type="submit" id="signUp">Registrati</button>
       </form>
     </div>

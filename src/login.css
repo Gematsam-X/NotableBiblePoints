@@ -1,9 +1,11 @@
 :root {
+  --primary-col: #1c1c1c;
   --nav-color: #000;
   --shadow-col: #1c1c1c;
 }
 
 .dark-theme {
+  --primary-col: #f4f4f9;
   --nav-color: #ffffff;
   --shadow-col: #f4f4f97e;
 }
@@ -43,6 +45,7 @@ body {
 
 .nav a {
   box-shadow: 5px 5px 10px var(--shadow-col);
+  color: var(--primary-col);
   font-weight: bold;
   cursor: pointer;
   font-size: 1.2em;
@@ -89,4 +92,22 @@ h1 {
 #signIn,
 #signUp {
   margin-top: 1.33rem;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fi-sr-eye, .fi-sr-eye-crossed {
+  font-size: larger;
+  margin-left: 3%;
+  cursor: pointer;
+}
+
+form input {
+  text-align: left;
+  display: block;
+  margin-left: 0;
 }
