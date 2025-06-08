@@ -7,6 +7,28 @@ const password = document.getElementById("password");
 const newPassword = document.getElementById("newPassword");
 const email = document.getElementById("email");
 const newEmail = document.getElementById("newEmail");
+const loginPwdVisible = document.getElementById("loginPwdVisible");
+const signupPwdVisible = document.getElementById("signupPwdVisible");
+
+loginPwdVisible.addEventListener("click", function () {
+  if (password.type === "password") {
+    password.type = "text";
+    loginPwdVisible.classList.replace("fi-sr-eye", "fi-sr-eye-crossed");
+  } else {
+    password.type = "password";
+    loginPwdVisible.classList.replace("fi-sr-eye-crossed", "fi-sr-eye");
+  }
+});
+
+signupPwdVisible.addEventListener("click", function () {
+  if (newPassword.type === "password") {
+    newPassword.type = "text";
+    signupPwdVisible.classList.replace("fi-sr-eye", "fi-sr-eye-crossed");
+  } else {
+    newPassword.type = "password";
+    signupPwdVisible.classList.replace("fi-sr-eye-crossed", "fi-sr-eye");
+  }
+});
 
 loginTab.addEventListener("click", function () {
   keyword.textContent = "Accedi a";
