@@ -68,21 +68,21 @@
 
 @font-face {
   font-family: "Cinzel";
-  src: url("../assets/fonts/Cinzel-Bold.woff2") format("woff2");
+  src: url("/src/assets/fonts/Cinzel-Bold.woff2") format("woff2");
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Fira Sans Condensed";
-  src: url("../assets/fonts/FiraSansCondensed-SemiBold.woff2") format("woff2");
+  src: url("/src/assets/fonts/FiraSansCondensed-SemiBold.woff2") format("woff2");
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Fira Sans Condensed Bold";
-  src: url("./assets/fonts/FiraSansCondensed-ExtraBold.ttf") format("truetype");
+  src: url("/src/assets/fonts/FiraSansCondensed-ExtraBold.ttf") format("truetype");
   font-style: normal;
   font-display: swap;
 }

@@ -36,7 +36,7 @@ const jsFiles = [
 
 // Entry HTML
 const htmlEntries = {
-  main: resolve(__dirname, "src/index.html"),
+  main: resolve(__dirname, "index.html"),
   login: resolve(__dirname, "src/html/login.html"),
   account: resolve(__dirname, "src/html/account.html"),
   chapters: resolve(__dirname, "src/html/chapters.html"),
@@ -66,7 +66,7 @@ Object.entries(allInputs).forEach(([key, path]) => {
 // Configurazione finale
 export default defineConfig({
   preview: {
-    open: "/src/index.html",
+    open: "/index.html",
   },
   root: "./",
   base: "./",

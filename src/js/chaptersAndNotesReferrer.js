@@ -5,7 +5,7 @@ if (
   (window.location.href.split("/").pop() === "notes.html" &&
     !sessionStorage.getItem("selectedChapter"))
 ) {
-  window.location.href = "../index.html";
+  window.location.href = "/index.html";
 }
 
 const referrer = document.referrer.split("/").pop();
@@ -17,7 +17,7 @@ if (
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
   sessionStorage.removeItem("selectedBook");
-  window.location.href = "../index.html";
+  window.location.href = "/index.html";
 }
 
 if (

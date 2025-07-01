@@ -42,7 +42,7 @@ const urlsToCache = [
   "/src/html/accessRestricted.html",
   "/src/html/account.html",
   "/src/html/chapters.html",
-  "/src/index.html",
+  "/index.html",
   "/src/html/notes.html",
   "/src/html/onboarding.html",
   "/src/js/injectInstructions.js",
