@@ -1,8 +1,8 @@
-import { isDarkTheme } from "./isDarkTheme.js";
-import { hideGif, showGif } from "./loadingGif.js";
-import toast from "./toast.js";
-import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
-import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
+import { isDarkTheme } from "/src/js/isDarkTheme.js";
+import { hideGif, showGif } from "/src/js/loadingGif.js";
+import toast from "/src/js/toast.js";
+import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione di logout
+import { setValue, getValue, deleteValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni IndexedDB
 import Backendless from "backendless";
 
 const refreshBtn = document.querySelector(".refreshNotes");

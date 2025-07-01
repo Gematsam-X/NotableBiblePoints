@@ -1,5 +1,5 @@
-import { hideGif, showGif } from "./loadingGif.js";
-import toast from "./toast.js";
+import { hideGif, showGif } from "/src/js/loadingGif.js";
+import toast from "/src/js/toast.js";
 import Backendless from "backendless";
 
 async function registerUser(email, password) {
@@ -67,7 +67,7 @@ async function loginUser(email, password) {
     // Salva l'utente corrente sul localStorage per mantenerlo loggato
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
-    window.location.href = "main.html"; // Reindirizza alla pagina principale
+    window.location.href = "../index.html"; // Reindirizza alla pagina principale
   } catch (error) {
     console.error("Errore nel login:", error);
     const errMsg = error.message.toLowerCase();

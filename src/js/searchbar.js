@@ -1,6 +1,6 @@
-import toast from "./toast.js";
-import { getValue, setValue } from "./indexedDButils.js";
-import { showGif, hideGif } from "./loadingGif.js";
+import toast from "/src/js/toast.js";
+import { getValue, setValue } from "/src/js/indexedDButils.js";
+import { showGif, hideGif } from "/src/js/loadingGif.js";
 import Backendless from "backendless";
 
 const toggleSearchMode = document.getElementById("toggleSearchMode");

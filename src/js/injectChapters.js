@@ -1,4 +1,4 @@
-import toast from "./toast.js";
+import toast from "/src/js/toast.js";
 
 const selectedBook = sessionStorage.getItem("selectedBook");
 const bookTitle = document.getElementById("book-title");

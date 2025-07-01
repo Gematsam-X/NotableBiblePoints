@@ -1,5 +1,5 @@
-import checkVersion from "./checkVersion.js";
-import toast from "./toast.js";
+import checkVersion from "/src/js/checkVersion.js";
+import toast from "/src/js/toast.js";
 
 const drawer = document.querySelector(".drawer");
 const drawerContent = document.querySelector(".drawer-content");

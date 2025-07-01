@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>NotableBiblePoints - accesso non consentito</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../styles.css" />
-    <link rel="icon" href="../assets/favicon.ico" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="icon" href="/src/assets/favicon.ico" />
   </head>
   <body class="centered-body">
     <h1>Accesso non consentito</h1>
@@ -20,7 +20,7 @@
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module" src="/src/js/logoutAndDelete.js"></script>
     <script type="module">
-      import { redirectToOriginPage } from "../js/logoutAndDelete.js";
+      import { redirectToOriginPage } from "/src/js/logoutAndDelete.js";
       document
         .querySelector("#linkToOriginPage")
         .addEventListener("click", redirectToOriginPage);

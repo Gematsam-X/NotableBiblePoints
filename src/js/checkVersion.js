@@ -1,4 +1,4 @@
-import toast from "./toast.js";
+import toast from "/src/js/toast.js";
 
 export default async function checkVersion(refresh = true, showToast = false) {
   console.log("refresh", refresh, "showToast", showToast);
