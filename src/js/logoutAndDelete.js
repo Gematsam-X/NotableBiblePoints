@@ -84,7 +84,7 @@ export async function logoutUser(showAlert = true) {
     // Mantenere isAuthenticated in localStorage
     localStorage.removeItem("userNotes");
     localStorage.removeItem("deletedNotes");
-    window.location.href = "/src/html//src/html/login.html";
+    window.location.href = "/src/html/login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
     toast("Errore durante il logout: " + error.message, 4000);
@@ -124,7 +124,7 @@ export async function redirectToOriginPage() {
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
   if (isAuthenticated === "false") {
-    window.location.href = "/src/html//src/html/login.html";
+    window.location.href = "/src/html/login.html";
     return;
   }
 
@@ -134,6 +134,6 @@ export async function redirectToOriginPage() {
     console.log("Ritornando a " + previousPage);
     window.location.href = previousPage;
   } else {
-    window.location.href = "/src/html//src/html/login.html";
+    window.location.href = "/src/html/login.html";
   }
 }

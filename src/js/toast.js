@@ -17,7 +17,7 @@ export default function toast(message, duration = 3000) {
       document.querySelector(".modal").appendChild(toast);
     } else if (isOnPage("notes.html")) {
       document.querySelector(".notesContainer")?.appendChild(toast);
-    } else if (isOnPage("/src/html/login.html")) {
+    } else if (isOnPage("login.html")) {
       document.querySelector(".container")?.appendChild(toast);
     } else {
       document.body.appendChild(toast);
