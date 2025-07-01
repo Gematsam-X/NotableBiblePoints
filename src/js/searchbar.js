@@ -226,7 +226,7 @@ function redirectToNote(book, chapter, id) {
     sessionStorage.getItem("selectedNoteId"),
     sessionStorage.getItem("selectedChapter")
   );
-  window.location.href = "../html/notes.html";
+  window.location.href = "/src/html/notes.html";
 }
 
 // Osserva cambiamenti nel contenuto della modale

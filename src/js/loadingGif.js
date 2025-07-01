@@ -4,7 +4,7 @@ loadingModalElement.classList.add("loadingModal");
 
 const loadingModalContent = document.createElement("div");
 loadingModalContent.classList.add("loadingModalContent");
-loadingModalContent.innerHTML = "<img src='../assets/loadingGif/loading.gif'>";
+loadingModalContent.innerHTML = "<img src='/src/assets/loadingGif/loading.gif'>";
 
 document.body.appendChild(loadingModalElement);
 loadingModalElement.appendChild(loadingModalContent);

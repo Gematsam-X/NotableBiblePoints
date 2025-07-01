@@ -1,4 +1,4 @@
-import { hideGif, showGif } from "./loadingGif.js";
+import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import Backendless from "backendless";

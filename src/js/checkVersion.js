@@ -22,7 +22,7 @@ export default async function checkVersion(refresh = true, showToast = false) {
   }
 
   try {
-    const response = await fetch("../../version.json", { cache: "no-store" });
+    const response = await fetch("/version.json", { cache: "no-store" });
     const data = await response.json();
     const latestVersion = data.version;
     const currentVersion = localStorage.getItem("appVersion");

@@ -3,47 +3,47 @@ import { themeToggleSwitch } from "/src/js/theme.js";
 themeToggleSwitch?.addEventListener("click", toggleImages);
 
 const categories = {
-  avatar: ["../assets/avatar/light.webp", "../assets/avatar/dark.webp"],
+  avatar: ["/src/assets/avatar/light.webp", "/src/assets/avatar/dark.webp"],
   deleteAccount: [
-    "../assets/account/delete/light.webp",
-    "../assets/account/delete/dark.webp",
+    "/src/assets/account/delete/light.webp",
+    "/src/assets/account/delete/dark.webp",
   ],
   deleteNote: [
-    "../assets/notes/delete/light.webp",
-    "../assets/notes/delete/dark.webp",
+    "/src/assets/notes/delete/light.webp",
+    "/src/assets/notes/delete/dark.webp",
   ],
-  edit: ["../assets/notes/edit/light.webp", "../assets/notes/edit/dark.webp"],
+  edit: ["/src/assets/notes/edit/light.webp", "/src/assets/notes/edit/dark.webp"],
   share: [
-    "../assets/notes/share/light.webp",
-    "../assets/notes/share/dark.webp",
+    "/src/assets/notes/share/light.webp",
+    "/src/assets/notes/share/dark.webp",
   ],
   logout: [
-    "../assets/account/logout/light.webp",
-    "../assets/account/logout/dark.webp",
+    "/src/assets/account/logout/light.webp",
+    "/src/assets/account/logout/dark.webp",
   ],
   refreshNotes: [
-    "../assets/notes/refresh/light.webp",
-    "../assets/notes/refresh/dark.webp",
+    "/src/assets/notes/refresh/light.webp",
+    "/src/assets/notes/refresh/dark.webp",
   ],
   restoreBackup: [
-    "../assets/account/backup/restore/light.webp",
-    "../assets/account/backup/restore/dark.webp",
+    "/src/assets/account/backup/restore/light.webp",
+    "/src/assets/account/backup/restore/dark.webp",
   ],
   createBackup: [
-    "../assets/account/backup/create/light.webp",
-    "../assets/account/backup/create/dark.webp",
+    "/src/assets/account/backup/create/light.webp",
+    "/src/assets/account/backup/create/dark.webp",
   ],
-  lens: ["../assets/lens/light.webp", "../assets/lens/dark.webp"],
-  help: ["../assets/help/light.webp", "../assets/help/dark.webp"],
-  github: ["../assets/github/light.webp", "../assets/github/dark.webp"],
-  openDrawer: ["../assets/drawer/open/light.webp", "../assets/drawer/open/dark.webp"],
+  lens: ["/src/assets/lens/light.webp", "/src/assets/lens/dark.webp"],
+  help: ["/src/assets/help/light.webp", "/src/assets/help/dark.webp"],
+  github: ["/src/assets/github/light.webp", "/src/assets/github/dark.webp"],
+  openDrawer: ["/src/assets/drawer/open/light.webp", "/src/assets/drawer/open/dark.webp"],
   otherApps: [
-    "../assets/drawer/otherApps/light.webp",
-    "../assets/drawer/otherApps/dark.webp",
+    "/src/assets/drawer/otherApps/light.webp",
+    "/src/assets/drawer/otherApps/dark.webp",
   ],
   rightArrow: [
-    "../assets/drawer/rightArrow/light.webp",
-    "../assets/drawer/rightArrow/dark.webp",
+    "/src/assets/drawer/rightArrow/light.webp",
+    "/src/assets/drawer/rightArrow/dark.webp",
   ],
 };
 

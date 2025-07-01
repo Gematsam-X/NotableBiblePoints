@@ -113,14 +113,14 @@ async function loadNotes() {
         noteElement.setAttribute("data-id", noteId);
 
         const deleteImageSrc = isDarkTheme
-          ? "../assets/notes/delete/dark.webp"
-          : "../assets/notes/delete/light.webp";
+          ? "/src/assets/notes/delete/dark.webp"
+          : "/src/assets/notes/delete/light.webp";
         const editImageSrc = isDarkTheme
-          ? "../assets/notes/edit/dark.webp"
-          : "../assets/notes/edit/light.webp";
+          ? "/src/assets/notes/edit/dark.webp"
+          : "/src/assets/notes/edit/light.webp";
         const shareImageSrc = isDarkTheme
-          ? "../assets/notes/share/dark.webp"
-          : "../assets/notes/share/light.webp";
+          ? "/src/assets/notes/share/dark.webp"
+          : "/src/assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
           <div class="verse-number">
