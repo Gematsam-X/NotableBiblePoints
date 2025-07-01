@@ -12,18 +12,18 @@ if (userEmail && userToken) {
     if (localStorage.getItem("isAuthenticated") === "true") {
       console.log("Utente già autenticato:", userEmail);
       // Se l'utente sta effettuando il login ma è già autenticato, salta il login e reindirizza alla home
-      if (window.location.pathname.split("/").pop() === "login.html")
+      if (window.location.pathname.split("/").pop() === "/src/html/login.html")
         window.location.href = "index.html";
     } else {
       console.log("Utente non autenticato o token non valido.");
       // Se l'utente non è autenticato, esegui il logout e reindirizza
-      if (window.location.pathname.split("/").pop() !== "login.html")
+      if (window.location.pathname.split("/").pop() !== "/src/html/login.html")
         logoutUser();
     }
   } catch (error) {
     console.error("Errore nel recupero dell'utente:", error);
     // In caso di errore, esegui il logout
-    if (window.location.pathname.split("/").pop() !== "login.html")
+    if (window.location.pathname.split("/").pop() !== "/src/html/login.html")
       logoutUser(false);
   }
 } else {
@@ -31,10 +31,10 @@ if (userEmail && userToken) {
   console.log("Nessun utente loggato, vai al login.");
   localStorage.setItem("isAuthenticated", "false");
   if (
-    window.location.pathname.split("/").pop() !== "login.html" &&
+    window.location.pathname.split("/").pop() !== "/src/html/login.html" &&
     window.location.pathname.split("/").pop() !== "accessRestricted.html"
   )
-    window.location.href = "login.html";
+    window.location.href = "/src/html/login.html";
 }
 
 sessionStorage.setItem("scriptExecuted", "true");
