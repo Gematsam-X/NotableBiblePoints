@@ -268,23 +268,5 @@
     <script type="module" src="/src/js/searchbar.js"></script>
     <script type="module" src="/src/js/online.js"></script>
     <script type="module" src="/src/js/drawer.js"></script>
-    <script type="module">
-      import toast from "/src/js/toast.js";
-      document.addEventListener("DOMContentLoaded", () => {
-        if (localStorage.getItem("isFirstTime") === null) {
-          localStorage.setItem("isFirstTime", "false");
-          if (
-            confirm(
-              "Benvenuto in NotableBiblePoints! Sei caldamente invitato a visitare la pagina di introduzione per scoprire tutte le funzionalità dell'app. Vuoi visitarla ora?"
-            )
-          ) {
-            window.location.href = "/src/html/onboarding.html";
-          }
-          toast(
-            "Puoi visitare la pagina di introduzione in qualsiasi momento cliccando sull'icona di aiuto in basso a sinistra."
-          );
-        }
-      });
-    </script>
   </body>
 </html>
