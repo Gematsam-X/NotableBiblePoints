@@ -4,8 +4,9 @@ node_modules/
 .yarn/
 *.log
 
-# Output Vite ssr
+# Output Vite
 .ssr/
+dist/
 
 # Cache di Vite
 .vite/
