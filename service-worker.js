@@ -52,7 +52,7 @@ const urlsToCache = [
   "./src/js/legend.js",
   "./src/js/theme.js",
   "./src/js/backup.js",
-  "./src/js/main.js",
+  "./src/js/main-ok.js",
   "./src/js/accountEventListeners.js",
   "./src/js/isDarkTheme.js",
   "./src/js/injectChapters.js",

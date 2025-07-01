@@ -3,6 +3,7 @@ import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
 import { setValue, getValue, deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
+import Backendless from "backendless";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 

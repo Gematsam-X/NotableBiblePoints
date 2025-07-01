@@ -1,3 +1,5 @@
+import "/src/styles.css";
+
 import { deleteCurrentUser, logoutUser } from "./logoutAndDelete.js";
 import { createBackup, restoreBackup } from "./backup.js";
 
