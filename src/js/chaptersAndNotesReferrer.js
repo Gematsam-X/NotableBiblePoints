@@ -1,3 +1,5 @@
+import "/src/styles.css"
+
 if (
   !sessionStorage.getItem("selectedBook") ||
   (window.location.href.split("/").pop() === "notes.html" &&

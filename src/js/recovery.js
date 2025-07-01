@@ -1,5 +1,6 @@
 import toast from "./toast.js";
 import { showGif, hideGif } from "./loadingGif.js";
+import Backendless from "backendless";
 
 const modal = document.querySelector(".modal");
 

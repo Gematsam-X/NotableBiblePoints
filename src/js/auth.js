@@ -1,5 +1,6 @@
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import Backendless from "backendless";
 
 async function registerUser(email, password) {
   if (password.length < 6) {

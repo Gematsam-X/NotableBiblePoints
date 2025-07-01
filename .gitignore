@@ -1,0 +1,31 @@
+# Dipendenze
+node_modules/
+.pnpm/
+.yarn/
+*.log
+
+# Output Vite ssr
+.ssr/
+
+# Cache di Vite
+.vite/
+
+# Cache di strumenti vari
+.cache/
+.eslintcache
+
+# File di sistema o editor
+.DS_Store
+Thumbs.db
+
+# IDE vari
+.vscode/
+.idea/
+*.sw?
+
+# Environment variables
+.env
+.env.*  # tipo .env.local, .env.production, ecc.
+
+# Output temporaneo di Vite quando serve
+*.tsbuildinfo

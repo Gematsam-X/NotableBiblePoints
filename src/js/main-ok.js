@@ -1,3 +1,5 @@
+import "/src/styles.css";
+import "/src/drawer.css";
 import checkVersion from "./checkVersion.js";
 
 document
