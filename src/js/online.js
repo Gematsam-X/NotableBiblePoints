@@ -1,5 +1,5 @@
-import { getValue, deleteValue, setValue } from "./indexedDButils.js";
-import toast from "./toast.js";
+import { getValue, deleteValue, setValue } from "/src/js/indexedDButils.js";
+import toast from "/src/js/toast.js";
 import Backendless from "backendless";
 
 const refreshBtn = document.querySelector(".refreshNotes");

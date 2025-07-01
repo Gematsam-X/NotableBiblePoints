@@ -1,4 +1,4 @@
-import { themeToggleSwitch } from "./theme.js";
+import { themeToggleSwitch } from "/src/js/theme.js";
 let isDarkTheme = false;
 
 function getTheme() {

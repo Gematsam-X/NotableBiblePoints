@@ -1,4 +1,4 @@
-import { getValue, setValue } from "./indexedDButils.js";
+import { getValue, setValue } from "/src/js/indexedDButils.js";
 import Backendless from "backendless";
 
 async function verifyChapterNotes() {

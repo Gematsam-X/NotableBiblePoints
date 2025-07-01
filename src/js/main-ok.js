@@ -1,10 +1,10 @@
 import "/src/styles.css";
 import "/src/drawer.css";
-import checkVersion from "./checkVersion.js";
+import checkVersion from "/src/js/checkVersion.js";
 
 document
   .querySelector(".help")
-  .addEventListener("click", () => (window.location.href = "onboarding.html"));
+  .addEventListener("click", () => (window.location.href = "/src/html/onboarding.html"));
 
 document.addEventListener("DOMContentLoaded", () => {
   const booksCells = document.querySelectorAll(".periodic-table td");
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cell.addEventListener("click", () => {
       const bookName = cell.dataset.name; // Prendiamo il nome dal data-name
       sessionStorage.setItem("selectedBook", bookName); // Salviamo in sessionStorage
-      window.location.href = "chapters.html"; // Reindirizziamo alla pagina dei capitoli
+      window.location.href = "/src/html/chapters.html"; // Reindirizziamo alla pagina dei capitoli
     });
   });
 });
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("../../service-worker.js")
+      .register("/service-worker.js")
       .then((registration) => {
         console.log("Service Worker registrato con successo: ", registration);
       })

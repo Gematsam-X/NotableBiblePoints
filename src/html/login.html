@@ -4,13 +4,13 @@
     <meta charset="utf-8" />
     <title>NotableBiblePoints - Accedi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="../icons.css" />
-    <link rel="stylesheet" href="../login.css" />
-    <link rel="icon" href="../assets/favicon.ico" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/icons.css" />
+    <link rel="stylesheet" href="/src/login.css" />
+    <link rel="icon" href="/src/assets/favicon.ico" />
     <script>
       if (localStorage.getItem("isAuthenticated") === "true") {
-        window.location.href = "main.html";
+        window.location.href = "/src/index.html";
       }
     </script>
     <!-- Meta tag Open Graph -->
@@ -105,7 +105,7 @@
     <script type="module" src="/src/js/recovery.js"></script>
     <script type="module" src="/src/js/legend.js"></script>
     <script type="module">
-      import checkVersion from "../js/checkVersion.js";
+      import checkVersion from "/src/js/checkVersion.js";
       checkVersion();
     </script>
     <script type="module" >
