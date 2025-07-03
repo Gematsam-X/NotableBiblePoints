@@ -365,10 +365,10 @@ function checkBibleBook() {
     // Se c'è il capitolo, reindirizza a notes.html
     if (chapterInput && !isNaN(chapterInput)) {
       sessionStorage.setItem("selectedChapter", parseInt(chapterInput));
-      window.location.href = "notes.html";
+      window.location.href = "/src/html/notes.html";
     } else {
       // Se solo il libro, reindirizza a chapters.html
-      window.location.href = "chapters.html";
+      window.location.href = "/src/html/chapters.html";
     }
   } else if (matches?.length > 1) {
     searchInput.blur();

@@ -158,7 +158,7 @@ function createSquares(num) {
     square.textContent = i;
     square.addEventListener("click", () => {
       sessionStorage.setItem("selectedChapter", i);
-      window.location.href = "notes.html";
+      window.location.href = "/src/html/notes.html";
     });
     if (chaptersContainer) chaptersContainer.appendChild(square);
   }
