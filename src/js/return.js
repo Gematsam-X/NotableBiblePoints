@@ -6,7 +6,7 @@ const loc = document.location.href.split("/").pop();
 if (loc === "notes.html") {
   returnButton.addEventListener(
     "click",
-    () => (window.location.href = "chapters.html")
+    () => (window.location.href = "/src/html/chapters.html")
   );
 } else if (loc === "chapters.html") {
   returnButton.addEventListener(

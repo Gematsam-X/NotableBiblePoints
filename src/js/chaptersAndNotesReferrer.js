@@ -1,4 +1,4 @@
-import "/src/styles.css"
+import "/src/styles.css";
 
 if (
   !sessionStorage.getItem("selectedBook") ||
@@ -12,6 +12,7 @@ const referrer = document.referrer.split("/").pop();
 
 if (
   referrer !== "index.html" &&
+  document.referrer === "/" &&
   referrer !== "chapters.html" &&
   referrer !== "notes.html"
 ) {

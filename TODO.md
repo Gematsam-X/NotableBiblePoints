@@ -40,4 +40,5 @@
 - [x] Remove the button for the theme in each page and implement a switch (like the toggleSearchMode switch) toggling the theme
 - [x] Improve the search function, splitting the search term into single words and searching also only single words, instead of the whole search term
 - [x] Add a "Show password" button/icon
+- [x] Use a bundler, allowing to define env vars (improving security)
 - [ ] Add the ability to tag notes

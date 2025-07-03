@@ -5,6 +5,7 @@ const allowedPages = [
   "index.html",
   "chapters.html",
   "account.html",
+  "/",
 ];
 
 // Controlla se il referrer è valido
@@ -18,13 +19,13 @@ if (localStorage.getItem("isAuthenticated") != "true") {
   let shouldRedirect = null;
 
   if (
-    window.location.href === "index.html" &&
+    (window.location.href === "index.html" || window.location.href === "/") &&
     document.referrer === "chapters.html"
   ) {
     shouldRedirect = false;
   }
   if (
-    referrer === "/src/html/login.html" ||
+    referrer === "login.html" ||
     isAllowed ||
     localStorage.getItem("isAuthenticated") == "true"
   ) {
