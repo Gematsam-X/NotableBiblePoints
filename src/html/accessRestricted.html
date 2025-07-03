@@ -12,19 +12,12 @@
     <br />
     <p>
       Per accedere a questa pagina devi essere autenticato. Puoi effettuare
-      l'accesso o la registrazione da
-      <ins id="linkToOriginPage">questo link</ins>.
+      l'accesso o la registrazione da <a href="/src/html/login.html">questo link</a>.
     </p>
 
     <script type="module" src="/src/js/backendlessInit.js"></script>
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module" src="/src/js/logoutAndDelete.js"></script>
-    <script type="module">
-      import { redirectToOriginPage } from "/src/js/logoutAndDelete.js";
-      document
-        .querySelector("#linkToOriginPage")
-        .addEventListener("click", redirectToOriginPage);
-    </script>
     <script type="module" src="/src/js/online.js"></script>
   </body>
 </html>

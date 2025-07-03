@@ -34,6 +34,11 @@ const jsFiles = [
   "verifyChapterNotes",
 ];
 
+const pwaEntries = [
+  resolve(__dirname, "manifest.json"),
+  resolve(__dirname, "service-worker.js")
+]
+
 // Entry HTML
 const htmlEntries = {
   main: resolve(__dirname, "index.html"),
@@ -50,10 +55,11 @@ const jsEntries = Object.fromEntries(
   jsFiles.map((name) => [name, resolve(__dirname, `src/js/${name}.js`)])
 );
 
-// Tutti gli input (HTML + JS)
+// Tutti gli input (HTML + JS + altro)
 const allInputs = {
   ...htmlEntries,
   ...jsEntries,
+  ...pwaEntries
 };
 
 // Log dei file effettivi prima della build

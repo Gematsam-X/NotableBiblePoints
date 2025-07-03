@@ -24,6 +24,14 @@
       content="https://gematsam-x.github.io/NotableBiblePoints/index.html"
     />
     <meta property="og:type" content="website" />
+    <script type="module">
+      if (localStorage.getItem("isAuthenticated") != "true") {
+        window.location.href = "/src/html/accessRestricted.html";
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userToken");
+      }
+    </script>
   </head>
   <body>
     <button id="return-btn">Indietro</button>
