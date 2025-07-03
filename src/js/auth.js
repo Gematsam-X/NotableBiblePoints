@@ -67,6 +67,10 @@ async function loginUser(email, password) {
     // Salva l'utente corrente sul localStorage per mantenerlo loggato
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
+    // Imposta il flag di autenticazione
+    localStorage.setItem("isAuthenticated", "true");
+    console.log("Utente autenticato:", localStorage.getItem("isAuthenticated"));
+
     window.location.href = "/index.html"; // Reindirizza alla pagina principale
   } catch (error) {
     console.error("Errore nel login:", error);
