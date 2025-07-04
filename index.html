@@ -32,6 +32,11 @@
     />
     <meta property="og:type" content="website" />
     <script type="module">
+      if (window.location.hostname.includes("github.io"))
+        window.location.href =
+          "https://notablebiblepoints.netlify.app/index.html";
+    </script>
+    <script type="module">
       if (localStorage.getItem("isAuthenticated") != "true") {
         window.location.href = "/src/html/accessRestricted.html";
         localStorage.removeItem("isAuthenticated");
