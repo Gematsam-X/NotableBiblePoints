@@ -1,6 +1,6 @@
-import "/src/styles.css";
 import "/src/drawer.css";
 import checkVersion from "/src/js/checkVersion.js";
+import "/src/styles.css";
 
 document
   .querySelector(".help")

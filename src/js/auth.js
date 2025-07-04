@@ -1,27 +1,27 @@
+import backendlessRequest from "./backendlessRequest.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
-import Backendless from "backendless";
 
 async function registerUser(email, password) {
   if (password.length < 6) {
     toast("La password deve contenere almeno 6 caratteri.");
-
-    return; // Fermiamo l'esecuzione qui
+    return;
   }
 
   console.log("Lunghezza password valida:", password.length);
-
   showGif();
 
-  const user = new Backendless.User();
-  user.email = email.toLowerCase().trim();
-  user.password = password;
-  user.name = email.toLowerCase().trim(); // Usa l'email come nome utente
+  const formattedEmail = email.toLowerCase().trim();
 
   try {
-    const registeredUser = await Backendless.UserService.register(user);
+    const registeredUser = await backendlessRequest("register", {
+      email: formattedEmail,
+      password,
+      name: formattedEmail, // puoi modificare se vuoi un nome diverso
+    });
+
     console.log("Utente registrato:", registeredUser);
-    toast(`Registrazione riuscita! Controlla la tua email per la conferma.`);
+    toast("Registrazione riuscita! Controlla la tua email per la conferma.");
   } catch (error) {
     console.error("Errore durante la registrazione:", error);
     const errMsg = error.message.toLowerCase();
@@ -54,11 +54,10 @@ async function loginUser(email, password) {
   showGif();
 
   try {
-    const loggedInUser = await Backendless.UserService.login(
-      email,
-      password,
-      true
-    );
+    const loggedInUser = await backendlessRequest("login", {
+      email: email.toLowerCase().trim(),
+      password: password.trim(),
+    });
     console.log("Utente loggato:", loggedInUser);
 
     // Salva l'email dell'utente in localStorage
@@ -106,20 +105,16 @@ async function loginUser(email, password) {
 const signInButton = document.getElementById("signIn");
 const signUpButton = document.getElementById("signUp");
 
-if (signInButton) {
-  signInButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    loginUser(email, password);
-  });
-}
+signInButton?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  loginUser(email, password);
+});
 
-if (signUpButton) {
-  signUpButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("newEmail").value.trim();
-    const password = document.getElementById("newPassword").value.trim();
-    registerUser(email, password);
-  });
-}
+signUpButton?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("newEmail").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  registerUser(email, password);
+});

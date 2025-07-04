@@ -7,7 +7,7 @@ import { viteStaticCopy } from "vite-plugin-static-copy"; // 🧩 Plugin per cop
 const jsFiles = [
   "accountEventListeners",
   "auth",
-  "backendlessInit",
+  "backendlessRequest",
   "backup",
   "chaptersAndNotesReferrer",
   "checkVersion",
@@ -34,10 +34,10 @@ const jsFiles = [
   "verifyChapterNotes",
 ];
 
-const pwaEntries = [
-  resolve(__dirname, "manifest.json"),
-  resolve(__dirname, "service-worker.js")
-]
+const pwaEntries = {
+  manifest: resolve(__dirname, "manifest.json"),
+  sw: resolve(__dirname, "service-worker.js"),
+};
 
 // Entry HTML
 const htmlEntries = {
@@ -59,7 +59,7 @@ const jsEntries = Object.fromEntries(
 const allInputs = {
   ...htmlEntries,
   ...jsEntries,
-  ...pwaEntries
+  ...pwaEntries,
 };
 
 // Log dei file effettivi prima della build
@@ -71,6 +71,9 @@ Object.entries(allInputs).forEach(([key, path]) => {
 
 // Configurazione finale
 export default defineConfig({
+  server: {
+    port: 5174,
+  },
   preview: {
     open: "/index.html",
   },

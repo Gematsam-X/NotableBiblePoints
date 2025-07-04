@@ -1,15 +1,33 @@
+import backendlessRequest from "./backendlessRequest.js";
+import { getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
-import { getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
-import Backendless from "backendless";
 
 async function findUserRecords() {
-  const databaseEntry =
-    (
-      await Backendless.Data.of("NotableBiblePoints").findFirst()
-    ).NotablePoints.filter(
-      (entry) => entry.owner == localStorage.getItem("userEmail")
-    ) || (await getValue("userNotes"));
+  const userEmail = localStorage.getItem("userEmail");
+  let databaseEntry;
+
+  try {
+    // Chiamiamo la funzione serverless per ottenere il primo record di NotableBiblePoints
+    const fullRecord = await backendlessRequest(
+      "getData",
+      {},
+      { table: "NotableBiblePoints" }
+    );
+
+    const firstEntry = Array.isArray(fullRecord) ? fullRecord[0] : null;
+    const points = firstEntry?.NotablePoints || [];
+
+    // Filtriamo per proprietario
+    databaseEntry = points.filter((entry) => entry.owner === userEmail);
+  } catch (err) {
+    console.error("Errore durante il recupero dal server:", err.message);
+  }
+
+  // Se non troviamo nulla, tentiamo il fallback locale
+  if (!databaseEntry || databaseEntry.length === 0) {
+    databaseEntry = await getValue("userNotes");
+  }
 
   if (!databaseEntry) {
     toast("Errore: dati non trovati.");
@@ -107,7 +125,13 @@ export async function restoreBackup() {
 
         // Recupera il primo (e unico) record dal database che contiene tutte le note
         let userNotes = navigator.onLine
-          ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+          ? (
+              await backendlessRequest(
+                "getData",
+                {},
+                { table: "NotableBiblePoints" }
+              )
+            )[0]
           : await getValue("userNotes");
 
         if (!userNotes) {
@@ -143,7 +167,10 @@ export async function restoreBackup() {
         userNotes.NotablePoints = notes;
 
         if (navigator.onLine) {
-          await Backendless.Data.of("NotableBiblePoints").save(userNotes);
+          await backendlessRequest("saveData", userNotes, {
+            table: "NotableBiblePoints",
+          });
+
           console.log("Backup ripristinato con successo sul server!");
         } else {
           await setValue(

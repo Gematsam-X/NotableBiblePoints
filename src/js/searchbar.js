@@ -1,7 +1,7 @@
-import toast from "/src/js/toast.js";
+import backendlessRequest from "./backendlessRequest.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js";
-import { showGif, hideGif } from "/src/js/loadingGif.js";
-import Backendless from "backendless";
+import { hideGif, showGif } from "/src/js/loadingGif.js";
+import toast from "/src/js/toast.js";
 
 const toggleSearchMode = document.getElementById("toggleSearchMode");
 const searchInput = document.getElementById("search-input");
@@ -61,11 +61,20 @@ async function searchInJson(searchTerm) {
   if (!notesData || !notesData.length) {
     if (navigator.onLine) {
       showGif();
-      notesData = (
-        await Backendless.Data.of("NotableBiblePoints").findFirst()
-      ).NotablePoints.filter(
-        (note) => note.owner === localStorage.getItem("userEmail")
+      const results = await backendlessRequest(
+        "getData",
+        {},
+        { table: "NotableBiblePoints" }
       );
+      const firstRecord = Array.isArray(results) ? results[0] : null;
+
+      const userEmail = localStorage.getItem("userEmail");
+
+      const notesData =
+        firstRecord?.NotablePoints?.filter(
+          (note) => note.owner === userEmail
+        ) || [];
+
       await setValue("userNotes", notesData);
       hideGif();
     } else {

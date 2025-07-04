@@ -1,7 +1,7 @@
 import "/src/styles.css";
 
-import { deleteCurrentUser, logoutUser } from "./logoutAndDelete.js";
 import { createBackup, restoreBackup } from "./backup.js";
+import { deleteCurrentUser, logoutUser } from "./logoutAndDelete.js";
 
 function addSpecificEventListener(id, callback) {
   return document.getElementById(id).addEventListener("click", callback);

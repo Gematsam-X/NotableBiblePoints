@@ -1,11 +1,16 @@
+import backendlessRequest from "./backendlessRequest.js";
+import { deleteValue, getValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
-import { getValue, deleteValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
-import Backendless from "backendless";
 
 export async function deleteCurrentUser() {
   try {
-    const currentUser = await Backendless.UserService.getCurrentUser();
+    const currentUser = await backendlessRequest(
+      "getCurrentUser",
+      {},
+      { userToken: localStorage.getItem("userToken") }
+    );
+
     console.log("Utente attuale:", currentUser);
 
     if (!currentUser) {
@@ -33,9 +38,12 @@ export async function deleteCurrentUser() {
     }
 
     // Recupera l'oggetto JSON dalla tabella NotableBiblePoints
-    const databaseEntry = await Backendless.Data.of(
-      "NotableBiblePoints"
-    ).findFirst();
+    const result = await backendlessRequest(
+      "getData",
+      {},
+      { table: "NotableBiblePoints" }
+    );
+    const databaseEntry = Array.isArray(result) ? result[0] : null;
 
     if (!databaseEntry || !databaseEntry.NotablePoints) {
       toast("Errore: dati non trovati.");
@@ -54,11 +62,13 @@ export async function deleteCurrentUser() {
 
     // Aggiorna il database con i dati filtrati
     databaseEntry.NotablePoints = updatedNotablePoints;
-    await Backendless.Data.of("NotableBiblePoints").save(databaseEntry);
+    await backendlessRequest("saveData", databaseEntry, {
+      table: "NotableBiblePoints",
+    });
 
     // Rimuovi l'utente dalla tabella Users
     console.log("Eliminazione utente con ID:", currentUser.objectId);
-    await Backendless.Data.of("Users").remove(currentUser.objectId);
+    await backendlessRequest("deleteUser", { objectId: currentUser.objectId });
 
     logoutUser(false);
   } catch (error) {
@@ -73,7 +83,7 @@ export async function logoutUser(showAlert = true) {
   if (showAlert) showGif();
   try {
     // Logout dell'utente
-    await Backendless.UserService.logout();
+    await backendlessRequest("logout");
 
     // Rimuoviamo i dati relativi all'utente da IndexedDB
     localStorage.removeItem("userEmail");

@@ -1,5 +1,5 @@
+import backendlessRequest from "./backendlessRequest.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js";
-import Backendless from "backendless";
 
 async function verifyChapterNotes() {
   let userNotes = [];
@@ -9,11 +9,17 @@ async function verifyChapterNotes() {
     let data = await getValue("userNotes");
 
     if (!data) {
-      data = (
-        await Backendless.Data.of("NotableBiblePoints").findFirst()
-      ).NotablePoints.filter(
-        (n) => n.owner === localStorage.getItem("userEmail")
+      const records = await backendlessRequest(
+        "getData",
+        {},
+        { table: "NotableBiblePoints" }
       );
+      const firstRecord = Array.isArray(records) ? records[0] : null;
+      const userEmail = localStorage.getItem("userEmail");
+
+      data =
+        firstRecord?.NotablePoints?.filter((n) => n.owner === userEmail) || [];
+
       await setValue("userNotes", data); // Salva i dati in IndexedDB
     }
 

@@ -12,7 +12,10 @@ const categories = {
     "/src/assets/notes/delete/light.webp",
     "/src/assets/notes/delete/dark.webp",
   ],
-  edit: ["/src/assets/notes/edit/light.webp", "/src/assets/notes/edit/dark.webp"],
+  edit: [
+    "/src/assets/notes/edit/light.webp",
+    "/src/assets/notes/edit/dark.webp",
+  ],
   share: [
     "/src/assets/notes/share/light.webp",
     "/src/assets/notes/share/dark.webp",
@@ -36,7 +39,10 @@ const categories = {
   lens: ["/src/assets/lens/light.webp", "/src/assets/lens/dark.webp"],
   help: ["/src/assets/help/light.webp", "/src/assets/help/dark.webp"],
   github: ["/src/assets/github/light.webp", "/src/assets/github/dark.webp"],
-  openDrawer: ["/src/assets/drawer/open/light.webp", "/src/assets/drawer/open/dark.webp"],
+  openDrawer: [
+    "/src/assets/drawer/open/light.webp",
+    "/src/assets/drawer/open/dark.webp",
+  ],
   otherApps: [
     "/src/assets/drawer/otherApps/light.webp",
     "/src/assets/drawer/otherApps/dark.webp",
