@@ -1,6 +1,6 @@
-import { getValue, deleteValue, setValue } from "/src/js/indexedDButils.js";
+import backendlessRequest from "./backendlessRequest.js";
+import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
 import toast from "/src/js/toast.js";
-import Backendless from "backendless";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -24,9 +24,12 @@ async function syncWithServer() {
     // Recupera il record dal server
     let serverRecord;
     try {
-      serverRecord = await Backendless.Data.of(
-        "NotableBiblePoints"
-      ).findFirst();
+      const results = await backendlessRequest(
+        "getData",
+        {},
+        { table: "NotableBiblePoints" }
+      );
+      serverRecord = Array.isArray(results) ? results[0] : null;
     } catch (error) {
       console.error("Errore nel recupero del record dal server:", error);
       toast(
@@ -92,7 +95,9 @@ async function syncWithServer() {
 
     // STEP 4: Salva nel server
     serverRecord.NotablePoints = updatedNotes;
-    await Backendless.Data.of("NotableBiblePoints").save(serverRecord);
+    await backendlessRequest("saveData", serverRecord, {
+      table: "NotableBiblePoints",
+    });
 
     // STEP 5: Aggiorna il locale
     await deleteValue("deletedNotes");

@@ -46,7 +46,7 @@ const urlsToCache = [
   "/src/html/notes.html",
   "/src/html/onboarding.html",
   "/src/js/injectInstructions.js",
-  "/src/js/backendlessInit.js",
+  "/src/js/backendlessRequest.js",
   "/src/js/referrer.js",
   "/src/js/rememberMe.js",
   "/src/js/legend.js",

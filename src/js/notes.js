@@ -1,9 +1,9 @@
+import backendlessRequest from "./backendlessRequest.js";
+import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni IndexedDB
 import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
-import toast from "/src/js/toast.js";
 import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione di logout
-import { setValue, getValue, deleteValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni IndexedDB
-import Backendless from "backendless";
+import toast from "/src/js/toast.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -55,8 +55,13 @@ async function loadNotes() {
 
     // Ottieni i dati dal server o IndexedDB
     const allRecords = (await shouldUseServer())
-      ? (await Backendless.Data.of("NotableBiblePoints").findFirst())
-          .NotablePoints
+      ? (
+          await backendlessRequest(
+            "getData",
+            {},
+            { table: "NotableBiblePoints" }
+          )
+        )[0]?.NotablePoints || []
       : await getValue("userNotes");
 
     console.log(allRecords, "allRecords");
@@ -183,9 +188,15 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Recupera il primo (e unico) record dal database che contiene tutte le note
+    // Recupera il record dal database che contiene tutte le note
     let userNotes = navigator.onLine
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+      ? (
+          await backendlessRequest(
+            "getData",
+            {},
+            { table: "NotableBiblePoints" }
+          )
+        )[0]
       : await getValue("userNotes");
 
     // Se non esiste un record, creiamo uno vuoto con un array di note
@@ -229,7 +240,10 @@ async function saveNote() {
     userNotes.NotablePoints = notes;
 
     if (navigator.onLine) {
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
+      await backendlessRequest("saveData", userNotes, {
+        table: "NotableBiblePoints",
+      });
+
       console.log("Nota salvata con successo sul server!");
     } else {
       await setValue(
@@ -318,7 +332,13 @@ async function deleteNote(noteElement) {
 
     // Recupera le note
     let userNotes = navigator.onLine
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+      ? (
+          await backendlessRequest(
+            "getData",
+            {},
+            { table: "NotableBiblePoints" }
+          )
+        )[0]
       : await getValue("userNotes");
 
     console.log(userNotes);
@@ -355,7 +375,9 @@ async function deleteNote(noteElement) {
 
     // Salva di nuovo
     if (navigator.onLine) {
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
+      await backendlessRequest("saveData", userNotes, {
+        table: "NotableBiblePoints",
+      });
     }
 
     // Rimuove dal DOM

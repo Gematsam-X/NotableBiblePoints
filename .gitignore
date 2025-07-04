@@ -30,3 +30,6 @@ Thumbs.db
 
 # Output temporaneo di Vite quando serve
 *.tsbuildinfo
+
+# Local Netlify folder
+.netlify
