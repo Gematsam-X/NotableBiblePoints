@@ -64,24 +64,86 @@ Object.entries(allInputs).forEach(([key, path]) => {
   console.log(`  ${key}: ${path} ${exists ? "✅" : "❌ NOT FOUND!"}`);
 });
 
-// 🧠 Plugin per minificare serviceWorker.js con esbuild
-const minifyServiceWorkerPlugin = {
-  name: "minify-service-worker",
+const generateServiceWorkerPlugin = {
+  name: "generate-service-worker",
   apply: "build",
   enforce: "post",
-  writeBundle() {
-    const inputPath = resolve(__dirname, "serviceWorker.js");
+  async writeBundle() {
+    const manifestPath = resolve(__dirname, "dist/hashManifest.json");
+    const templatePath = resolve(__dirname, "serviceWorker.template.js");
     const outputPath = resolve(__dirname, "dist/serviceWorker.js");
 
-    // Usa esbuild per bundlare e minificare
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error("hashManifest.json non trovato!");
+    }
+
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+    const template = fs.readFileSync(templatePath, "utf-8");
+
+    // Qui scegli i file da cachare (es. quelli con js e css)
+    const filesToCache = Object.values(manifest)
+      .filter((entry) => entry.file && /\.(js|css)$/.test(entry.file))
+      .map((entry) => `/${entry.file}`);
+
+    const imgArray = [
+      "/assets/favicon.ico",
+      "/assets/jw.org.webp",
+      "/assets/account/backup/create/dark.webp",
+      "/assets/account/backup/create/light.webp",
+      "/assets/account/backup/restore/dark.webp",
+      "/assets/account/backup/restore/light.webp",
+      "/assets/account/delete/dark.webp",
+      "/assets/account/delete/light.webp",
+      "/assets/account/logout/dark.webp",
+      "/assets/account/logout/light.webp",
+      "/assets/avatar/dark.webp",
+      "/assets/avatar/light.webp",
+      "/assets/drawer/open/dark.webp",
+      "/assets/drawer/open/light.webp",
+      "/assets/drawer/otherApps/dark.webp",
+      "/assets/drawer/otherApps/light.webp",
+      "/assets/drawer/rightArrow/dark.webp",
+      "/assets/drawer/rightArrow/light.webp",
+      "/assets/fonts/Cinzel-Bold.woff2",
+      "/assets/fonts/FiraSansCondensed-ExtraBold.ttf",
+      "/assets/fonts/FiraSansCondensed-SemiBold.woff2",
+      "/assets/github/dark.webp",
+      "/assets/github/light.webp",
+      "/assets/help/dark.webp",
+      "/assets/help/light.webp",
+      "/assets/lens/dark.webp",
+      "/assets/lens/light.webp",
+      "/assets/loadingGif/loading.gif",
+      "/assets/notes/delete/dark.webp",
+      "/assets/notes/delete/light.webp",
+      "/assets/notes/edit/dark.webp",
+      "/assets/notes/edit/light.webp",
+      "/assets/notes/refresh/dark.webp",
+      "/assets/notes/refresh/light.webp",
+      "/assets/notes/share/dark.webp",
+      "/assets/notes/share/light.webp",
+    ];
+    
+    const finalAssets = [...filesToCache, ...imgArray];
+    const finalCode = template.replace(
+      "__ASSETS_TO_CACHE__",
+      JSON.stringify(finalAssets, null, 2)
+    );
+
+    // Minifica con esbuild
     buildSync({
-      entryPoints: [inputPath],
+      stdin: {
+        contents: finalCode,
+        resolveDir: __dirname,
+        sourcefile: "serviceWorker.js",
+        loader: "js",
+      },
       bundle: true,
       minify: true,
       outfile: outputPath,
     });
 
-    console.log("🛠️ serviceWorker.js minificato in /dist");
+    console.log("✅ serviceWorker.js generato con asset reali e minificato.");
   },
 };
 
@@ -98,11 +160,13 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    manifest: "hashManifest.json", // 👉 forza la generazione in dist/
     rollupOptions: {
       input: allInputs,
     },
     minify: "terser",
   },
+
   plugins: [
     viteStaticCopy({
       targets: [
@@ -116,6 +180,6 @@ export default defineConfig({
         },
       ],
     }),
-    minifyServiceWorkerPlugin, // 🔩 Plugin personalizzato per serviceWorker
+    generateServiceWorkerPlugin,
   ],
 });
