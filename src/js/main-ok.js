@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register("/serviceWorker.js")
       .then((registration) => {
         console.log("Service Worker registrato con successo: ", registration);
       })
