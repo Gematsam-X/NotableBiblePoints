@@ -9,16 +9,13 @@ const refreshBtn = document.querySelector(".refreshNotes");
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
 const selectedBook = sessionStorage.getItem("selectedBook");
-const chapter = parseInt(sessionStorage.getItem("selectedChapter"));
+const selectedChapter = parseInt(sessionStorage.getItem("selectedChapter"));
 
 // Imposta il titolo della pagina
 const pageTitle = document.querySelector(".notes-page-title");
-const title = `Punti notevoli del capitolo ${chapter} di ${selectedBook}`;
-
-if (pageTitle) {
-  pageTitle.textContent = title;
-  window.document.title = `${title} - NotableBiblePoints`;
-}
+if (pageTitle)
+  pageTitle.textContent = `Note del capitolo ${selectedChapter} di ${selectedBook}`;
+window.document.title = `${selectedBook} ${selectedChapter} - NotableBiblePoints`;
 
 // Funzione per controllare se bisogna usare il server
 async function shouldUseServer() {
@@ -98,7 +95,7 @@ async function loadNotes() {
         if (noteObj) {
           if (
             noteObj.book === selectedBook &&
-            noteObj.chapter === chapter &&
+            noteObj.chapter === selectedChapter &&
             noteObj.owner === userEmail
           ) {
             notesFound = true;
@@ -400,7 +397,7 @@ function shareNote(noteElement) {
     .textContent.replace("Versetto ", "")
     .trim();
 
-  const shareText = `Ho trovato un punto notevole interessante in ${selectedBook} ${chapter}:${verseNumber}: ${noteContent}`;
+  const shareText = `Ho trovato un punto notevole interessante in ${selectedBook} ${selectedChapter}:${verseNumber}: ${noteContent}`;
 
   if (navigator.share) {
     navigator

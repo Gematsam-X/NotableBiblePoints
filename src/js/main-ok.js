@@ -1,10 +1,14 @@
 import "/src/drawer.css";
 import checkVersion from "/src/js/checkVersion.js";
 import "/src/styles.css";
+import "/src/icons.css";
 
 document
   .querySelector(".help")
-  .addEventListener("click", () => (window.location.href = "/src/html/onboarding.html"));
+  .addEventListener(
+    "click",
+    () => (window.location.href = "/src/html/onboarding.html")
+  );
 
 document.addEventListener("DOMContentLoaded", () => {
   const booksCells = document.querySelectorAll(".periodic-table td");

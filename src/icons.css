@@ -7,6 +7,29 @@
     url("https://cdn-uicons.flaticon.com/uicons-solid-rounded/webfonts/uicons-solid-rounded.woff")
       format("woff");
 }
+@font-face {
+  font-family: "uicons-brands";
+  src: url("https://cdn-uicons.flaticon.com/uicons-brands/webfonts/uicons-brands.eot#iefix")
+      format("embedded-opentype"),
+    url("https://cdn-uicons.flaticon.com/uicons-brands/webfonts/uicons-brands.woff2")
+      format("woff2"),
+    url("https://cdn-uicons.flaticon.com/uicons-brands/webfonts/uicons-brands.woff")
+      format("woff");
+}
+
+i[class^="fi-brands-"]:before,
+i[class*=" fi-brands-"]:before,
+span[class^="fi-brands-"]:before,
+span[class*="fi-brands-"]:before {
+  font-family: uicons-brands !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 i[class^="fi-sr-"]:before,
 i[class*=" fi-sr-"]:before,
@@ -29,8 +52,14 @@ span[class*="fi-sr-"]:before {
   content: "\f45f";
 }
 
+.fi-brands-android:before {
+  content: "\f10e";
+  font-size: 40px;
+}
+
 /* Extracted on 2025-06-08 from:
    https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css
-   Only a partial subset of the original stylesheet is included.
+   https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css
+   Only a partial subset of the original stylesheets is included.
    All rights belong to Flaticon.
 */
