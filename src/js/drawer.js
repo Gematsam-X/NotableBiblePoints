@@ -66,6 +66,11 @@ document.querySelector("#other-apps").addEventListener("click", () => {
   window.location.href = "https://gematsamx.webnode.it/alcuni-miei-progetti/";
 });
 
+document.querySelector("#downloadAPK").addEventListener("click", () => {
+  window.location.href =
+    "https://github.com/Gematsam-X/NotableBiblePoints/releases/latest/download/NotableBiblePoints.apk";
+});
+
 document.querySelector("#appVersion").innerText =
   localStorage.getItem("appVersion");
 

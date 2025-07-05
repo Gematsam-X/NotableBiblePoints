@@ -1,6 +1,6 @@
 import "/src/styles.css";
 
-const instructions = () => {
+const pwaInstructions = () => {
   const os = navigator.userAgent.toLowerCase();
   if (
     os.includes("ipad") ||
@@ -14,4 +14,23 @@ const instructions = () => {
   }
 };
 
-document.getElementById("instruction-by-os").innerText = `${instructions()}`;
+document.getElementById(
+  "instructions-by-os"
+).innerText = `${pwaInstructions()}`;
+
+const APKinstructions = () => {
+  const os = navigator.userAgent.toLowerCase();
+  if (os.includes("android")) {
+    return `Per poter usare l'applicazione anche offline, devi installare l'APK. Scarica l'ultima versione da <a href="https://github.com/Gematsam-X/NotableBiblePoints/releases/latest/download/NotableBiblePoints.apk">qui</a> e installala sul tuo dispositivo Android. Assicurati di abilitare l'installazione da fonti sconosciute nelle impostazioni del tuo dispositivo. Una volta installata, sarà possibile utilizzare l'applicazione normalmente anche offline, dopo il primo login online. Le eventuali modifiche apportate alle proprie note si sincronizzeranno con il cloud appena si riaprirà l'applicazione con una connessione a Internet. In questo modo il progetto sarà fruibile in ogni circostanza. Anche se non vuoi installare l'APK, `;
+  } else return false;
+};
+
+const instructionsForAPK = document.getElementById("istructionsForAPK");
+
+if (instructionsForAPK)
+  instructionsForAPK.innerHTML = `${APKinstructions() || ""}`;
+
+const lowerOrUpperCase = document.getElementById("lowerOrUpperCase");
+
+if (lowerOrUpperCase)
+  lowerOrUpperCase.innerText = `${APKinstructions() ? "p" : "P"}`;
