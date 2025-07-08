@@ -25,9 +25,6 @@ async function verifyChapterNotes() {
 
     if (data) {
       let parsedData = data;
-
-      console.log(parsedData, typeof parsedData);
-
       // Verifica che i dati siano un array valido
       if (Array.isArray(parsedData) && parsedData.length > 0) {
         userNotes = parsedData; // Usa direttamente l'array

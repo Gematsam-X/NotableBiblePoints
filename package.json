@@ -1,6 +1,6 @@
 {
   "name": "notablebiblepoints",
-  "version": "2.0.7",
+  "version": "2.1.0",
   "description": "NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi.",
   "keywords": [
     "bible"
@@ -16,7 +16,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "author": "Gionatan Venturi - Gematsam X",
   "type": "module",
-  "main": "src/js/main-ok.js",
+  "main": "/src/js/main-ok.js",
   "scripts": {
     "build": "vite build",
     "netlify-preset": "netlify login && netlify link",
@@ -24,7 +24,8 @@
     "preview:main": "vite preview"
   },
   "dependencies": {
-    "backendless": "^7.4.6"
+    "backendless": "^7.4.6",
+    "choices.js": "^11.1.0"
   },
   "devDependencies": {
     "netlify-cli": "^22.2.1",

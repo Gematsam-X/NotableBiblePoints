@@ -1,10 +1,12 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filtra per tag - NotableBiblePoints</title>
     <link rel="icon" href="/src/assets/favicon.ico" />
     <!-- Meta tag Open Graph -->
-    <meta property="og:title" content="Le tue note - NotableBiblePoints" />
+    <meta property="og:title" content="Filtra per tag - NotableBiblePoints" />
     <meta
       property="og:description"
       content="NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
@@ -15,14 +17,6 @@
     />
     <meta property="og:url" content="https://notablebiblepoints.netlify.app" />
     <meta property="og:type" content="website" />
-    <script type="module">
-      if (localStorage.getItem("isAuthenticated") != "true") {
-        window.location.href = "/src/html/accessRestricted.html";
-        localStorage.removeItem("isAuthenticated");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("userToken");
-      }
-    </script>
   </head>
   <body>
     <div class="notes-page-title-container">
@@ -31,10 +25,6 @@
     </div>
     <br />
     <br />
-    <button class="openModal">&#43;</button>
-    <a id="readChapter">
-      <button>Leggi dalla Traduzione del Nuovo mondo</button>
-    </a>
     <button class="refreshNotes">
       <img width="40px" height="40px" id="refreshNotes_img" />
     </button>
@@ -84,7 +74,7 @@
 
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module" src="/src/js/chaptersAndNotesReferrer.js"></script>
-    <script type="module" src="/src/js/notes.js"></script>
+    <script type="module" src="/src/js/notesByTag.js"></script>
     <script type="module" src="/src/js/legend.js"></script>
     <script type="module" src="/src/js/isDarkTheme.js"></script>
     <script type="module" src="/src/js/return.js"></script>
