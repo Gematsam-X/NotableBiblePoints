@@ -22,6 +22,12 @@
   --maj-prophet-hover: #a09e9e;
   --min-prophet: #8fbcd4;
   --min-prophet-hover: #7295a8;
+
+  --tag-bg: #cce5ff; /* azzurro chiaro, sfondo pill */
+  --tag-bg-hover: #99ccff; /* azzurro più intenso, hover */
+  --tag-color: #004085; /* blu scuro testo */
+  --tag-border: #b8daff; /* bordo pill */
+  --tag-border-hover: #66b0ff; /* bordo pill hover */
 }
 
 .dark-theme {
@@ -48,6 +54,12 @@
   --maj-prophet-hover: #d4c38b;
   --min-prophet: #fab1a0;
   --min-prophet-hover: #c98e81;
+
+  --tag-bg: #2a3b5c; /* blu scuro sfondo pill */
+  --tag-bg-hover: #405a8c; /* blu più chiaro hover */
+  --tag-color: #cbd5f7; /* testo azzurro chiaro */
+  --tag-border: #405a8c; /* bordo pill */
+  --tag-border-hover: #6699ff; /* bordo pill hover */
 }
 
 /* Tema chiaro */
@@ -82,7 +94,8 @@
 
 @font-face {
   font-family: "Fira Sans Condensed Bold";
-  src: url("/src/assets/fonts/FiraSansCondensed-ExtraBold.ttf") format("truetype");
+  src: url("/src/assets/fonts/FiraSansCondensed-ExtraBold.ttf")
+    format("truetype");
   font-style: normal;
   font-display: swap;
 }
@@ -324,6 +337,7 @@ div.actions-row {
 .notesContainer .note .verse-number {
   text-align: center;
   justify-content: center;
+  align-items: center;
   margin-right: 5rem;
 }
 
@@ -393,6 +407,125 @@ div.actions-row {
 
 #clicked-note .note-body {
   margin-bottom: 10rem;
+}
+
+/* Tags */
+
+/* Contenitore del select */
+.choices {
+  background-color: var(--bg);
+  border: 2px solid var(--border-col);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+/* Parte interna */
+.choices__inner {
+  background-color: var(--bg) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  text-align: center;
+  border: none !important;
+}
+
+/* Tag selezionati */
+.choices__item--selectable {
+  background-color: var(--bg);
+  border: 1px solid var(--primary-col);
+  color: var(--primary-col); /* ✅ testo visibile */
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: default;
+}
+
+.choices__item--selectable.is-highlighted {
+  background-color: green;
+  color: var(--bg); /* ✅ testo visibile */
+}
+
+/* Bottone "x" per rimuovere un tag */
+.choices__button {
+  margin-left: 6px;
+  color: var(--btn-hover);
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown delle scelte */
+.choices__list--dropdown {
+  background-color: var(--bg);
+  border: 1px solid var(--border-col);
+  border-radius: 0 0 6px 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Opzioni nel dropdown */
+.choices__list--dropdown .choices__item--choice {
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--primary-col);
+  transition: background-color 0.2s;
+}
+
+/* Hover sulle scelte */
+.choices__list--dropdown .choices__item--choice.is-highlighted {
+  background-color: #000000;
+  color: var(--bg);
+}
+
+.choices__notice {
+  color: var(--bg) !important;
+}
+
+.tag-pill {
+  display: inline-block;
+  max-width: 180px; /* Limite larghezza max */
+  padding: 4px 12px;
+  margin: 4px 6px 0 0;
+  background-color: var(--tag-bg);
+  color: var(--tag-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 100px;
+  border: 1px solid var(--tag-border);
+  user-select: none;
+  white-space: nowrap; /* Nessuna rottura su più righe */
+  overflow: hidden; /* Nasconde l'eccesso */
+  text-overflow: ellipsis; /* Puntini di troncamento */
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+  cursor: default;
+}
+
+.tag-pill:hover {
+  background-color: var(--tag-bg-hover);
+  color: var(--tag-color);
+  border-color: var(--tag-border-hover);
+}
+
+/* Container per avere gap e wrap */
+.tags-container {
+  margin-top: 10px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 /* Modal styles */

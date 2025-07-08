@@ -2,7 +2,8 @@ import "/src/styles.css";
 
 if (
   !sessionStorage.getItem("selectedBook") ||
-  (window.location.href.split("/").pop() === "notes.html" &&
+  ((window.location.href.split("/").pop() === "notes.html" ||
+    window.location.href.split("/").pop() === "notesByTag.html") &&
     !sessionStorage.getItem("selectedChapter"))
 ) {
   window.location.href = "/index.html";
@@ -14,10 +15,13 @@ if (
   referrer !== "index.html" &&
   document.referrer === "/" &&
   referrer !== "chapters.html" &&
-  referrer !== "notes.html"
+  referrer !== "notes.html" &&
+  referrer !== "notesByTag.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
   sessionStorage.removeItem("selectedBook");
+  sessionStorage.removeItem("selectedChapter");
+  sessionStorage.removeItem("filteringTag");
   window.location.href = "/index.html";
 }
 
@@ -48,3 +52,6 @@ if (
     observer.observe(document.body, { childList: true, subtree: true });
   }
 }
+
+if (window.location.href.split("/").pop() != "notesByTag.html")
+  sessionStorage.removeItem("filteringTag");

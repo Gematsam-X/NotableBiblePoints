@@ -4,6 +4,8 @@ import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione di logout
 import toast from "/src/js/toast.js";
+import Choices from "choices.js";
+import "choices.js/public/assets/styles/choices.min.css";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -27,7 +29,22 @@ async function shouldUseServer() {
 const modal = document.querySelector(".modal");
 
 // Funzione per aprire la modale
-document.querySelector(".openModal").addEventListener("click", () => {
+document.querySelector(".openModal")?.addEventListener("click", async () => {
+  editingNoteId = null; // RESET!
+
+  // Pulisci input testuali
+  document.querySelector("#noteTitle").value = "";
+  document.querySelector("#verseNumber").value = "";
+  document.querySelector("#noteContent").value = "";
+
+  // Pulisci select tags di Choices.js
+  if (typeof tagChoices !== "undefined") {
+    tagChoices.removeActiveItems();
+  }
+
+  await refreshTagChoices();
+
+  // Mostra la modale
   modal.style.display = "block";
 });
 
@@ -50,20 +67,18 @@ async function loadNotes() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Ottieni i dati dal server o IndexedDB
     const allRecords = (await shouldUseServer())
       ? (
           await backendlessRequest(
             "getData",
             {},
-            { table: "NotableBiblePoints" }
+            {
+              table: "NotableBiblePoints",
+            }
           )
         )[0]?.NotablePoints || []
       : await getValue("userNotes");
 
-    console.log(allRecords, "allRecords");
-
-    // Verifica che allRecords sia un array
     if (!Array.isArray(allRecords)) {
       toast("Errore: i dati non sono in formato corretto.");
       notesContainer.innerHTML = "<p>Errore nei dati delle note.</p>";
@@ -75,44 +90,41 @@ async function loadNotes() {
     );
     const userNotes = notesArray.filter((note) => note.owner === userEmail);
 
-    console.log(allRecords, notesArray, userNotes);
-
-    // Salvataggio delle note locali in IndexedDB (aspettiamo il completamento)
     await setValue("userNotes", userNotes);
 
-    // Popola il contenitore con le note
-    notesContainer.innerHTML = ""; // Svuota il contenitore
+    notesContainer.innerHTML = "";
     let notesFound = false;
     let allNotes = [];
 
     if (Array.isArray(userNotes) && userNotes.length > 0) {
-      if (await shouldUseServer()) {
-        await setValue("userNotes", userNotes);
-      }
+      if (await shouldUseServer()) await setValue("userNotes", userNotes);
 
-      // Filtra e ordina le note
       userNotes.forEach((noteObj) => {
-        if (noteObj) {
-          if (
-            noteObj.book === selectedBook &&
-            noteObj.chapter === selectedChapter &&
-            noteObj.owner === userEmail
-          ) {
-            notesFound = true;
-            const { verse, title = "", content, id: noteId } = noteObj;
-            allNotes.push({ verse, title, content, noteId });
-          }
+        if (
+          noteObj.book === selectedBook &&
+          noteObj.chapter === selectedChapter &&
+          noteObj.owner === userEmail
+        ) {
+          notesFound = true;
+          const { verse, title = "", content, id: noteId, tags = [] } = noteObj;
+          allNotes.push({ verse, title, content, noteId, tags });
         }
       });
 
-      // Ordina per versetto
       allNotes.sort((a, b) => a.verse - b.verse);
 
-      // Aggiungi le note al contenitore
-      allNotes.forEach(({ verse, title, content, noteId }) => {
+      allNotes.forEach(({ verse, title, content, noteId, tags }) => {
         const noteElement = document.createElement("div");
         noteElement.classList.add("note");
         noteElement.setAttribute("data-id", noteId);
+        if (tags?.length > 0) {
+          noteElement.setAttribute("data-tags", JSON.stringify(tags));
+        }
+
+        // Costruzione tag HTML visivi
+        const tagsHtml = tags
+          .map((tag) => `<span class="tag-pill">${tag}</span>`)
+          .join("");
 
         const deleteImageSrc = isDarkTheme
           ? "/src/assets/notes/delete/dark.webp"
@@ -127,6 +139,7 @@ async function loadNotes() {
         noteElement.innerHTML = `
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
+          <div class="tags-container">${tagsHtml}</div>
           </div>
           <div class="note-body">
             <h2 class="note-title">${title}</h2>
@@ -134,9 +147,15 @@ async function loadNotes() {
           </div>
 
           <div class="note-action-buttons">
-          <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
-          <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
-          <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
+            <button class="delete">
+              <img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px">
+            </button>
+            <button class="edit">
+              <img class="edit_img" src="${editImageSrc}" width="40px" height="40px">
+            </button>
+            <button class="share">
+              <img class="share_img" src="${shareImageSrc}" width="40px" height="40px">
+            </button>
           </div>
         `;
 
@@ -144,10 +163,9 @@ async function loadNotes() {
       });
     }
 
-    // Messaggio se non ci sono note
     if (!notesFound) {
       notesContainer.innerHTML =
-        "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
+        "<p>Non hai salvato nessuna nota per questo capitolo. Creane una usando il pulsante in basso a destra con l'icona '+'.</p>";
     }
   } catch (error) {
     if (error.message.toLowerCase().includes("not existing user token")) {
@@ -155,6 +173,7 @@ async function loadNotes() {
       logoutUser();
       return;
     }
+
     console.error("Errore nel recupero delle note:", error);
     toast(`Errore: ${error.message}`);
     notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
@@ -169,16 +188,173 @@ async function loadNotes() {
 // Carica le note al caricamento della pagina
 window.addEventListener("load", loadNotes);
 
+let tagChoices;
+let tagChoicesArray = []; // lista globale di tutti i tag disponibili
+
+(async () => {
+  /**
+   * Ricostruisce da zero il dropdown:
+   * - Svuota tutte le choices
+   * - Ripristina tutte le opzioni globali
+   * - Riapplica la selezione per nascondere i tag già scelti
+   */
+  function updateChoicesDropdown() {
+    const selected = tagChoices.getValue(true); // tag già selezionati
+    tagChoices.clearChoices(); // svuota tutte le opzioni
+    tagChoices.setChoices(tagChoicesArray, "value", "label", true); // rimetti tutto
+    tagChoices.setValue(selected); // riapplica la selezione
+  }
+
+  // 1️⃣ Prendo il <select> dal DOM
+  const tagSelect = document.getElementById("noteTags");
+  if (!tagSelect) {
+    console.warn("⚠️ Campo #noteTags non trovato nel DOM!");
+    return;
+  }
+
+  // 2️⃣ Recupero email utente
+  const currentUserEmail = localStorage.getItem("userEmail");
+  if (!currentUserEmail) {
+    console.warn("⚠️ Nessuna email utente trovata nel localStorage!");
+    return;
+  }
+
+  // 3️⃣ Carico le note (server o local)
+  const res = (await shouldUseServer())
+    ? await backendlessRequest("getData", {}, { table: "NotableBiblePoints" })
+    : await getValue("userNotes");
+  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
+  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+
+  // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
+  const tagSet = new Set();
+  for (const point of userPoints) {
+    if (Array.isArray(point.tags)) {
+      point.tags.forEach((t) => {
+        if (t && typeof t === "string") tagSet.add(t.trim());
+      });
+    }
+  }
+  tagChoicesArray = Array.from(tagSet).map((tag) => ({
+    value: tag,
+    label: tag,
+  }));
+
+  // 5️⃣ Inizializzo Choices.js
+  tagChoices = new Choices(tagSelect, {
+    choices: tagChoicesArray,
+    removeItemButton: true,
+    duplicateItemsAllowed: false,
+    placeholderValue: "Aggiungi o seleziona tag...",
+    searchEnabled: true,
+    shouldSort: false,
+    position: "auto",
+    itemSelectText: "Seleziona",
+    noChoicesText:
+      "Hai selezionato tutti i tag disponibili, o non hai ancora creato nessun tag. Creane uno scrivendolo qui.",
+    paste: true,
+    addItems: false, // gestiamo l’aggiunta manualmente
+    allowHTML: true,
+  });
+
+  // 6️⃣ Controlla se un tag esiste già tra quelli selezionati
+  function tagExists(val) {
+    const v = val.toLowerCase().trim();
+    return tagChoices.getValue(true).some((t) => t.toLowerCase() === v);
+  }
+
+  // 7️⃣ Evento di ricerca: filtra + opzione “Crea nuovo”
+  tagSelect.addEventListener("search", (e) => {
+    const q = e.detail.value.trim().toLowerCase();
+    if (!q) {
+      updateChoicesDropdown();
+      tagChoices.hideDropdown();
+      return;
+    }
+    const filtered = tagChoicesArray.filter((c) =>
+      c.value.toLowerCase().startsWith(q)
+    );
+    if (q && !tagExists(q)) {
+      filtered.unshift({
+        value: `__add__${q}`,
+        label: `Crea nuovo tag: <strong>"${q}"</strong>`,
+        custom: true,
+      });
+    }
+    tagChoices.setChoices(filtered, "value", "label", true);
+    tagChoices.showDropdown();
+  });
+
+  // 8️⃣ Evento di aggiunta: nuovo tag o selezione esistente
+  tagSelect.addEventListener("addItem", (e) => {
+    const v = e.detail.value;
+    if (v.startsWith("__add__")) {
+      const newTag = v.replace("__add__", "").trim();
+      tagChoices.removeActiveItemsByValue(v);
+      if (!tagExists(newTag)) {
+        // aggiungo al globale e seleziono
+        tagChoicesArray.push({ value: newTag, label: newTag });
+        const sel = [...tagChoices.getValue(true), newTag];
+        updateChoicesDropdown();
+        tagChoices.setChoiceByValue(sel);
+      } else {
+        updateChoicesDropdown();
+      }
+    } else {
+      // selezione di un tag già esistente
+      updateChoicesDropdown();
+    }
+    tagSelect.value = "";
+    tagChoices.clearInput();
+  });
+
+  // 9️⃣ Evento di rimozione: rimetti il tag nel dropdown
+  tagSelect.addEventListener("removeItem", () => {
+    updateChoicesDropdown();
+  });
+})();
+
+async function refreshTagChoices() {
+  const currentUserEmail = localStorage.getItem("userEmail");
+  if (!currentUserEmail) return;
+
+  const res = (await shouldUseServer())
+    ? await backendlessRequest("getData", {}, { table: "NotableBiblePoints" })
+    : await getValue("userNotes");
+
+  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
+  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+
+  const tagSet = new Set();
+  for (const point of userPoints) {
+    if (Array.isArray(point.tags)) {
+      point.tags.forEach((tag) => {
+        if (tag && typeof tag === "string") tagSet.add(tag.trim());
+      });
+    }
+  }
+
+  const newChoices = Array.from(tagSet).map((tag) => ({
+    value: tag,
+    label: tag,
+  }));
+
+  // Aggiorna choices nel tagChoices (Choices.js)
+  tagChoices.setChoices(newChoices, "value", "label", true);
+}
+
 // Async function to save or update a note
 async function saveNote() {
   const noteTitle = document.querySelector("#noteTitle").value.trim();
   const verseNumber = parseInt(document.querySelector("#verseNumber").value);
   const noteContent = document.querySelector("#noteContent").value.trim();
+  const selectedTags = tagChoices.getValue(true);
 
   if (isNaN(verseNumber) || !noteContent) {
     toast("Compila tutti i campi correttamente!");
     return;
   }
+
   modal.style.display = "none";
   showGif();
 
@@ -196,18 +372,15 @@ async function saveNote() {
         )[0]
       : await getValue("userNotes");
 
-    // Se non esiste un record, creiamo uno vuoto con un array di note
-    if (!userNotes) {
-      userNotes = { NotablePoints: [] };
-    }
+    if (!userNotes) userNotes = { NotablePoints: [] };
 
     let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
 
-    // Se stai modificando una nota
     if (editingNoteId) {
       const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
       if (noteIndex === -1) {
         toast("Errore: impossibile trovare la nota da modificare.");
+        console.warn("[saveNote] Nota da modificare NON trovata!");
         return;
       }
 
@@ -217,9 +390,9 @@ async function saveNote() {
         verse: verseNumber,
         updatedAt: Date.now().toString(),
         content: noteContent,
+        tags: selectedTags,
       };
     } else {
-      // Se stai creando una nuova nota
       const newNote = {
         id: Date.now().toString(),
         title: noteTitle || " ",
@@ -228,54 +401,73 @@ async function saveNote() {
         chapter: parseInt(sessionStorage.getItem("selectedChapter")),
         book: sessionStorage.getItem("selectedBook"),
         owner: userEmail,
+        tags: selectedTags,
       };
 
       notes.push(newNote);
     }
 
-    // Aggiorna il record principale
     userNotes.NotablePoints = notes;
 
     if (navigator.onLine) {
       await backendlessRequest("saveData", userNotes, {
         table: "NotableBiblePoints",
       });
-
-      console.log("Nota salvata con successo sul server!");
     } else {
       await setValue(
         "userNotes",
         notes.filter((note) => note.owner === userEmail)
       );
-      console.log("Nota salvata con successo in locale!");
     }
 
-    // Resetta lo stato di editing
     editingNoteId = null;
     modal.style.display = "none";
 
-    if (navigator.onLine) {
-      await deleteValue("userNotes");
-      console.log("locale eliminato");
-    }
+    if (navigator.onLine) await deleteValue("userNotes");
 
-    loadNotes();
+    await loadNotes();
   } catch (error) {
-    console.error("Errore durante il salvataggio/modifica:", error);
+    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
     toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
+
+    if (typeof tagChoices !== "undefined") {
+      tagChoices.removeActiveItems(); // reset visivo
+    }
+
+    await refreshTagChoices();
     hideGif();
   }
 }
 
 document.querySelector("#saveNote").addEventListener("click", saveNote);
 
+let shouldEnterFullscreen = true;
+
+// Assumiamo che i tuoi tag abbiano la classe "tag-pill" (modifica se usi un'altra classe)
+document.addEventListener("click", (event) => {
+  // Controlla se il click è su un tag-pill o su un suo discendente
+  const tagElement = event.target.closest(".tag-pill");
+
+  if (!tagElement) return; // Se non è un tag, esci subito
+  event.stopPropagation();
+  shouldEnterFullscreen = false;
+
+  // Qui dentro c'è il tag pill cliccato, prendi il testo del tag (senza spazi inutili)
+  const tagText = tagElement.textContent.trim();
+
+  if (tagText != sessionStorage.getItem("filteringTag")) {
+    sessionStorage.setItem("filteringTag", tagText);
+    window.location.href = "/src/html/notesByTag.html";
+  }
+});
+
 document.addEventListener("click", (event) => {
   const closestNote = event.target.closest(".note");
-  if (closestNote) {
+  if (closestNote && shouldEnterFullscreen) {
     closestNote.id = "clicked-note";
     closestNote.requestFullscreen();
   }
@@ -287,7 +479,6 @@ document.addEventListener("fullscreenchange", () => {
     return;
   } else {
     document.querySelector("#clicked-note").id = "";
-    console.log("Uscito dal fullscreen!");
   }
 });
 
@@ -337,8 +528,6 @@ async function deleteNote(noteElement) {
           )
         )[0]
       : await getValue("userNotes");
-
-    console.log(userNotes);
 
     if (
       (navigator.onLine && !userNotes.NotablePoints) ||
@@ -405,7 +594,6 @@ function shareNote(noteElement) {
         title: `Punto notevole: ${noteTitle}`,
         text: shareText,
       })
-      .then(() => console.log("Condivisione avvenuta con successo!"))
       .catch((error) =>
         console.error("Errore durante la condivisione:", error)
       );
@@ -444,8 +632,6 @@ document.addEventListener("keypress", (event) => {
 let editingNoteId = null; // Variabile globale per sapere se stiamo modificando
 
 async function editNote(noteElement) {
-  console.log("Editing note...");
-
   if (document.fullscreenElement) {
     document.exitFullscreen();
   }
@@ -466,6 +652,25 @@ async function editNote(noteElement) {
   document.querySelector("#verseNumber").value = verseNumber;
   document.querySelector("#noteContent").value = noteContent;
 
+  // Pulisce prima i tag precedenti (visivamente)
+  if (typeof tagChoices !== "undefined") {
+    tagChoices.removeActiveItems();
+    await refreshTagChoices();
+
+    // Prendi i tag dal data-attribute e settali nel select
+    const tagString = noteElement.getAttribute("data-tags");
+    if (tagString) {
+      try {
+        const tagArray = JSON.parse(tagString);
+        tagArray.forEach((tag) => {
+          tagChoices.setChoiceByValue(tag); // seleziona i tag esistenti
+        });
+      } catch (err) {
+        console.warn("⚠️ Errore parsing tag:", err);
+      }
+    }
+  }
+
   // Mostra la modale
   modal.style.display = "block";
 }
@@ -481,11 +686,9 @@ document.addEventListener("keydown", function escHandler(event) {
 
 const observer = new MutationObserver(() => {
   window.setTimeout(() => {
-    if (document.querySelector(".notesContainer").children.length === 0) {
-      console.log("Tutte le note sono state eliminate");
+    if (document.querySelector(".notesContainer").children.length === 0)
       document.querySelector(".notesContainer").innerHTML =
-        "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
-    }
+        "<p>Non hai salvato nessuna nota per questo capitolo. Creane una usando il pulsante in basso a destra con l'icona '+'.</p>";
   }, 500);
 });
 
@@ -594,10 +797,8 @@ link?.addEventListener("click", () => {
 
     // Costruisce l'URL con il riferimento completo
     link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
-  } else {
-    // Se il libro non è trovato, puoi gestire l'errore
+  } else
     toast(
       "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
     );
-  }
 });
