@@ -26,7 +26,7 @@ async function shouldUseServer() {
   else if (!(await getValue("userNotes"))) return true;
 }
 
-const modal = document.querySelector(".modal");
+export const modal = document.querySelector(".modal");
 
 // Funzione per aprire la modale
 document.querySelector(".openModal")?.addEventListener("click", async () => {
@@ -57,7 +57,7 @@ document.querySelector(".closeModal").addEventListener("click", () => {
 });
 
 // Funzione per caricare le note dal database o da IndexedDB
-async function loadNotes() {
+export async function loadNotes() {
   const notesContainer = document.querySelector(".notesContainer");
   if (!notesContainer) return;
 
@@ -188,7 +188,7 @@ async function loadNotes() {
 // Carica le note al caricamento della pagina
 window.addEventListener("load", loadNotes);
 
-let tagChoices;
+export let tagChoices;
 let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
 (async () => {
@@ -314,7 +314,7 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
   });
 })();
 
-async function refreshTagChoices() {
+export async function refreshTagChoices() {
   const currentUserEmail = localStorage.getItem("userEmail");
   if (!currentUserEmail) return;
 
@@ -629,7 +629,7 @@ document.addEventListener("keypress", (event) => {
   }
 });
 
-let editingNoteId = null; // Variabile globale per sapere se stiamo modificando
+export let editingNoteId = null; // Variabile globale per sapere se stiamo modificando
 
 async function editNote(noteElement) {
   if (document.fullscreenElement) {
