@@ -43,7 +43,7 @@ const htmlEntries = {
   account: resolve(__dirname, "src/html/account.html"),
   chapters: resolve(__dirname, "src/html/chapters.html"),
   notesHTML: resolve(__dirname, "src/html/notes.html"),
-  notesByTag: resolve(__dirname, "src/html/notesByTag.html"),
+  notesByTagHTML: resolve(__dirname, "src/html/notesByTag.html"),
   onboarding: resolve(__dirname, "src/html/onboarding.html"),
   accessRestricted: resolve(__dirname, "src/html/accessRestricted.html"),
 };
