@@ -42,5 +42,5 @@
 - [x] Add a "Show password" button/icon
 - [x] Use a bundler, allowing to define env vars (improving security)
 - [x] Add the ability to tag notes
-- [ ] Fix security problem, filtering notes in the backend
+- [ ] Fix security problem, filtering notes in the backend and not saving important info in localStorage
 - [ ] Add a redirect to the corresponding verse when clicking on the referenced verse in a note

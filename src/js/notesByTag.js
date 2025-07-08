@@ -30,6 +30,7 @@ async function loadNotesByTag(forceServer = false) {
 
   notesContainer.innerHTML = "<p>Caricamento in corso...</p>";
   refreshBtn?.classList.add("disabled");
+  if (!navigator.onLine) forceServer = false;
 
   try {
     const userEmail = localStorage.getItem("userEmail");
@@ -287,93 +288,85 @@ document.querySelector("#saveNote").addEventListener("click", saveNote);
 
 // Funzione di salvataggio della nota modificata, con gestione server online e IndexedDB sempre
 async function saveNote() {
+  const noteTitle = document.querySelector("#noteTitle").value.trim();
+  const verseNumber = parseInt(document.querySelector("#verseNumber").value);
+  const noteContent = document.querySelector("#noteContent").value.trim();
+  const selectedTags = tagChoices.getValue(true);
+
+  if (isNaN(verseNumber) || !noteContent) {
+    toast("Compila tutti i campi correttamente!");
+    return;
+  }
+
+  modal.style.display = "none";
+  showGif();
+
   try {
-    showGif();
-
-    const title = document.querySelector("#noteTitle").value.trim();
-    const content = document.querySelector("#noteContent").value.trim();
-    const verse = parseInt(document.querySelector("#verseNumber").value);
-    const tags = tagChoices.getValue(true);
-
-    if (!content || !verse) {
-      alert("Compila tutti i campi correttamente.");
-      hideGif();
-      return;
-    }
-
-    modal.style.display = "none";
-
     const userEmail = localStorage.getItem("userEmail");
 
-    const useServer = navigator.onLine;
-
-    // Carico dati da server se online, altrimenti IndexedDB
-    let data = useServer
+    // Recupera il record dal database che contiene tutte le note
+    let userNotes = navigator.onLine
       ? (
           await backendlessRequest(
             "getData",
             {},
             { table: "NotableBiblePoints" }
           )
-        )[0]?.NotablePoints
+        )[0]
       : await getValue("userNotes");
 
-    const notes = useServer ? data : data;
+    if (!userNotes) userNotes = { NotablePoints: [] };
 
-    if (!Array.isArray(notes)) {
-      toast("Errore interno: lista note non valida");
-      console.error("[saveNote] Errore: notes non è un array");
-      hideGif();
+    let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
+
+    const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+    if (noteIndex === -1) {
+      toast("Errore: impossibile trovare la nota da modificare.");
+      console.warn("[saveNote] Nota da modificare NON trovata!");
       return;
     }
 
-    const index = notes.findIndex((n) => n.id === editingNoteId);
-    if (index === -1) {
-      toast("Nota non trovata");
-      console.warn(`[saveNote] Nota con id ${editingNoteId} non trovata`);
-      hideGif();
-      return;
-    }
-
-    // Aggiorno la nota con nuovi dati
-    notes[index] = {
-      ...notes[index],
-      title: title || " ",
-      content,
-      verse,
-      tags,
+    notes[noteIndex] = {
+      ...notes[noteIndex],
+      ...(noteTitle && { title: noteTitle }),
+      verse: verseNumber,
       updatedAt: Date.now().toString(),
+      content: noteContent,
+      tags: selectedTags,
     };
 
-    // Se online, salvo anche sul server
-    if (useServer) {
-      const serverData = (
-        await backendlessRequest("getData", {}, { table: "NotableBiblePoints" })
-      )[0];
-      serverData.NotablePoints = notes;
-      await backendlessRequest("saveData", serverData, {
+    userNotes.NotablePoints = notes;
+
+    if (navigator.onLine) {
+      await backendlessRequest("saveData", userNotes, {
         table: "NotableBiblePoints",
       });
-      await deleteValue("userNotesByTag");
+    } else {
+      await setValue(
+        "userNotes",
+        notes.filter((note) => note.owner === userEmail)
+      );
     }
-
-    // Salvo SEMPRE su IndexedDB (backup locale e sincronizzazione)
-    await setValue(
-      "userNotesByTag",
-      notes.filter(
-        (n) => n.owner === userEmail && n.tags?.includes(filteringTag)
-      )
-    );
 
     editingNoteId = null;
     modal.style.display = "none";
 
-    // Ricarico le note filtrate
+    if (navigator.onLine) await deleteValue("userNotes");
+
     navigator.onLine ? await loadNotesByTag(true) : await loadNotesByTag();
   } catch (error) {
-    console.error("[saveNote] Errore in saveNote:", error);
-    toast("Errore durante il salvataggio della nota.");
+    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
+    toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
+    document.querySelector("#noteContent").value = "";
+    document.querySelector("#noteTitle").value = "";
+    document.querySelector("#verseNumber").value = "";
+
+    if (typeof tagChoices !== "undefined") {
+      tagChoices.removeActiveItems(); // reset visivo
+    }
+
+    await refreshTagChoices();
     hideGif();
   }
 }
@@ -381,7 +374,7 @@ async function saveNote() {
 // Bottone refresh: se online elimina cached userNotesByTag per forzare reload server, poi carica le note
 refreshBtn?.addEventListener("click", async () => {
   if (navigator.onLine) await deleteValue("userNotesByTag");
-  loadNotesByTag();
+  loadNotesByTag(true);
 });
 
 let tagChoices;
