@@ -34,8 +34,9 @@ async function loadNotesByTag(forceServer = false) {
     const userEmail = localStorage.getItem("userEmail");
 
     // Prendo i dati da server o IndexedDB in base a shouldUseServer
+    console.log(await shouldUseServer(), forceServer);
     const allRecords =
-      (await shouldUseServer()) || forceServer
+      forceServer || (await shouldUseServer())
         ? (
             await backendlessRequest(
               "getData",
@@ -121,7 +122,7 @@ async function loadNotesByTag(forceServer = false) {
 }
 
 // Al caricamento della pagina, carica le note
-window.addEventListener("load", loadNotesByTag);
+window.addEventListener("load", loadNotesByTag());
 
 // Listener click dentro il contenitore delle note
 notesContainer?.addEventListener("click", async (event) => {
