@@ -13,7 +13,7 @@ const referrer = document.referrer.split("/").pop();
 
 if (
   referrer !== "index.html" &&
-  document.referrer === "/" &&
+  !document.referrer.endsWith("/") &&
   referrer !== "chapters.html" &&
   referrer !== "notes.html" &&
   referrer !== "notesByTag.html"

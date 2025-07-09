@@ -53,7 +53,7 @@ const jsEntries = Object.fromEntries(
   jsFiles.map((name) => [name, resolve(__dirname, `src/js/${name}.js`)])
 );
 
-// 🎯 Tutti gli input (HTML + JS + PWA)
+// 🎯 Tutti gli input (HTML + JS)
 const allInputs = {
   ...htmlEntries,
   ...jsEntries,
