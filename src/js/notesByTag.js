@@ -1,5 +1,3 @@
-// ✅ notesByTag.js — carica solo le note con il tag selezionato, le fa modificare/eliminare/condividere, ma NON creare
-
 import backendlessRequest from "./backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
 import { isDarkTheme } from "/src/js/isDarkTheme.js";
@@ -304,7 +302,7 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Recupera il record dal database che contiene tutte le note
+    // Carica il record contenente TUTTE le note
     let userNotes = navigator.onLine
       ? (
           await backendlessRequest(
@@ -317,17 +315,25 @@ async function saveNote() {
 
     if (!userNotes) userNotes = { NotablePoints: [] };
 
-    let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
+    // Tutte le note del DB o dal localStorage
+    let allNotes = navigator.onLine ? userNotes.NotablePoints : userNotes;
 
-    const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+    // Filtra solo le note dell'utente
+    let userNotesOnly = allNotes.filter((note) => note.owner === userEmail);
+
+    // Cerca la nota da modificare tra le tue
+    const noteIndex = userNotesOnly.findIndex(
+      (note) => note.id === editingNoteId
+    );
     if (noteIndex === -1) {
       toast("Errore: impossibile trovare la nota da modificare.");
       console.warn("[saveNote] Nota da modificare NON trovata!");
       return;
     }
 
-    notes[noteIndex] = {
-      ...notes[noteIndex],
+    // Aggiorna la nota
+    userNotesOnly[noteIndex] = {
+      ...userNotesOnly[noteIndex],
       ...(noteTitle && { title: noteTitle }),
       verse: verseNumber,
       updatedAt: Date.now().toString(),
@@ -335,17 +341,19 @@ async function saveNote() {
       tags: selectedTags,
     };
 
-    userNotes.NotablePoints = notes;
-
     if (navigator.onLine) {
+      // Ricostruisci l'array completo con le tue note aggiornate + le altre intatte
+      userNotes.NotablePoints = [
+        ...allNotes.filter((n) => n.owner !== userEmail),
+        ...userNotesOnly,
+      ];
+
       await backendlessRequest("saveData", userNotes, {
         table: "NotableBiblePoints",
       });
     } else {
-      await setValue(
-        "userNotes",
-        notes.filter((note) => note.owner === userEmail)
-      );
+      // Offline: salva solo le tue
+      await setValue("userNotes", userNotesOnly);
     }
 
     editingNoteId = null;

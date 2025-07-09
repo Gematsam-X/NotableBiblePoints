@@ -188,8 +188,8 @@ export async function loadNotes() {
 // Carica le note al caricamento della pagina
 window.addEventListener("load", loadNotes);
 
-export let tagChoices;
-let tagChoicesArray = []; // lista globale di tutti i tag disponibili
+let tagChoices;
+let tagChoicesArray = [];
 
 (async () => {
   /**
@@ -447,16 +447,15 @@ document.querySelector("#saveNote").addEventListener("click", saveNote);
 
 let shouldEnterFullscreen = true;
 
-// Assumiamo che i tuoi tag abbiano la classe "tag-pill" (modifica se usi un'altra classe)
 document.addEventListener("click", (event) => {
-  // Controlla se il click è su un tag-pill o su un suo discendente
+  // Controlla se il click è su un tag
   const tagElement = event.target.closest(".tag-pill");
 
-  if (!tagElement) return; // Se non è un tag, esci subito
+  if (!tagElement) return; // Se non è un tag, esci
   event.stopPropagation();
   shouldEnterFullscreen = false;
 
-  // Qui dentro c'è il tag pill cliccato, prendi il testo del tag (senza spazi inutili)
+  // Prendi il testp del tag
   const tagText = tagElement.textContent.trim();
 
   if (tagText != sessionStorage.getItem("filteringTag")) {
