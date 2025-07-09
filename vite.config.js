@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import fs from "fs";
-import { viteStaticCopy } from "vite-plugin-static-copy"; // 🧩 Plugin per copiare file statici
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // Lista dei JS da includere come entry separati
 const jsFiles = [
@@ -22,6 +22,7 @@ const jsFiles = [
   "logoutAndDelete",
   "main-ok",
   "notes",
+  "notesByTag",
   "online",
   "recovery",
   "referrer",
@@ -34,13 +35,13 @@ const jsFiles = [
   "verifyChapterNotes",
 ];
 
-// Entry HTML
 const htmlEntries = {
   main: resolve(__dirname, "src/index.html"),
   login: resolve(__dirname, "src/html/login.html"),
   account: resolve(__dirname, "src/html/account.html"),
   chapters: resolve(__dirname, "src/html/chapters.html"),
   notesHTML: resolve(__dirname, "src/html/notes.html"),
+  notesByTagHTML: resolve(__dirname, "src/html/notesByTag.html"),
   onboarding: resolve(__dirname, "src/html/onboarding.html"),
   accessRestricted: resolve(__dirname, "src/html/accessRestricted.html"),
 };

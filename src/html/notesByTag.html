@@ -1,9 +1,11 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filtra per tag - NotableBiblePoints</title>
     <link rel="icon" href="../assets/favicon.ico" />
+    <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
     <div class="notes-page-title-container">
@@ -12,10 +14,6 @@
     </div>
     <br />
     <br />
-    <button class="openModal">&#43;</button>
-    <a id="readChapter">
-      <button>Leggi dalla Traduzione del Nuovo mondo</button>
-    </a>
     <button class="refreshNotes">
       <img width="40px" height="40px" id="refreshNotes_img" />
     </button>
@@ -51,6 +49,8 @@
               autocomplete="off"
               placeholder="Contenuto della nota..."
             ></textarea>
+            <label for="noteTags">Tag</label>
+            <select id="noteTags" multiple></select>
           </div>
           <button id="saveNote">Salva</button>
         </div>
@@ -64,7 +64,7 @@
     <script type="module" src="../js/backendlessInit.js"></script>
     <script type="module" src="../js/theme.js"></script>
     <script type="module" src="../js/chaptersAndNotesReferrer.js"></script>
-    <script type="module" src="../js/notes.js"></script>
+    <script type="module" src="../js/notesByTag.js"></script>
     <script type="module" src="../js/legend.js"></script>
     <script type="module" src="../js/isDarkTheme.js"></script>
     <script type="module" src="../js/return.js"></script>
