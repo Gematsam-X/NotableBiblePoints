@@ -53,5 +53,8 @@ if (
   }
 }
 
-if (window.location.href.split("/").pop() != "notesByTag.html")
+if (
+  window.location.href.toLowerCase().split("/").pop() != "notesbytag" &&
+  window.location.href.toLowerCase().split("/").pop() != "notesbytag.html"
+)
   sessionStorage.removeItem("filteringTag");
