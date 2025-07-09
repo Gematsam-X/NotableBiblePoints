@@ -36,9 +36,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# === LINUX & UBUNTU ===
-*~         # backup file
-*.swp      # swap Vim/NeoVim
+# === LINUX ===
+*~
+*.swp
 *.swo
 .cache/
 

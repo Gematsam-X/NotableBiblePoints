@@ -1,10 +1,12 @@
 import { Share } from "@capacitor/share";
 import Backendless from "backendless";
-import { deleteValue, getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni IndexedDB
+import { deleteValue, getValue, setValue } from "./indexedDButils.js";
 import { isDarkTheme } from "./isDarkTheme.js";
-import { isOnline } from "./isOnline.js"; // Importa la funzione per verificare la connessione
+import { isOnline } from "./isOnline.js";
 import { hideGif, showGif } from "./loadingGif.js";
-import { logoutUser } from "./logoutAndDelete.js"; // Importa la funzione di logout
+import { logoutUser } from "./logoutAndDelete.js";
+import Choices from "choices.js";
+import "choices.js/public/assets/styles/choices.min.css";
 import toast from "./toast.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
@@ -15,11 +17,11 @@ const chapter = parseInt(sessionStorage.getItem("selectedChapter"));
 
 // Imposta il titolo della pagina
 const pageTitle = document.querySelector(".notes-page-title");
-const title = `Punti notevoli del capitolo ${chapter} di ${selectedBook}`;
+const title = `Punti notevoli di ${selectedBook} ${chapter}`;
 
 if (pageTitle) {
   pageTitle.textContent = title;
-  window.document.title = `${title} - NotableBiblePoints`;
+  window.document.title = `${selectedBook} ${chapter} - NotableBiblePoints`;
 }
 
 // Funzione per controllare se bisogna usare il server
@@ -32,7 +34,20 @@ async function shouldUseServer() {
 const modal = document.querySelector(".modal");
 
 // Funzione per aprire la modale
-document.querySelector(".openModal").addEventListener("click", () => {
+document.querySelector(".openModal")?.addEventListener("click", async () => {
+  // Pulisci select tags di Choices.js
+  if (typeof tagChoices !== "undefined") {
+    tagChoices.removeActiveItems();
+  }
+
+  editingNoteId = null; // RESET!
+
+  // Pulisci input testuali
+  document.querySelector("#noteTitle").value = "";
+  document.querySelector("#verseNumber").value = "";
+  document.querySelector("#noteContent").value = "";
+
+  await refreshTagChoices();
   modal.style.display = "block";
 });
 
@@ -86,22 +101,18 @@ async function loadNotes() {
     let allNotes = [];
 
     if (Array.isArray(userNotes) && userNotes.length > 0) {
-      if (await shouldUseServer()) {
-        await setValue("userNotes", userNotes);
-      }
+      if (await shouldUseServer()) await setValue("userNotes", userNotes);
 
       // Filtra e ordina le note
       userNotes.forEach((noteObj) => {
-        if (noteObj) {
-          if (
-            noteObj.book === selectedBook &&
-            noteObj.chapter === chapter &&
-            noteObj.owner === userEmail
-          ) {
-            notesFound = true;
-            const { verse, title = "", content, id: noteId } = noteObj;
-            allNotes.push({ verse, title, content, noteId });
-          }
+        if (
+          noteObj.book === selectedBook &&
+          noteObj.chapter === chapter &&
+          noteObj.owner === userEmail
+        ) {
+          notesFound = true;
+          const { verse, title = "", content, id: noteId, tags = [] } = noteObj;
+          allNotes.push({ verse, title, content, noteId, tags });
         }
       });
 
@@ -109,25 +120,33 @@ async function loadNotes() {
       allNotes.sort((a, b) => a.verse - b.verse);
 
       // Aggiungi le note al contenitore
-      allNotes.forEach(({ verse, title, content, noteId }) => {
+      allNotes.forEach(({ verse, title, content, noteId, tags }) => {
         const noteElement = document.createElement("div");
         noteElement.classList.add("note");
         noteElement.setAttribute("data-id", noteId);
+        if (tags?.length > 0) {
+          noteElement.setAttribute("data-tags", JSON.stringify(tags));
+        }
+
+        // Costruzione tag HTML visivi
+        const tagsHtml = tags
+          .map((tag) => `<span class="tag-pill">${tag}</span>`)
+          .join("");
 
         const deleteImageSrc = isDarkTheme
-          ? "../assets/notes/delete/dark.webp"
-          : "../assets/notes/delete/light.webp";
+          ? "/src/assets/notes/delete/dark.webp"
+          : "/src/assets/notes/delete/light.webp";
         const editImageSrc = isDarkTheme
-          ? "../assets/notes/edit/dark.webp"
-          : "../assets/notes/edit/light.webp";
+          ? "/src/assets/notes/edit/dark.webp"
+          : "/src/assets/notes/edit/light.webp";
         const shareImageSrc = isDarkTheme
-          ? "../assets/notes/share/dark.webp"
-          : "../assets/notes/share/light.webp";
+          ? "/src/assets/notes/share/dark.webp"
+          : "/src/assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
-        <span class="close-note">&times;</span>
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
+          <div class="tags-container">${tagsHtml}</div>
           </div>
           <div class="note-body">
             <h2 class="note-title">${title}</h2>
@@ -135,9 +154,15 @@ async function loadNotes() {
           </div>
 
           <div class="note-action-buttons">
-          <button class="delete"><img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px"></button>
-          <button class="edit"><img class="edit_img" src="${editImageSrc}" width="40px" height="40px"></button>
-          <button class="share"><img class="share_img" src="${shareImageSrc}" width="40px" height="40px"></button>
+            <button class="delete">
+              <img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px">
+            </button>
+            <button class="edit">
+              <img class="edit_img" src="${editImageSrc}" width="40px" height="40px">
+            </button>
+            <button class="share">
+              <img class="share_img" src="${shareImageSrc}" width="40px" height="40px">
+            </button>
           </div>
         `;
 
@@ -153,7 +178,7 @@ async function loadNotes() {
   } catch (error) {
     if (error.message.toLowerCase().includes("not existing user token")) {
       toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
-      logoutUser();
+      logoutUser(true, true);
       return;
     }
     console.error("Errore nel recupero delle note:", error);
@@ -170,11 +195,138 @@ async function loadNotes() {
 // Carica le note al caricamento della pagina
 window.addEventListener("load", loadNotes);
 
+let tagChoices;
+let tagChoicesArray = []; // lista globale di tutti i tag disponibili
+
+(async () => {
+  /**
+   * Ricostruisce da zero il dropdown:
+   * - Svuota tutte le choices
+   * - Ripristina tutte le opzioni globali
+   * - Riapplica la selezione per nascondere i tag già scelti
+   */
+  function updateChoicesDropdown() {
+    const selected = tagChoices.getValue(true); // tag già selezionati
+    tagChoices.clearChoices(); // svuota tutte le opzioni
+    tagChoices.setChoices(tagChoicesArray, "value", "label", true); // rimetti tutto
+    tagChoices.setValue(selected); // riapplica la selezione
+  }
+
+  // 1️⃣ Prendo il <select> dal DOM
+  const tagSelect = document.getElementById("noteTags");
+  if (!tagSelect) {
+    console.warn("⚠️ Campo #noteTags non trovato nel DOM!");
+    return;
+  }
+
+  // 2️⃣ Recupero email utente
+  const currentUserEmail = localStorage.getItem("userEmail");
+  if (!currentUserEmail) {
+    console.warn("⚠️ Nessuna email utente trovata nel localStorage!");
+    return;
+  }
+
+  // 3️⃣ Carico le note (server o local)
+  const res = (await shouldUseServer())
+    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    : await getValue("userNotes");
+  const allPoints = Array.isArray(res) ? res : res?.NotablePoints || [];
+  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+
+  // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
+  const tagSet = new Set();
+  for (const point of userPoints) {
+    if (Array.isArray(point.tags)) {
+      point.tags.forEach((t) => {
+        if (t && typeof t === "string") tagSet.add(t.trim());
+      });
+    }
+  }
+  tagChoicesArray = Array.from(tagSet).map((tag) => ({
+    value: tag,
+    label: tag,
+  }));
+
+  // 5️⃣ Inizializzo Choices.js
+  tagChoices = new Choices(tagSelect, {
+    choices: tagChoicesArray,
+    removeItemButton: true,
+    duplicateItemsAllowed: false,
+    placeholderValue: "Aggiungi o seleziona tag...",
+    searchEnabled: true,
+    shouldSort: false,
+    position: "auto",
+    itemSelectText: "Seleziona",
+    noChoicesText:
+      "Hai selezionato tutti i tag disponibili, o non hai ancora creato nessun tag. Creane uno scrivendolo qui.",
+    paste: true,
+    addItems: false, // gestiamo l’aggiunta manualmente
+    allowHTML: true,
+  });
+
+  // 6️⃣ Controlla se un tag esiste già tra quelli selezionati
+  function tagExists(val) {
+    const v = val.toLowerCase().trim();
+    return tagChoices.getValue(true).some((t) => t.toLowerCase() === v);
+  }
+
+  // 7️⃣ Evento di ricerca: filtra + opzione “Crea nuovo”
+  tagSelect.addEventListener("search", (e) => {
+    const q = e.detail.value.trim().toLowerCase();
+    if (!q) {
+      updateChoicesDropdown();
+      tagChoices.hideDropdown();
+      return;
+    }
+    const filtered = tagChoicesArray.filter((c) =>
+      c.value.toLowerCase().startsWith(q)
+    );
+    if (q && !tagExists(q)) {
+      filtered.unshift({
+        value: `__add__${q}`,
+        label: `Crea nuovo tag: <strong>"${q}"</strong>`,
+        custom: true,
+      });
+    }
+    tagChoices.setChoices(filtered, "value", "label", true);
+    tagChoices.showDropdown();
+  });
+
+  // 8️⃣ Evento di aggiunta: nuovo tag o selezione esistente
+  tagSelect.addEventListener("addItem", (e) => {
+    const v = e.detail.value;
+    if (v.startsWith("__add__")) {
+      const newTag = v.replace("__add__", "").trim();
+      tagChoices.removeActiveItemsByValue(v);
+      if (!tagExists(newTag)) {
+        // aggiungo al globale e seleziono
+        tagChoicesArray.push({ value: newTag, label: newTag });
+        const sel = [...tagChoices.getValue(true), newTag];
+        updateChoicesDropdown();
+        tagChoices.setChoiceByValue(sel);
+      } else {
+        updateChoicesDropdown();
+      }
+    } else {
+      // selezione di un tag già esistente
+      updateChoicesDropdown();
+    }
+    tagSelect.value = "";
+    tagChoices.clearInput();
+  });
+
+  // 9️⃣ Evento di rimozione: rimetti il tag nel dropdown
+  tagSelect.addEventListener("removeItem", () => {
+    updateChoicesDropdown();
+  });
+})();
+
 // Async function to save or update a note
 async function saveNote() {
   const noteTitle = document.querySelector("#noteTitle").value.trim();
   const verseNumber = parseInt(document.querySelector("#verseNumber").value);
   const noteContent = document.querySelector("#noteContent").value.trim();
+  const selectedTags = tagChoices.getValue(true);
 
   if (isNaN(verseNumber) || !noteContent) {
     toast("Compila tutti i campi correttamente!");
@@ -203,6 +355,7 @@ async function saveNote() {
       const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
       if (noteIndex === -1) {
         toast("Errore: impossibile trovare la nota da modificare.");
+        console.warn("[saveNote] Nota da modificare NON trovata!");
         return;
       }
 
@@ -212,9 +365,9 @@ async function saveNote() {
         verse: verseNumber,
         updatedAt: Date.now().toString(),
         content: noteContent,
+        tags: selectedTags,
       };
     } else {
-      // Se stai creando una nuova nota
       const newNote = {
         id: Date.now().toString(),
         title: noteTitle || " ",
@@ -223,6 +376,7 @@ async function saveNote() {
         chapter: parseInt(sessionStorage.getItem("selectedChapter")),
         book: sessionStorage.getItem("selectedBook"),
         owner: userEmail,
+        tags: selectedTags,
       };
 
       notes.push(newNote);
@@ -246,10 +400,7 @@ async function saveNote() {
     editingNoteId = null;
     modal.style.display = "none";
 
-    if (await isOnline()) {
-      await deleteValue("userNotes");
-      console.log("locale eliminato");
-    }
+    if (await isOnline()) await deleteValue("userNotes");
 
     loadNotes();
   } catch (error) {
@@ -259,15 +410,39 @@ async function saveNote() {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
+    if (typeof tagChoices !== "undefined") {
+      tagChoices.removeActiveItems(); // reset visivo
+    }
+
+    await refreshTagChoices();
     hideGif();
   }
 }
 
 document.querySelector("#saveNote").addEventListener("click", saveNote);
 
+let shouldEnterFullscreen = true; // Variabile per controllare l'entrata in fullscreen
+
+document.addEventListener("click", (event) => {
+  // Controlla se il click è su un tag-pill o su un suo discendente
+  const tagElement = event.target.closest(".tag-pill");
+
+  if (!tagElement) return; // Se non è un tag, esci subito
+  event.stopPropagation();
+  shouldEnterFullscreen = false;
+
+  // Qui dentro c'è il tag pill cliccato, prendi il testo del tag (senza spazi inutili)
+  const tagText = tagElement.textContent.trim();
+
+  if (tagText != sessionStorage.getItem("filteringTag")) {
+    sessionStorage.setItem("filteringTag", tagText);
+    window.location.href = "./notesByTag.html";
+  }
+});
+
 document.addEventListener("click", (event) => {
   const closestNote = event.target.closest(".note");
-  if (closestNote) {
+  if (closestNote && shouldEnterFullscreen) {
     closestNote.id = "clicked-note";
     closestNote.requestFullscreen();
   }
@@ -279,7 +454,6 @@ document.addEventListener("fullscreenchange", () => {
     return;
   } else {
     document.querySelector("#clicked-note").id = "";
-    console.log("Uscito dal fullscreen!");
   }
 });
 
@@ -429,8 +603,6 @@ document.addEventListener("keypress", (event) => {
 let editingNoteId = null; // Variabile globale per sapere se stiamo modificando
 
 async function editNote(noteElement) {
-  console.log("Editing note...");
-
   if (document.fullscreenElement) {
     document.exitFullscreen();
   }
@@ -450,6 +622,25 @@ async function editNote(noteElement) {
   document.querySelector("#noteTitle").value = noteTitle;
   document.querySelector("#verseNumber").value = verseNumber;
   document.querySelector("#noteContent").value = noteContent;
+
+  // Pulisce prima i tag precedenti (visivamente)
+  if (typeof tagChoices !== "undefined") {
+    tagChoices.removeActiveItems();
+    await refreshTagChoices();
+
+    // Prendi i tag dal data-attribute e settali nel select
+    const tagString = noteElement.getAttribute("data-tags");
+    if (tagString) {
+      try {
+        const tagArray = JSON.parse(tagString);
+        tagArray.forEach((tag) => {
+          tagChoices.setChoiceByValue(tag); // seleziona i tag esistenti
+        });
+      } catch (err) {
+        console.warn("⚠️ Errore parsing tag:", err);
+      }
+    }
+  }
 
   // Mostra la modale
   modal.style.display = "block";
@@ -479,12 +670,36 @@ observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
 
-refreshBtn.addEventListener("click", async () => {
+refreshBtn?.addEventListener("click", async () => {
   if (sessionStorage.getItem("canRefresh") !== "false") {
     if (await isOnline()) await deleteValue("userNotes");
     loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
   }
 });
+
+// Funzione per aggiornare Choices.js con i tag freschi
+async function refreshTagChoices() {
+  const userEmail = localStorage.getItem("userEmail");
+  const res = (await shouldUseServer())
+    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    : await getValue("userNotes");
+
+  const allNotes = Array.isArray(res) ? res : res?.NotablePoints || [];
+  const userNotes = allNotes.filter((n) => n.owner === userEmail);
+
+  const tagSet = new Set();
+  userNotes.forEach((note) => {
+    if (Array.isArray(note.tags)) {
+      note.tags.forEach((t) => tagSet.add(t.trim()));
+    }
+  });
+
+  const choicesArray = Array.from(tagSet).map((tag) => ({
+    value: tag,
+    label: tag,
+  }));
+  tagChoices.setChoices(choicesArray, "value", "label", true);
+}
 
 // Sezione sul reindirizzamento alla Traduzione del Nuovo Mondo
 
@@ -560,10 +775,6 @@ const bibleBooks = [
 const link = document.querySelector("#readChapter") || null;
 
 link?.addEventListener("click", () => {
-  // Ottieni il libro selezionato
-  const selectedBook = sessionStorage.getItem("selectedBook");
-  const selectedChapter = sessionStorage.getItem("selectedChapter");
-
   // Cerca l'indice del libro selezionato nell'array bibleBooks
   const bookIndex = bibleBooks.indexOf(selectedBook); // Restituisce l'indice del libro, o -1 se non trovato
 
@@ -572,10 +783,10 @@ link?.addEventListener("click", () => {
     const bookCode = (bookIndex + 1).toString().padStart(2, "0");
 
     // Costruisce il codice del riferimento (ad esempio, 01001001 per Genesi 1:1)
-    const referenceCode = `${bookCode}${selectedChapter.padStart(
+    const referenceCode = `${bookCode}${chapter.padStart(
       3,
       "0"
-    )}000-${bookCode}${selectedChapter.padStart(3, "0")}999}`;
+    )}000-${bookCode}${chapter.padStart(3, "0")}999}`;
 
     // Costruisce l'URL con il riferimento completo
     link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;

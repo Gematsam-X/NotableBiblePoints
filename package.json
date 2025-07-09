@@ -1,6 +1,6 @@
 {
   "name": "notablebiblepoints",
-  "version": "1.0.0",
+  "version": "2.2.4",
   "description": "NotableBiblePoints ti permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi.",
   "main": "src/js/main-ok.js",
   "scripts": {
@@ -9,21 +9,18 @@
     "update": "npm run build && npx cap copy && npx cap sync && npx cap open android"
   },
   "author": "Gionatan Venturi",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@capacitor/android": "^7.2.0",
-    "@capacitor/cli": "^7.2.0",
-    "@capacitor/core": "^7.2.0",
+    "@capacitor/android": "^7.4.1",
+    "@capacitor/core": "^7.4.1",
     "@capacitor/network": "^7.0.1",
     "@capacitor/share": "^7.0.1",
     "backendless": "^7.4.6",
-    "fs-extra": "^11.3.0",
-    "globby": "^14.1.0",
-    "html-minifier": "^4.0.0",
-    "terser": "^5.39.2"
+    "choices.js": "^11.1.0"
   },
   "devDependencies": {
-    "vite": "^6.3.5",
+    "@capacitor/cli": "^7.2.0",
+    "vite": "^7.0.3",
     "vite-plugin-static-copy": "^3.0.0"
   }
 }
