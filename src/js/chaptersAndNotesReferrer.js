@@ -3,20 +3,20 @@ import "/src/styles.css";
 if (
   !sessionStorage.getItem("selectedBook") ||
   ((window.location.href.split("/").pop() === "notes.html" ||
-    window.location.href.split("/").pop() === "notesByTag.html") &&
+    window.location.href.split("/").pop() === "notesbytag.html") &&
     !sessionStorage.getItem("selectedChapter"))
 ) {
   window.location.href = "/index.html";
 }
 
-const referrer = document.referrer.split("/").pop();
+const referrer = document.referrer.toLowerCase().split("/").pop();
 
 if (
   referrer !== "index.html" &&
   !document.referrer.endsWith("/") &&
   referrer !== "chapters.html" &&
   referrer !== "notes.html" &&
-  referrer !== "notesByTag.html"
+  referrer !== "notesbytag.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
   sessionStorage.removeItem("selectedBook");
