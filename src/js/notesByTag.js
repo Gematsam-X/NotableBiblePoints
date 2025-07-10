@@ -22,7 +22,7 @@ async function shouldUseServer() {
   else return true;
 }
 
-// 🔁 Carica solo le note che contengono il filteringTag
+// Carica solo le note che contengono il filteringTag
 async function loadNotesByTag(forceServer = false) {
   if (!notesContainer) return;
 
@@ -33,8 +33,7 @@ async function loadNotesByTag(forceServer = false) {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Prendo i dati da server o IndexedDB in base a shouldUseServer
-    console.log(await shouldUseServer(), forceServer);
+    // Prendo i dati
     const allRecords =
       forceServer || (await shouldUseServer())
         ? (
