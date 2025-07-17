@@ -276,6 +276,18 @@
     </div>
 
     <script type="module" src="/src/js/theme.js"></script>
+    <script type="module">
+      import { logoutUser } from "/src/js/logoutAndDelete.js";
+      const versionToFloat = (s) =>
+        parseFloat(s.split(".").shift() + "." + s.split(".").slice(1).join(""));
+      if (versionToFloat(localStorage.getItem("appVersion")) < 2.32) {
+        const selectedTheme = localStorage.getItem("theme");
+        localStorage.clear();
+        localStorage.setItem("theme", selectedTheme);
+        localStorage.setItem("appVersion", "2.3.2");
+        await logoutUser(false);
+      }
+    </script>
     <script type="module" src="/src/js/referrer.js"></script>
     <script type="module" src="/src/js/legend.js"></script>
     <script type="module" src="/src/js/rememberMe.js"></script>
@@ -284,17 +296,5 @@
     <script type="module" src="/src/js/searchbar.js"></script>
     <script type="module" src="/src/js/online.js"></script>
     <script type="module" src="/src/js/drawer.js"></script>
-    <script type="module">
-      import { logoutUser } from "/src/js/logoutAndDelete.js";
-      const versionToFloat = (s) =>
-        parseFloat(s.split(".").shift() + "." + s.split(".").slice(1).join(""));
-      if (versionToFloat(localStorage.getItem("appVersion")) < 2.31) {
-        const selectedTheme = localStorage.getItem("theme");
-        localStorage.clear();
-        localStorage.setItem("theme", selectedTheme);
-        localStorage.setItem("appVersion", "2.3.1")
-        await logoutUser(false);
-      }
-    </script>
   </body>
 </html>

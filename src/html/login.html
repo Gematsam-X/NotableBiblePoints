@@ -93,16 +93,6 @@
     </div>
 
     <script type="module" src="/src/js/auth.js"></script>
-    <script type="module" src="/src/js/rememberMe.js"></script>
-    <script type="module" src="/src/js/loadingGif.js"></script>
-    <script type="module" src="/src/js/theme.js"></script>
-    <script type="module" src="/src/js/toggleLoginSignup.js"></script>
-    <script type="module" src="/src/js/recovery.js"></script>
-    <script type="module" src="/src/js/legend.js"></script>
-    <script type="module">
-      import checkVersion from "/src/js/checkVersion.js";
-      checkVersion();
-    </script>
     <script type="module">
       document
         .querySelector(".help")
@@ -115,13 +105,23 @@
       import { logoutUser } from "/src/js/logoutAndDelete.js";
       const versionToFloat = (s) =>
         parseFloat(s.split(".").shift() + "." + s.split(".").slice(1).join(""));
-      if (versionToFloat(localStorage.getItem("appVersion")) < 2.31) {
+      if (versionToFloat(localStorage.getItem("appVersion")) < 2.32) {
         const selectedTheme = localStorage.getItem("theme");
         localStorage.clear();
         localStorage.setItem("theme", selectedTheme);
-        localStorage.setItem("appVersion", "2.3.1");
+        localStorage.setItem("appVersion", "2.3.2");
         await logoutUser(false);
       }
+    </script>
+    <script type="module" src="/src/js/rememberMe.js"></script>
+    <script type="module" src="/src/js/loadingGif.js"></script>
+    <script type="module" src="/src/js/theme.js"></script>
+    <script type="module" src="/src/js/toggleLoginSignup.js"></script>
+    <script type="module" src="/src/js/recovery.js"></script>
+    <script type="module" src="/src/js/legend.js"></script>
+    <script type="module">
+      import checkVersion from "/src/js/checkVersion.js";
+      checkVersion();
     </script>
   </body>
 </html>
