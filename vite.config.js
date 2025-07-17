@@ -11,6 +11,7 @@ const jsFiles = [
   "backendlessRequest",
   "backup",
   "chaptersAndNotesReferrer",
+  "checkIfLegacy",
   "checkVersion",
   "drawer",
   "idb",
