@@ -278,9 +278,8 @@
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module">
       import { logoutUser } from "/src/js/logoutAndDelete.js";
-      const versionToFloat = (s) =>
-        parseFloat(s.split(".").shift() + "." + s.split(".").slice(1).join(""));
-      if (versionToFloat(localStorage.getItem("appVersion")) < 2.32) {
+      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (regex.test(localStorage.getItem("userEmail"))) {
         const selectedTheme = localStorage.getItem("theme");
         localStorage.clear();
         localStorage.setItem("theme", selectedTheme);
