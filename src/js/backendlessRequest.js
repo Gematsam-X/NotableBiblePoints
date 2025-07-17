@@ -1,31 +1,24 @@
-/**
- * Funzione riutilizzabile per chiamare la serverless function backendlessHandler
- * @param {string} action - L'azione da eseguire ("login", "register", "saveData", etc)
- * @param {object} data - Dati da inviare
- * @param {object} [extra] - Parametri extra (es. { token, objectId, table })
- * @returns {Promise<object>} - Risposta JSON della funzione serverless
- */
 export default async function backendlessRequest(
   action,
   data = {},
-  extra = {}
+  userToken = null
 ) {
-  const payload = {
-    action,
-    data,
-    ...extra,
-  };
-
   const response = await fetch("/.netlify/functions/backendlessHandler", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action,
+      data,
+      userToken,
+    }),
   });
 
   const json = await response.json();
 
   if (!response.ok) {
-    throw new Error(json.error || "Errore generico da backendlessHandler");
+    throw new Error(json.error || "Errore dalla serverless.");
   }
 
   return json;

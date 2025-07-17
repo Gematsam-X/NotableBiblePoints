@@ -1,6 +1,6 @@
 {
   "name": "notablebiblepoints",
-  "version": "2.2.5",
+  "version": "2.3.0",
   "description": "NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi.",
   "keywords": [
     "bible"
@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "backendless": "^7.4.6",
-    "choices.js": "^11.1.0"
+    "choices.js": "^11.1.0",
+    "crypto-js": "^4.2.0",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "netlify-cli": "^22.2.1",

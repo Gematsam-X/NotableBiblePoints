@@ -21,7 +21,9 @@ async function registerUser(email, password) {
     });
 
     console.log("Utente registrato:", registeredUser);
-    toast("Registrazione riuscita! Controlla la tua email per la conferma.");
+    toast(
+      "Registrazione riuscita! Adesso effettua il login con l'email e la password appena impostati."
+    );
   } catch (error) {
     console.error("Errore durante la registrazione:", error);
     const errMsg = error.message.toLowerCase();
@@ -58,43 +60,44 @@ async function loginUser(email, password) {
       email: email.toLowerCase().trim(),
       password: password.trim(),
     });
-    console.log("Utente loggato:", loggedInUser);
 
-    // Salva l'email dell'utente in localStorage
-    localStorage.setItem("userEmail", loggedInUser.email);
+    // ⚠️ Verifica che loggedInUser sia valido
+    if (
+      !loggedInUser ||
+      !loggedInUser.email ||
+      !loggedInUser["user-token"] ||
+      !loggedInUser.encryptedEmail
+    ) {
+      throw new Error("Risposta inattesa dal server.");
+    }
 
-    // Salva l'utente corrente sul localStorage per mantenerlo loggato
+    // Salva userToken e email criptata
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
-    // Imposta il flag di autenticazione
+    localStorage.setItem("userEmail", loggedInUser.encryptedEmail);
+    localStorage.setItem("userId", loggedInUser.objectId);
     localStorage.setItem("isAuthenticated", "true");
-    console.log("Utente autenticato:", localStorage.getItem("isAuthenticated"));
 
-    window.location.href = "/index.html"; // Reindirizza alla pagina principale
+    window.location.href = "/index.html";
   } catch (error) {
     console.error("Errore nel login:", error);
-    const errMsg = error.message.toLowerCase();
+    const msg = (error.message || "").toLowerCase();
 
-    if (errMsg.includes("invalid login or password")) {
-      toast(
-        "Credenziali errate o utente non registrato. Controlla l'email e la password, verifica di essere registrato e riprova."
-      );
-    } else if (errMsg.includes("password value cannot be empty")) {
-      toast("Inserisci la password.", 2000);
-    } else if (errMsg.includes("email value cannot be empty")) {
-      toast("Inserisci l'email.", 2000);
-    } else if (errMsg.includes("email address must be confirmed first")) {
-      toast(
-        "Conferma il tuo indirizzo email prima di accedere. Puoi farlo accedendo alla tua posta elettronica e cliccando sul link contenuto nella mail da parte di Backendless.",
-        5000
-      );
+    if (msg.includes("invalid login or password")) {
+      toast("Credenziali errate o utente non registrato.");
+    } else if (msg.includes("password value cannot be empty")) {
+      toast("Inserisci la password.");
+    } else if (msg.includes("email value cannot be empty")) {
+      toast("Inserisci l'email.");
+    } else if (msg.includes("email address must be confirmed")) {
+      toast("Conferma la tua email tramite il link nella mail di verifica.");
     } else if (
-      errMsg.includes("network error") ||
-      errMsg.includes("failed to fetch")
+      msg.includes("network error") ||
+      msg.includes("failed to fetch")
     ) {
-      toast("Errore di connessione. Controlla la tua rete e riprova.");
+      toast("Errore di rete. Controlla la connessione.");
     } else {
-      toast(error.message);
+      toast("Errore: " + error.message);
     }
   } finally {
     hideGif();

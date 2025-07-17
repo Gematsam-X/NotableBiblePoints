@@ -1,41 +1,33 @@
-import backendlessRequest from "./backendlessRequest.js";
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
+import shouldUseServer from "/src/js/notes.js";
 import toast from "/src/js/toast.js";
 
 async function findUserRecords() {
   const userEmail = localStorage.getItem("userEmail");
-  let databaseEntry;
-
+  let fullRecord = [];
   try {
-    // Chiamiamo la funzione serverless per ottenere il primo record di NotableBiblePoints
-    const fullRecord = await backendlessRequest(
-      "getData",
-      {},
-      { table: "NotableBiblePoints" }
-    );
-
-    const firstEntry = Array.isArray(fullRecord) ? fullRecord[0] : null;
-    const points = firstEntry?.NotablePoints || [];
-
-    // Filtriamo per proprietario
-    databaseEntry = points.filter((entry) => entry.owner === userEmail);
+    // Recupera le note
+    fullRecord =
+      ((await shouldUseServer())
+        ? await backendlessRequest(
+            "notes:get",
+            {
+              email: userEmail,
+            },
+            localStorage.getItem("userToken")
+          )
+        : await getValue("userNotes")) || [];
   } catch (err) {
-    console.error("Errore durante il recupero dal server:", err.message);
+    console.error("Errore durante il recupero:", err.message);
   }
 
-  // Se non troviamo nulla, tentiamo il fallback locale
-  if (!databaseEntry || databaseEntry.length === 0) {
-    databaseEntry = await getValue("userNotes");
-  }
-
-  if (!databaseEntry) {
+  if (!fullRecord) {
     toast("Errore: dati non trovati.");
     return [];
   }
-
-  console.log("Dati attuali:", databaseEntry);
-  return databaseEntry;
+  return fullRecord;
 }
 
 export async function createBackup() {
@@ -48,13 +40,7 @@ export async function createBackup() {
     return;
   }
 
-  const userEmail = localStorage.getItem("userEmail"); // Otteniamo l'email dall'IndexedDB
-
-  if (!databaseEntry.length) {
-    toast("Nessun dato disponibile per l'utente corrente.");
-    hideGif();
-    return;
-  }
+  const userEmail = localStorage.getItem("userEmail");
 
   let jsonString = JSON.stringify(databaseEntry, null, 4);
   let blob = new Blob([jsonString], { type: "application/json" });
@@ -65,7 +51,7 @@ export async function createBackup() {
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
 
-  let fileName = `NotableBiblePointsBACKUP_${userEmail}_${day}-${month}-${year}.nbp`;
+  let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}.nbp`;
 
   let a = document.createElement("a");
   a.href = url;
@@ -95,11 +81,14 @@ export async function restoreBackup() {
 
   inputFile.accept = ".nbp";
 
-  inputFile.addEventListener("change", async function (event) {
-    const file = event.target.files[0];
+  // ✅ Rimuovi eventuali listener precedenti per evitare duplicati
+  const newInput = inputFile.cloneNode(true);
+  inputFile.replaceWith(newInput);
 
+  newInput.addEventListener("change", async function (event) {
+    const file = event.target.files[0];
     if (!file) {
-      toast("Per favore, seleziona un file JSON.");
+      toast("Seleziona un file .nbp valido.");
       return;
     }
 
@@ -109,7 +98,7 @@ export async function restoreBackup() {
 
     reader.onload = async function (e) {
       try {
-        jsonData = JSON.parse(e.target.result);
+        const jsonData = JSON.parse(e.target.result);
 
         if (!Array.isArray(jsonData)) {
           toast("Il file di backup è corrotto. Non è possibile ripristinarlo.");
@@ -117,76 +106,46 @@ export async function restoreBackup() {
         }
 
         const userEmail = localStorage.getItem("userEmail");
-
         if (!userEmail) {
           toast("Utente non autenticato.");
           return;
         }
 
-        // Recupera il primo (e unico) record dal database che contiene tutte le note
-        let userNotes = navigator.onLine
-          ? (
-              await backendlessRequest(
-                "getData",
-                {},
-                { table: "NotableBiblePoints" }
-              )
-            )[0]
-          : await getValue("userNotes");
+        const existing = await getValue("userNotes");
+        const notes = Array.isArray(existing) ? existing : [];
 
-        if (!userNotes) {
-          userNotes = { NotablePoints: [] };
-        }
-
-        let notes = navigator.onLine ? userNotes.NotablePoints : userNotes;
-
-        // Aggiungi i nuovi record o aggiorna quelli esistenti
         for (const newRecord of jsonData) {
-          // Cerca se esiste già un record con lo stesso id
-          const existingRecordIndex = notes.findIndex(
-            (note) => note.id === newRecord.id
-          );
+          const idx = notes.findIndex((note) => note.id === newRecord.id);
 
-          if (existingRecordIndex !== -1) {
-            // Se il record esiste, aggiornalo
-            notes[existingRecordIndex] = {
-              ...notes[existingRecordIndex],
-              ...newRecord, // Aggiorna solo i campi modificati
-              updatedAt: Date.now().toString(),
-            };
+          const record = {
+            ...newRecord,
+            updatedAt: Date.now().toString(),
+          };
+
+          if (idx !== -1) {
+            notes[idx] = { ...notes[idx], ...record };
           } else {
-            // Se il record non esiste, aggiungilo
-            notes.push({
-              ...newRecord,
-              owner: userEmail, // Associa il nuovo record all'utente
-            });
+            notes.push(record);
           }
         }
 
-        // Salva i dati nel database
-        userNotes.NotablePoints = notes;
-
-        if (navigator.onLine) {
-          await backendlessRequest("saveData", userNotes, {
-            table: "NotableBiblePoints",
-          });
-
-          console.log("Backup ripristinato con successo sul server!");
-        } else {
-          await setValue(
-            "userNotes",
-            notes.filter((note) => note.owner === userEmail)
+        // Salva nel server o in locale
+        if (navigator.onLine)
+          await backendlessRequest(
+            "notes:addOrUpdate",
+            {
+              email: userEmail,
+              note: notes,
+            },
+            localStorage.getItem("userToken")
           );
-          console.log("Backup ripristinato con successo in locale!");
-        }
 
-        // Resetta lo stato
-        toast("Backup ripristinato con successo.");
-      } catch (e) {
-        console.error("Errore nel parsing del file JSON:", e);
-        toast(
-          "Errore nel parsing del file di backup. Assicurati che il file sia valido."
-        );
+        await setValue("userNotes", notes);
+
+        toast("Backup ripristinato con successo!");
+      } catch (err) {
+        console.error("Errore nel parsing del file JSON:", err);
+        toast("Errore nel file di backup. Assicurati che sia un .nbp valido.");
       } finally {
         hideGif();
       }
@@ -195,5 +154,5 @@ export async function restoreBackup() {
     reader.readAsText(file);
   });
 
-  inputFile.click();
+  newInput.click();
 }
