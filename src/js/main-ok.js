@@ -1,7 +1,7 @@
 import "/src/drawer.css";
+import "/src/icons.css";
 import checkVersion from "/src/js/checkVersion.js";
 import "/src/styles.css";
-import "/src/icons.css";
 
 document
   .querySelector(".help")
@@ -25,14 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // Controllo se il browser supporta i service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/serviceWorker.js")
-      .then((registration) => {
-        console.log("Service Worker registrato con successo: ", registration);
-      })
-      .catch((error) => {
-        console.log("Errore nella registrazione del Service Worker: ", error);
-      });
+    navigator.serviceWorker.register("/serviceWorker.js").catch((error) => {
+      console.error("Errore nella registrazione del service worker:", error);
+    });
   });
 }
 

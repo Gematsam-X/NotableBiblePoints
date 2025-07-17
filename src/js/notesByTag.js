@@ -1,10 +1,10 @@
+import Choices from "choices.js";
+import "choices.js/public/assets/styles/choices.min.css";
 import backendlessRequest from "./backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
 import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
-import Choices from "choices.js";
-import "choices.js/public/assets/styles/choices.min.css";
 
 let editingNoteId = null;
 const modal = document.querySelector(".modal");
@@ -36,27 +36,21 @@ async function loadNotesByTag(forceServer = false) {
     // Prendo i dati
     const allRecords =
       forceServer || (await shouldUseServer())
-        ? (
-            await backendlessRequest(
-              "getData",
-              {},
-              { table: "NotableBiblePoints" }
-            )
-          )[0]?.NotablePoints || []
+        ? (await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            localStorage.getItem("userToken")
+          )) || []
         : await getValue("userNotes");
 
-    const globalUserNotes = allRecords.filter(
-      (note) => note?.owner === userEmail
-    );
-
-    // Filtro le note in base all'owner e al tag filtrante
-    const filteredNotes = globalUserNotes.filter((note) =>
+    // Filtro le note in base al tag filtrante
+    const filteredNotes = allRecords.filter((note) =>
       note?.tags?.includes(filteringTag)
     );
 
     // Salvo nel DB locale filtered subset (campo userNotesByTag)
     await setValue("userNotesByTag", filteredNotes);
-    await setValue("userNotes", globalUserNotes);
+    await setValue("userNotes", allRecords);
 
     notesContainer.innerHTML = "";
 
@@ -192,58 +186,59 @@ function shareNote(noteElement) {
 }
 
 // Eliminazione nota con salvataggio online se possibile e sempre IndexedDB
+/**
+ * Elimina una nota, sia lato Backendless che localmente.
+ * @param {HTMLElement} noteElement - L'elemento DOM della nota da eliminare.
+ */
 async function deleteNote(noteElement) {
   if (!confirm("Vuoi davvero eliminare questa nota?")) return;
 
+  showGif(); // Mostra la gif di caricamento
+
   try {
-    showGif();
     const id = noteElement.getAttribute("data-id");
     const userEmail = localStorage.getItem("userEmail");
+    const userToken = localStorage.getItem("userToken");
 
-    const online = navigator.onLine;
-
-    let data = online
-      ? (
-          await backendlessRequest(
-            "getData",
-            {},
-            { table: "NotableBiblePoints" }
-          )
-        )[0]
-      : await getValue("userNotes");
-
-    const notes = online ? data.NotablePoints : data;
-
-    if (!Array.isArray(notes)) {
-      toast("Errore interno: lista note non valida");
-      console.error("[deleteNote] Errore: notes non è un array");
-      hideGif();
+    if (!id || !userEmail || !userToken) {
+      toast("Errore: dati utente mancanti o ID non valido.");
+      console.error("[deleteNote] ID o credenziali non trovate.");
       return;
     }
 
-    const updated = notes.filter((note) => note.id !== id);
+    const online = navigator.onLine;
 
+    // Elimina la nota da Backendless se siamo online
     if (online) {
-      data.NotablePoints = updated;
-      await backendlessRequest("saveData", data, {
-        table: "NotableBiblePoints",
-      });
+      await backendlessRequest(
+        "notes:delete",
+        { email: userEmail, ids: id },
+        userToken
+      );
     }
 
+    // Prende le note salvate localmente
+    const allNotes = (await getValue("userNotes")) || [];
+
+    // Filtra le note rimuovendo quella con l'id corrispondente
+    const updated = allNotes.filter((note) => note.id !== id);
+
+    // Aggiorna sia l'array completo che quello filtrato per il tag attivo
+    await setValue("userNotes", updated);
     await setValue(
       "userNotesByTag",
-      updated.filter(
-        (n) => n.owner === userEmail && n.tags?.includes(filteringTag)
-      )
+      updated.filter((n) => n.tags?.includes(filteringTag))
     );
 
+    // Rimuove la nota dal DOM
     noteElement.remove();
-    toast("Nota eliminata.");
+
+    toast("Nota eliminata con successo.");
   } catch (error) {
     console.error("[deleteNote] Errore durante eliminazione:", error);
     toast("Errore durante l'eliminazione della nota.");
   } finally {
-    hideGif();
+    hideGif(); // Nasconde la gif di caricamento in ogni caso
   }
 }
 
@@ -302,38 +297,26 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Carica il record contenente TUTTE le note
-    let userNotes = navigator.onLine
-      ? (
-          await backendlessRequest(
-            "getData",
-            {},
-            { table: "NotableBiblePoints" }
+    // Recupera il record dal database che contiene tutte le note
+    let notes =
+      (navigator.onLine
+        ? await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            localStorage.getItem("userToken")
           )
-        )[0]
-      : await getValue("userNotes");
-
-    if (!userNotes) userNotes = { NotablePoints: [] };
-
-    // Tutte le note del DB o dal localStorage
-    let allNotes = navigator.onLine ? userNotes.NotablePoints : userNotes;
-
-    // Filtra solo le note dell'utente
-    let userNotesOnly = allNotes.filter((note) => note.owner === userEmail);
+        : await getValue("userNotes")) || [];
 
     // Cerca la nota da modificare tra le tue
-    const noteIndex = userNotesOnly.findIndex(
-      (note) => note.id === editingNoteId
-    );
+    const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
     if (noteIndex === -1) {
       toast("Errore: impossibile trovare la nota da modificare.");
-      console.warn("[saveNote] Nota da modificare NON trovata!");
       return;
     }
 
     // Aggiorna la nota
-    userNotesOnly[noteIndex] = {
-      ...userNotesOnly[noteIndex],
+    notes[noteIndex] = {
+      ...notes[noteIndex],
       ...(noteTitle && { title: noteTitle }),
       verse: verseNumber,
       updatedAt: Date.now().toString(),
@@ -341,20 +324,13 @@ async function saveNote() {
       tags: selectedTags,
     };
 
-    if (navigator.onLine) {
-      // Ricostruisci l'array completo con le tue note aggiornate + le altre intatte
-      userNotes.NotablePoints = [
-        ...allNotes.filter((n) => n.owner !== userEmail),
-        ...userNotesOnly,
-      ];
-
-      await backendlessRequest("saveData", userNotes, {
-        table: "NotableBiblePoints",
-      });
-    } else {
-      // Offline: salva solo le tue
-      await setValue("userNotes", userNotesOnly);
-    }
+    if (navigator.onLine)
+      await backendlessRequest(
+        "notes:addOrUpdate",
+        { email: localStorage.getItem("userEmail"), note: notes[noteIndex] },
+        localStorage.getItem("userToken")
+      );
+    else await setValue("userNotes", notes);
 
     editingNoteId = null;
     modal.style.display = "none";
@@ -363,7 +339,7 @@ async function saveNote() {
 
     navigator.onLine ? await loadNotesByTag(true) : await loadNotesByTag();
   } catch (error) {
-    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
+    console.error("[saveNote] Errore durante modifica:", error);
     toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
     document.querySelector("#noteContent").value = "";

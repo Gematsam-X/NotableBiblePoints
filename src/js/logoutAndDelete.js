@@ -1,23 +1,10 @@
 import backendlessRequest from "./backendlessRequest.js";
-import { deleteValue, getValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
+import { deleteValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";
 
 export async function deleteCurrentUser() {
   try {
-    const currentUser = await backendlessRequest(
-      "getCurrentUser",
-      {},
-      { userToken: localStorage.getItem("userToken") }
-    );
-
-    console.log("Utente attuale:", currentUser);
-
-    if (!currentUser) {
-      toast("Nessun utente loggato.");
-      return;
-    }
-
     showGif();
 
     const confirmDelete = confirm(
@@ -29,8 +16,8 @@ export async function deleteCurrentUser() {
       return;
     }
 
-    // Recupera l'email dell'utente da IndexedDB
-    const userEmail = await getValue("userEmail");
+    // Recupera l'email
+    const userEmail = localStorage.getItem("userEmail");
     if (!userEmail) {
       toast("Errore: email utente non trovata.");
       hideGif();
@@ -38,37 +25,35 @@ export async function deleteCurrentUser() {
     }
 
     // Recupera l'oggetto JSON dalla tabella NotableBiblePoints
-    const result = await backendlessRequest(
-      "getData",
-      {},
-      { table: "NotableBiblePoints" }
-    );
-    const databaseEntry = Array.isArray(result) ? result[0] : null;
+    const result =
+      (await backendlessRequest(
+        "notes:get",
+        {
+          email: userEmail,
+        },
+        localStorage.getItem("userToken")
+      )) || [];
 
-    if (!databaseEntry || !databaseEntry.NotablePoints) {
+    if (!result) {
       toast("Errore: dati non trovati.");
       hideGif();
       return;
     }
 
-    console.log("Dati attuali:", databaseEntry.NotablePoints);
-
-    // Filtra i dati per rimuovere quelli dell'utente
-    const updatedNotablePoints = databaseEntry.NotablePoints.filter(
-      (entry) => entry.owner !== userEmail
+    await backendlessRequest(
+      "notes:delete",
+      {
+        email: userEmail,
+        ids: result.map(({ id }) => id),
+      },
+      localStorage.getItem("userToken")
     );
 
-    console.log("Dati aggiornati:", updatedNotablePoints);
-
-    // Aggiorna il database con i dati filtrati
-    databaseEntry.NotablePoints = updatedNotablePoints;
-    await backendlessRequest("saveData", databaseEntry, {
-      table: "NotableBiblePoints",
-    });
-
     // Rimuovi l'utente dalla tabella Users
-    console.log("Eliminazione utente con ID:", currentUser.objectId);
-    await backendlessRequest("deleteUser", { objectId: currentUser.objectId });
+    console.log("Eliminazione utente con ID:", localStorage.getItem("userId"));
+    await backendlessRequest("deleteUser", {
+      objectId: localStorage.getItem("userId"),
+    });
 
     logoutUser(false);
   } catch (error) {
@@ -87,13 +72,12 @@ export async function logoutUser(showAlert = true) {
 
     // Rimuoviamo i dati relativi all'utente da IndexedDB
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
     localStorage.removeItem("userToken");
     await deleteValue("userNotes");
+    await deleteValue("userNotesByTag");
     await deleteValue("deletedNotes");
 
-    // Mantenere isAuthenticated in localStorage
-    localStorage.removeItem("userNotes");
-    localStorage.removeItem("deletedNotes");
     window.location.href = "/src/html/login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);

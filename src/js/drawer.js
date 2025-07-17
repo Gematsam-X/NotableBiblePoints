@@ -1,3 +1,4 @@
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import checkVersion from "/src/js/checkVersion.js";
 import toast from "/src/js/toast.js";
 
@@ -42,8 +43,12 @@ document
   .querySelector(".openDrawer")
   .addEventListener("click", handleOpenDrawerClick);
 
-document.querySelector("#username").innerText =
-  localStorage.getItem("userEmail");
+document.querySelector("#username").innerText = await backendlessRequest(
+  "decrypt",
+  {
+    ciphertext: localStorage.getItem("userEmail"),
+  }
+);
 
 document.querySelector("#drawer-account").addEventListener("click", () => {
   window.location.href = "/src/html/account.html";
