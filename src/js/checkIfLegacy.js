@@ -8,6 +8,5 @@ if (regex.test(localStorage.getItem("userEmail"))) {
   const selectedTheme = localStorage.getItem("theme");
   localStorage.clear();
   localStorage.setItem("theme", selectedTheme);
-  localStorage.setItem("appVersion", "2.3.2");
   await logoutUser(false);
 }
