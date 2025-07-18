@@ -1,4 +1,4 @@
-import backendlessRequest from "./backendlessRequest.js";
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js";
 
 async function verifyChapterNotes() {

@@ -1,6 +1,6 @@
 import Choices from "choices.js";
 import "choices.js/public/assets/styles/choices.min.css";
-import backendlessRequest from "./backendlessRequest.js";
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni IndexedDB
 import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
@@ -38,9 +38,7 @@ document.querySelector(".openModal")?.addEventListener("click", async () => {
   document.querySelector("#noteContent").value = "";
 
   // Pulisci select tags di Choices.js
-  if (typeof tagChoices !== "undefined") {
-    tagChoices.removeActiveItems();
-  }
+  if (typeof tagChoices !== "undefined") tagChoices.removeActiveItems();
 
   await refreshTagChoices();
 
@@ -791,4 +789,71 @@ link?.addEventListener("click", () => {
     toast(
       "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
     );
+});
+
+// Funzione per aggiungere il listener al singolo h4
+function attachClickListenerToVerse(verseElement, noteElement) {
+  verseElement.addEventListener("click", () => {
+    if (!document.fullscreenElement) return;
+
+    const selectedBook = sessionStorage.getItem("selectedBook");
+    const selectedChapter = sessionStorage.getItem("selectedChapter");
+    const bookIndex = bibleBooks.indexOf(selectedBook);
+
+    if (bookIndex === -1) {
+      toast("Libro non trovato");
+      return;
+    }
+
+    // Ricava il numero del versetto cliccato
+    const verseNumber = verseElement.textContent
+      .trim()
+      .replace("Versetto ", "")
+      .padStart(3, "0");
+
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+    const chapterCode = selectedChapter.padStart(3, "0");
+    const referenceCode = `${bookCode}${chapterCode}${verseNumber}`;
+    
+    window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
+  });
+}
+
+// Funzione che cerca tutti gli h4 dentro .verse-number e aggiunge il listener
+function applyListenersToAllVerses() {
+  document.querySelectorAll(".verse-number h4").forEach((e) => {
+    // Evita di aggiungere due volte lo stesso listener (optional)
+    if (!e.dataset.listenerAttached) {
+      attachClickListenerToVerse(e);
+      e.dataset.listenerAttached = "true";
+    }
+  });
+}
+
+// Applichiamo i listener iniziali
+applyListenersToAllVerses();
+
+// Creiamo un observer per tenere d'occhio il DOM
+const verseObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    // Per ogni nodo aggiunto al DOM
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        // Se è proprio un h4 dentro .verse-number
+        if (node.matches && node.matches(".verse-number h4")) {
+          attachClickListenerToVerse(node);
+        } else {
+          // Oppure se dentro ci sono elementi del genere
+          node.querySelectorAll?.(".verse-number h4").forEach((child) => {
+            attachClickListenerToVerse(child);
+          });
+        }
+      }
+    });
+  }
+});
+
+verseObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
 });
