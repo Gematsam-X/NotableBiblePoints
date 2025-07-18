@@ -1,4 +1,4 @@
-import backendlessRequest from "./backendlessRequest.js";
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";

@@ -1,6 +1,6 @@
 import Choices from "choices.js";
 import "choices.js/public/assets/styles/choices.min.css";
-import backendlessRequest from "./backendlessRequest.js";
+import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
 import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
@@ -70,6 +70,8 @@ async function loadNotesByTag(forceServer = false) {
       if (note.tags?.length) {
         noteElement.setAttribute("data-tags", JSON.stringify(note.tags));
       }
+      noteElement.setAttribute("data-book", note.book);
+      noteElement.setAttribute("data-chapter", JSON.stringify(note.chapter));
 
       // Tags come pillole cliccabili
       const tagsHtml = note.tags
@@ -132,14 +134,12 @@ notesContainer?.addEventListener("click", async (event) => {
 
   // Se clicchi su una nota
   const noteElement = event.target.closest(".note");
-  if (!noteElement) return;
+  if (!noteElement || noteElement.id) return;
 
   // Se clicchi su pulsanti azione
   if (event.target.closest(".delete")) return deleteNote(noteElement);
   if (event.target.closest(".share")) return shareNote(noteElement);
   if (event.target.closest(".edit")) return editNote(noteElement);
-
-  // 🖱️ Se clicchi sulla nota stessa, fullscreen SOLO per la nota e stile evidenziato
   try {
     if (document.fullscreenElement) {
       noteElement.id = "";
@@ -394,14 +394,19 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
   // 3️⃣ Carico le note (server o local)
   const res = (await shouldUseServer())
-    ? await backendlessRequest("getData", {}, { table: "NotableBiblePoints" })
+    ? await backendlessRequest(
+        "notes:get",
+        {
+          email: localStorage.getItem("userEmail"),
+        },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
-  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
-  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+  const allPoints = Array.isArray(res) ? res : res || [];
 
   // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
   const tagSet = new Set();
-  for (const point of userPoints) {
+  for (const point of allPoints) {
     if (Array.isArray(point.tags)) {
       point.tags.forEach((t) => {
         if (t && typeof t === "string") tagSet.add(t.trim());
@@ -491,14 +496,19 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 async function refreshTagChoices() {
   const userEmail = localStorage.getItem("userEmail");
   const res = (await shouldUseServer())
-    ? await backendlessRequest("getData", {}, { table: "NotableBiblePoints" })
+    ? await backendlessRequest(
+        "notes:get",
+        {
+          email: localStorage.getItem("userEmail"),
+        },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
 
-  const allNotes = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
-  const userNotes = allNotes.filter((n) => n.owner === userEmail);
+  const allNotes = Array.isArray(res) ? res : res || [];
 
   const tagSet = new Set();
-  userNotes.forEach((note) => {
+  allNotes.forEach((note) => {
     if (Array.isArray(note.tags)) {
       note.tags.forEach((t) => tagSet.add(t.trim()));
     }
@@ -542,4 +552,152 @@ const observer = new MutationObserver(() => {
 // Configura l'osservatore per rilevare aggiunte e rimozioni di nodi
 observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
+});
+
+const bibleBooks = [
+  "Genesi",
+  "Esodo",
+  "Levitico",
+  "Numeri",
+  "Deuteronomio",
+  "Giosuè",
+  "Giudici",
+  "Rut",
+  "1 Samuele",
+  "2 Samuele",
+  "1 Re",
+  "2 Re",
+  "1 Cronache",
+  "2 Cronache",
+  "Esdra",
+  "Neemia",
+  "Ester",
+  "Giobbe",
+  "Salmi",
+  "Proverbi",
+  "Ecclesiaste",
+  "Cantico dei Cantici",
+  "Isaia",
+  "Geremia",
+  "Lamentazioni",
+  "Ezechiele",
+  "Daniele",
+  "Osea",
+  "Gioele",
+  "Amos",
+  "Abdia",
+  "Giona",
+  "Michea",
+  "Naum",
+  "Abacuc",
+  "Sofonia",
+  "Aggeo",
+  "Zaccaria",
+  "Malachia",
+  "Matteo",
+  "Marco",
+  "Luca",
+  "Giovanni",
+  "Atti",
+  "Romani",
+  "1 Corinti",
+  "2 Corinti",
+  "Galati",
+  "Efesini",
+  "Filippesi",
+  "Colossesi",
+  "1 Tessalonicesi",
+  "2 Tessalonicesi",
+  "1 Timoteo",
+  "2 Timoteo",
+  "Tito",
+  "Filemone",
+  "Ebrei",
+  "Giacomo",
+  "1 Pietro",
+  "2 Pietro",
+  "1 Giovanni",
+  "2 Giovanni",
+  "3 Giovanni",
+  "Giuda",
+  "Rivelazione",
+];
+
+// Funzione per aggiungere il listener al singolo h4
+function attachClickListenerToVerse(verseElement, noteElement) {
+  verseElement.addEventListener("click", () => {
+    // Blocca il click se non siamo in modalità fullscreen
+    if (!document.fullscreenElement) return;
+
+    // Ricava le info dal contenitore del versetto
+    const selectedBook = noteElement.getAttribute("data-book");
+    const selectedChapter = noteElement.getAttribute("data-chapter");
+    const bookIndex = bibleBooks.indexOf(selectedBook);
+
+    if (bookIndex === -1) {
+      toast("Libro non trovato");
+      return;
+    }
+
+    // Estrai il numero del versetto da "Proverbi 20:4"
+    const text = verseElement.textContent.trim();
+    const verseMatch = text.match(/:(\d+)$/); // Cattura il numero dopo i due punti
+
+    if (!verseMatch) {
+      toast("Versetto non riconosciuto");
+      return;
+    }
+
+    const verseNumber = verseMatch[1].padStart(3, "0"); // es: "4" → "004"
+
+    // Crea il codice JW.org: es. "20 005 004"
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+    const chapterCode = selectedChapter.padStart(3, "0");
+    const referenceCode = `${bookCode}${chapterCode}${verseNumber}`;
+
+    // Vai su jw.org al versetto specifico
+    window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
+  });
+}
+
+// Funzione che cerca tutti gli h4 dentro .verse-number e aggiunge il listener
+function applyListenersToAllVerses() {
+  document.querySelectorAll(".verse-number h4").forEach((e) => {
+    // Evita doppio listener
+    if (!e.dataset.listenerAttached) {
+      const noteElement = e.closest(".note"); // Cerca il contenitore più vicino
+      if (noteElement) {
+        attachClickListenerToVerse(e, noteElement);
+        e.dataset.listenerAttached = "true";
+      }
+    }
+  });
+}
+
+// Applica i listener iniziali ai versetti esistenti
+applyListenersToAllVerses();
+
+// Osserva il DOM per versetti aggiunti dinamicamente
+const verseObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.matches?.(".verse-number h4")) {
+          const noteElement = node.closest(".note");
+          if (noteElement) attachClickListenerToVerse(node, noteElement);
+        } else {
+          node.querySelectorAll?.(".verse-number h4").forEach((child) => {
+            const noteElement = child.closest(".note");
+            if (noteElement) attachClickListenerToVerse(child, noteElement);
+          });
+        }
+      }
+    });
+  }
+});
+
+// Inizia l’osservazione del DOM
+verseObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
 });

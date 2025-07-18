@@ -100,7 +100,8 @@ h1 {
   justify-content: center;
 }
 
-.fi-sr-eye, .fi-sr-eye-crossed {
+.fi-sr-eye,
+.fi-sr-eye-crossed {
   font-size: larger;
   margin-left: 3%;
   cursor: pointer;

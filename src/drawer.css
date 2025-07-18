@@ -1,79 +1,62 @@
-/*=================================================================
-  Stili per l'elemento <hr> personalizzato
-=================================================================*/
 hr {
-  display: block;               /* Rende hr elemento a blocco */
-  height: 8px;                  /* Altezza barra */
-  border-radius: 20px;          /* Angoli arrotondati */
-  border: none;                 /* Nessun bordo di default */
-  background-color: #ccc;       /* Colore grigio chiaro */
-  width: 100%;                  /* Larghezza piena del contenitore */
-  margin: 16px 0;               /* Spaziatura verticale */
+  display: block;
+  height: 8px;
+  border-radius: 20px;
+  border: none;
+  background-color: #ccc;
+  width: 100%;
+  margin: 16px 0;
 }
 
-/*=================================================================
-Bottone di apertura del drawer
-=================================================================*/
 .openDrawer {
-  cursor: pointer;              /* Mostra la mano al passaggio */
-  position: fixed;              /* Fisso rispetto alla viewport */
+  cursor: pointer;
+  position: fixed;
   top: 20px;
   left: 20px;
-  z-index: 1000;                /* Sopra gli altri elementi */
-  font-size: 2rem;              /* Dimensione del testo/icon */
+  z-index: 1000;
+  font-size: 2rem;
   font-weight: bold;
-  transition: transform 0.5s ease; /* Transizione per hover */
+  transition: transform 0.5s ease;
 }
 
 .openDrawer:hover {
-  transform: scale(1.1);        /* Effetto zoom al passaggio */
+  transform: scale(1.1);
 }
 
-/*=================================================================
-Contenitore del drawer overlay semi-trasparente
-=================================================================*/
 .drawer {
-  position: fixed;              /* Copre l'intera viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay scura */
-  display: none;               /* Nascosto di default */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
   z-index: 900;
-  backdrop-filter: blur(2px);   /* Sfocatura sullo sfondo */
+  backdrop-filter: blur(2px);
 }
 
-/*=================================================================
-Contenuto interno del drawer a sinistra
-=================================================================*/
 .drawer-content {
   position: absolute;
   top: 0;
-  left: 0;                       /* Spostato a sinistra */
-  width: 40%;                   /* Larghezza del drawer */
+  left: 0;
+  width: 40%;
   height: 100%;
-  background-color: var(--bg);  /* Colore di sfondo variabile */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Ombra dal lato destro */
+  background-color: var(--bg);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
   padding: 20px;
   display: flex;
   flex-direction: column;
 
-  /* Stato iniziale chiuso */
   opacity: 0;
   transform: translateX(-100%);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Quando il drawer è aperto, porta il pannello in vista */
 .drawer-content.open {
   opacity: 1;
   transform: translateX(0);
 }
 
-/*=================================================================
-Allineamento orizzontale per gli elementi interni
-=================================================================*/
 .drawer-horizontal-align {
   display: flex;
   align-items: center;
@@ -82,23 +65,17 @@ Allineamento orizzontale per gli elementi interni
 }
 
 .drawer-horizontal-align * {
-  margin: 0;                    /* Rimuove margini default */
+  margin: 0;
   padding: 0;
-  line-height: 1;               /* Spaziatura compatta */
+  line-height: 1;
 }
 
-/*=================================================================
-Responsive: adatta la larghezza su schermi piccoli
-=================================================================*/
 @media (max-width: 768px) {
   .drawer-content {
-      width: 70%;               /* Drawer più largo su mobile */
+    width: 70%;
   }
 }
 
-/*=================================================================
-Footer del drawer con link e info aggiuntive
-=================================================================*/
 .drawer-footer {
   position: absolute;
   bottom: 20px;
@@ -108,12 +85,12 @@ Footer del drawer con link e info aggiuntive
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 5%;            /* Spazio sotto contenuto */
+  margin-bottom: 5%;
 }
 
 .drawer-footer-links {
   display: flex;
-  gap: 30px;                    /* Spaziatura tra link */
+  gap: 30px;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
