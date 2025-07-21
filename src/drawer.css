@@ -1,12 +1,15 @@
-hr {
-  display: block;
+.drawer-content > hr {
+  flex-shrink: 0;
+  flex-basis: auto;
   height: 8px;
-  border-radius: 20px;
-  border: none;
-  background-color: #ccc;
   width: 100%;
-  margin: 16px 0;
+  background: linear-gradient(90deg, #ccc, #aaa);
+  border: none;
+  border-radius: 20px;
+  margin: 24px 0;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
+
 
 .openDrawer {
   cursor: pointer;
@@ -46,6 +49,7 @@ hr {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* 👉 scroll verticale */
 
   opacity: 0;
   transform: translateX(-100%);
@@ -77,15 +81,13 @@ hr {
 }
 
 .drawer-footer {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 5%;
 }
 
 .drawer-footer-links {
@@ -94,4 +96,49 @@ hr {
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .drawer-content {
+    width: 90vw;
+    height: 100vh;
+    padding: 20px;
+    font-size: 0.9rem;
+    overflow-y: auto;
+  }
+
+  .drawer-footer {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 20px;
+  }
+
+  .drawer-footer-links {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .openDrawer {
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+  }
+}
+
+/* ✅ Tablet o dispositivi medi in orizzontale */
+@media screen and (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .drawer-content {
+    width: 50%;
+    padding: 20px;
+  }
+
+  .drawer-footer {
+    font-size: 0.9rem;
+  }
+}
+
+.drawer-content::after {
+  content: "";
+  display: block;
+  height: 80px;
 }
