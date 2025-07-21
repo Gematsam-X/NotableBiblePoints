@@ -792,7 +792,7 @@ link?.addEventListener("click", () => {
 });
 
 // Funzione per aggiungere il listener al singolo h4
-function attachClickListenerToVerse(verseElement, noteElement) {
+function attachClickListenerToVerse(verseElement) {
   verseElement.addEventListener("click", () => {
     if (!document.fullscreenElement) return;
 
