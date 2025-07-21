@@ -65,6 +65,7 @@ exports.handler = async (event) => {
             process.env.ENCRYPTION_KEY
           ).toString();
           // Ritorna l'oggetto utente loggato
+          console.log(loggedUser);
           return ok(loggedUser);
         } catch (e) {
           return status4xx(
