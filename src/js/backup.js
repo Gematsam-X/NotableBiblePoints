@@ -35,8 +35,9 @@ export async function createBackup() {
   const day = String(today.getDate()).padStart(2, "0");
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
+  const now = new Date.now();
 
-  let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}.txt`;
+  let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}_${now}.txt`;
 
   let a = document.createElement("a");
   a.href = url;
