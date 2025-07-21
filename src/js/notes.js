@@ -20,7 +20,7 @@ if (pageTitle)
 window.document.title = `${selectedBook} ${selectedChapter} - NotableBiblePoints`;
 
 // Funzione per controllare se bisogna usare il server
-export default async function shouldUseServer() {
+async function shouldUseServer() {
   if (!navigator.onLine) return false;
   else if (await getValue("userNotes")) return false;
   else if (!(await getValue("userNotes"))) return true;
@@ -814,7 +814,7 @@ function attachClickListenerToVerse(verseElement, noteElement) {
     const bookCode = (bookIndex + 1).toString().padStart(2, "0");
     const chapterCode = selectedChapter.padStart(3, "0");
     const referenceCode = `${bookCode}${chapterCode}${verseNumber}`;
-    
+
     window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
   });
 }

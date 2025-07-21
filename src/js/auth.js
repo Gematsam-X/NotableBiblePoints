@@ -17,7 +17,7 @@ async function registerUser(email, password) {
     const registeredUser = await backendlessRequest("register", {
       email: formattedEmail,
       password,
-      name: formattedEmail, // puoi modificare se vuoi un nome diverso
+      name: formattedEmail,
     });
 
     console.log("Utente registrato:", registeredUser);

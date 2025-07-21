@@ -1,33 +1,18 @@
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import { getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "/src/js/loadingGif.js";
-import shouldUseServer from "/src/js/notes.js";
 import toast from "/src/js/toast.js";
 
 async function findUserRecords() {
-  const userEmail = localStorage.getItem("userEmail");
-  let fullRecord = [];
-  try {
-    // Recupera le note
-    fullRecord =
-      ((await shouldUseServer())
-        ? await backendlessRequest(
-            "notes:get",
-            {
-              email: userEmail,
-            },
-            localStorage.getItem("userToken")
-          )
-        : await getValue("userNotes")) || [];
-  } catch (err) {
-    console.error("Errore durante il recupero:", err.message);
-  }
-
-  if (!fullRecord) {
-    toast("Errore: dati non trovati.");
-    return [];
-  }
-  return fullRecord;
+  return (
+    (await backendlessRequest(
+      "notes:get",
+      { email: localStorage.getItem("userEmail") },
+      localStorage.getItem("userToken")
+    )) ||
+    (await getValue("userNotes")) ||
+    []
+  );
 }
 
 export async function createBackup() {
@@ -51,7 +36,7 @@ export async function createBackup() {
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
 
-  let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}.nbp`;
+  let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}.txt`;
 
   let a = document.createElement("a");
   a.href = url;
@@ -69,8 +54,6 @@ export async function createBackup() {
   );
 }
 
-let jsonData = null;
-
 export async function restoreBackup() {
   const inputFile = document.getElementById("fileInput");
 
@@ -79,16 +62,16 @@ export async function restoreBackup() {
     return;
   }
 
-  inputFile.accept = ".nbp";
+  inputFile.accept = ".txt";
 
-  // ✅ Rimuovi eventuali listener precedenti per evitare duplicati
+  // Elimina listener duplicati clonando l'elemento
   const newInput = inputFile.cloneNode(true);
   inputFile.replaceWith(newInput);
 
   newInput.addEventListener("change", async function (event) {
     const file = event.target.files[0];
     if (!file) {
-      toast("Seleziona un file .nbp valido.");
+      toast("Seleziona un file valido.");
       return;
     }
 
@@ -106,7 +89,9 @@ export async function restoreBackup() {
         }
 
         const userEmail = localStorage.getItem("userEmail");
-        if (!userEmail) {
+        const userToken = localStorage.getItem("userToken");
+
+        if (!userEmail || !userToken) {
           toast("Utente non autenticato.");
           return;
         }
@@ -114,14 +99,18 @@ export async function restoreBackup() {
         const existing = await getValue("userNotes");
         const notes = Array.isArray(existing) ? existing : [];
 
+        // Mappa di note da backup
+        const newNotesMap = new Map();
         for (const newRecord of jsonData) {
-          const idx = notes.findIndex((note) => note.id === newRecord.id);
-
-          const record = {
+          newNotesMap.set(newRecord.id, {
             ...newRecord,
             updatedAt: Date.now().toString(),
-          };
+          });
+        }
 
+        // Merge: aggiorna o aggiungi
+        for (const [id, record] of newNotesMap.entries()) {
+          const idx = notes.findIndex((note) => note.id === id);
           if (idx !== -1) {
             notes[idx] = { ...notes[idx], ...record };
           } else {
@@ -129,23 +118,52 @@ export async function restoreBackup() {
           }
         }
 
-        // Salva nel server o in locale
-        if (navigator.onLine)
+        // Salva nel server se online
+        if (navigator.onLine) {
+          // Recupera le note attualmente sul server
+          const response = await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            userToken
+          );
+
+          const serverNotes = Array.isArray(response) ? response : [];
+
+          // Trova ID da eliminare (note presenti nel server ma NON nel file)
+          const idsToDelete = serverNotes
+            .filter((note) => !newNotesMap.has(note.id))
+            .map((note) => note.id);
+
+          // Elimina dal server se necessario
+          if (idsToDelete.length > 0) {
+            await backendlessRequest(
+              "notes:delete",
+              {
+                email: userEmail,
+                ids: idsToDelete,
+              },
+              userToken
+            );
+          }
+
+          // Salva tutto il nuovo set di note
           await backendlessRequest(
             "notes:addOrUpdate",
             {
               email: userEmail,
-              note: notes,
+              note: Array.from(newNotesMap.values()),
             },
-            localStorage.getItem("userToken")
+            userToken
           );
+        }
 
-        await setValue("userNotes", notes);
+        // Salva anche localmente
+        await setValue("userNotes", Array.from(newNotesMap.values()));
 
         toast("Backup ripristinato con successo!");
       } catch (err) {
-        console.error("Errore nel parsing del file JSON:", err);
-        toast("Errore nel file di backup. Assicurati che sia un .nbp valido.");
+        console.error("Errore nel parsing del file:", err);
+        toast("Errore nel file di backup. Assicurati che sia valido.");
       } finally {
         hideGif();
       }

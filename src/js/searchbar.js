@@ -62,20 +62,12 @@ async function searchInJson(searchTerm) {
     if (navigator.onLine) {
       showGif();
       const results = await backendlessRequest(
-        "getData",
-        {},
-        { table: "NotableBiblePoints" }
+        "notes:get",
+        { email: localStorage.getItem("userEmail") },
+        localStorage.getItem("userToken")
       );
-      const firstRecord = Array.isArray(results) ? results[0] : null;
 
-      const userEmail = localStorage.getItem("userEmail");
-
-      const notesData =
-        firstRecord?.NotablePoints?.filter(
-          (note) => note.owner === userEmail
-        ) || [];
-
-      await setValue("userNotes", notesData);
+      await setValue("userNotes", results);
       hideGif();
     } else {
       alert("Connettersi a Internet.");
