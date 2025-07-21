@@ -25,8 +25,6 @@ export async function createBackup() {
     return;
   }
 
-  const userEmail = localStorage.getItem("userEmail");
-
   let jsonString = JSON.stringify(databaseEntry, null, 4);
   let blob = new Blob([jsonString], { type: "application/json" });
   let url = URL.createObjectURL(blob);
