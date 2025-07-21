@@ -1,3 +1,5 @@
+import "../styles.css"
+
 const body = document.body;
 
 export const themeToggleSwitch = document.querySelector("#themeToggle");

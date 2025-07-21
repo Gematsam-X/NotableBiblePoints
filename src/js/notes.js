@@ -134,20 +134,21 @@ async function loadNotes() {
           .join("");
 
         const deleteImageSrc = isDarkTheme
-          ? "/src/assets/notes/delete/dark.webp"
-          : "/src/assets/notes/delete/light.webp";
+          ? "../assets/notes/delete/dark.webp"
+          : "../assets/notes/delete/light.webp";
         const editImageSrc = isDarkTheme
-          ? "/src/assets/notes/edit/dark.webp"
-          : "/src/assets/notes/edit/light.webp";
+          ? "../assets/notes/edit/dark.webp"
+          : "../assets/notes/edit/light.webp";
         const shareImageSrc = isDarkTheme
-          ? "/src/assets/notes/share/dark.webp"
-          : "/src/assets/notes/share/light.webp";
+          ? "../assets/notes/share/dark.webp"
+          : "../assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
           <div class="tags-container">${tagsHtml}</div>
           </div>
+        <span class="close-note">&times;</span>
           <div class="note-body">
             <h2 class="note-title">${title}</h2>
             <h3>${content}</h3>
@@ -698,7 +699,7 @@ async function refreshTagChoices() {
     value: tag,
     label: tag,
   }));
-  tagChoices.setChoices(choicesArray, "value", "label", true);
+  tagChoices?.setChoices(choicesArray, "value", "label", true);
 }
 
 // Sezione sul reindirizzamento alla Traduzione del Nuovo Mondo

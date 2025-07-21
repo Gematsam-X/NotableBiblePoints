@@ -13,6 +13,7 @@
   "dependencies": {
     "@capacitor/android": "^7.4.1",
     "@capacitor/core": "^7.4.1",
+    "@capacitor/filesystem": "^7.1.2",
     "@capacitor/network": "^7.0.1",
     "@capacitor/share": "^7.0.1",
     "backendless": "^7.4.6",

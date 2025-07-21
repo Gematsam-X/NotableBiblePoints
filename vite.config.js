@@ -61,13 +61,16 @@ const allInputs = {
 console.log("👉 INPUT FILES to build:");
 Object.entries(allInputs).forEach(([key, path]) => {
   const exists = fs.existsSync(path) || false;
-  console.log(`  ${key}: ${path} ${exists ? "✅" : "❌ NOT FOUND!"}`);
+  console.log(`  ${key}: ${path} ${exists ? "✅ FOUND" : "❌ NOT FOUND!"}`);
 });
 
 // Configurazione finale
 export default defineConfig({
   root: "src",
   base: "./",
+  server: {
+    port: 5170,
+  },
   build: {
     outDir: "../dist",
     emptyOutDir: true,

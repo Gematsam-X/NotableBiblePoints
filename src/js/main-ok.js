@@ -1,3 +1,5 @@
+import "../drawer.css"
+
 document
   .querySelector(".help")
   .addEventListener(
