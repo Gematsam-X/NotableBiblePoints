@@ -14,7 +14,6 @@ const jsFiles = [
   "idb",
   "indexedDButils",
   "injectChapters",
-  "injectInstructions",
   "isDarkTheme",
   "isOnline",
   "legend",
