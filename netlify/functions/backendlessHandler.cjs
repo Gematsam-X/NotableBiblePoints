@@ -3,6 +3,14 @@ const CryptoJS = require("crypto-js");
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: "OK",
+    };
+  }
+
   await Backendless.initApp(process.env.APP_ID, process.env.API_KEY);
 
   const BASE_URL = `https://api.backendless.com/${process.env.APP_ID}/${process.env.API_KEY}/services/SecureNotesService`;
