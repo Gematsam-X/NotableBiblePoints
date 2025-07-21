@@ -433,7 +433,11 @@ div.actions-row {
   font-family: inherit;
   font-size: 14px;
   transition: border-color 0.2s;
-  width: 100%;
+}
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .choices {
+    width: 180%;
+  }
 }
 
 /* Parte interna */
@@ -452,8 +456,8 @@ div.actions-row {
 /* Tag selezionati */
 .choices__item--selectable {
   background-color: var(--bg);
-  border: 1px solid var(--primary-col);
-  color: var(--primary-col); /* ✅ testo visibile */
+  border: 1px solid var(--border-col);
+  color: var(--primary-col);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 13px;
@@ -462,14 +466,12 @@ div.actions-row {
 }
 
 .choices__item--selectable.is-highlighted {
-  background-color: green;
-  color: var(--bg); /* ✅ testo visibile */
+  color: var(--bg);
 }
 
 /* Bottone "x" per rimuovere un tag */
 .choices__button {
   margin-left: 6px;
-  color: var(--btn-hover);
   font-weight: bold;
   background: none;
   border: none;
@@ -478,8 +480,8 @@ div.actions-row {
 
 /* Dropdown delle scelte */
 .choices__list--dropdown {
-  background-color: var(--bg);
-  border: 1px solid var(--border-col);
+  background-color: transparent !important;
+  border: none !important;
   border-radius: 0 0 6px 6px;
   max-height: 200px;
   overflow-y: auto;
@@ -489,14 +491,9 @@ div.actions-row {
 .choices__list--dropdown .choices__item--choice {
   padding: 8px 10px;
   cursor: pointer;
-  color: var(--primary-col);
-  transition: background-color 0.2s;
-}
-
-/* Hover sulle scelte */
-.choices__list--dropdown .choices__item--choice.is-highlighted {
-  background-color: #000000;
+  background-color: var(--primary-col) !important;
   color: var(--bg);
+  transition: background-color 0.2s;
 }
 
 .choices__notice {
@@ -539,6 +536,15 @@ div.actions-row {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+#noteContent,
+#verseNumber,
+#noteTitle {
+  padding: 10px;
+  display: inline-block;
+  border: 2px solid var(--border-col);
+  border-radius: 8px;
 }
 
 /* Modal styles */
@@ -637,6 +643,26 @@ div.actions-row {
   width: 10rem;
   font-size: 2.3rem;
   margin-top: 10%;
+  margin: 0 auto;
+}
+
+.saveNoteWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+#saveNote {
+  height: 6rem;
+  width: 10rem;
+  font-size: 2.3rem;
+}
+
+@media (orientation: landscape) {
+  .saveNoteWrapper {
+    height: 100vh;
+  }
 }
 
 .modal-footer {
