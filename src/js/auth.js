@@ -1,27 +1,29 @@
-import Backendless from "backendless";
+import backendlessRequest from "./backendlessRequest.js";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 
 async function registerUser(email, password) {
   if (password.length < 6) {
     toast("La password deve contenere almeno 6 caratteri.");
-
-    return; // Fermiamo l'esecuzione qui
+    return;
   }
 
   console.log("Lunghezza password valida:", password.length);
-
   showGif();
 
-  const user = new Backendless.User();
-  user.email = email.toLowerCase().trim();
-  user.password = password;
-  user.name = email.toLowerCase().trim(); // Usa l'email come nome utente
+  const formattedEmail = email.toLowerCase().trim();
 
   try {
-    const registeredUser = await Backendless.UserService.register(user);
+    const registeredUser = await backendlessRequest("register", {
+      email: formattedEmail,
+      password,
+      name: formattedEmail,
+    });
+
     console.log("Utente registrato:", registeredUser);
-    toast(`Registrazione riuscita! Controlla la tua email per la conferma.`);
+    toast(
+      "Registrazione riuscita! Adesso effettua il login con l'email e la password appena impostati."
+    );
   } catch (error) {
     console.error("Errore durante la registrazione:", error);
     const errMsg = error.message.toLowerCase();
@@ -54,44 +56,63 @@ async function loginUser(email, password) {
   showGif();
 
   try {
-    const loggedInUser = await Backendless.UserService.login(
-      email,
-      password,
-      true
-    );
-    console.log("Utente loggato:", loggedInUser);
+    const loggedInUser = await backendlessRequest("login", {
+      email: email.toLowerCase().trim(),
+      password: password.trim(),
+    });
 
-    // Salva l'email dell'utente in localStorage
-    localStorage.setItem("userEmail", loggedInUser.email);
+    // ⚠️ Verifica che loggedInUser sia valido
+    if (!loggedInUser) {
+      throw new Error(
+        "🟥 Errore: loggedInUser è null o undefined. Nessun utente è stato trovato nella risposta."
+      );
+    }
 
-    // Salva l'utente corrente sul localStorage per mantenerlo loggato
+    if (!loggedInUser.email) {
+      throw new Error(
+        "🟥 Errore: Campo 'email' mancante nella risposta dell'utente."
+      );
+    }
+
+    if (!loggedInUser["user-token"]) {
+      throw new Error(
+        "🟥 Errore: Campo 'user-token' mancante nella risposta dell'utente."
+      );
+    }
+
+    if (!loggedInUser.encryptedEmail) {
+      throw new Error(
+        "🟥 Errore: Campo 'encryptedEmail' mancante nella risposta dell'utente."
+      );
+    }
+
+    // Salva userToken e email criptata
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
-    window.location.href = "../index.html"; // Reindirizza alla pagina principale
+    localStorage.setItem("userEmail", loggedInUser.encryptedEmail);
+    localStorage.setItem("userId", loggedInUser.objectId);
+    localStorage.setItem("isAuthenticated", "true");
+
+    window.location.href = "/index.html";
   } catch (error) {
     console.error("Errore nel login:", error);
-    const errMsg = error.message.toLowerCase();
+    const msg = (error.message || "").toLowerCase();
 
-    if (errMsg.includes("invalid login or password")) {
-      toast(
-        "Credenziali errate o utente non registrato. Controlla l'email e la password, verifica di essere registrato e riprova."
-      );
-    } else if (errMsg.includes("password value cannot be empty")) {
-      toast("Inserisci la password.", 2000);
-    } else if (errMsg.includes("email value cannot be empty")) {
-      toast("Inserisci l'email.", 2000);
-    } else if (errMsg.includes("email address must be confirmed first")) {
-      toast(
-        "Conferma il tuo indirizzo email prima di accedere. Puoi farlo accedendo alla tua posta elettronica e cliccando sul link contenuto nella mail da parte di Backendless.",
-        5000
-      );
+    if (msg.includes("invalid login or password")) {
+      toast("Credenziali errate o utente non registrato.");
+    } else if (msg.includes("password value cannot be empty")) {
+      toast("Inserisci la password.");
+    } else if (msg.includes("email value cannot be empty")) {
+      toast("Inserisci l'email.");
+    } else if (msg.includes("email address must be confirmed")) {
+      toast("Conferma la tua email tramite il link nella mail di verifica.");
     } else if (
-      errMsg.includes("network error") ||
-      errMsg.includes("failed to fetch")
+      msg.includes("network error") ||
+      msg.includes("failed to fetch")
     ) {
-      toast("Errore di connessione. Controlla la tua rete e riprova.");
+      toast("Errore di rete. Controlla la connessione.");
     } else {
-      toast(error.message);
+      toast("Errore: " + error.message);
     }
   } finally {
     hideGif();
@@ -102,20 +123,16 @@ async function loginUser(email, password) {
 const signInButton = document.getElementById("signIn");
 const signUpButton = document.getElementById("signUp");
 
-if (signInButton) {
-  signInButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    loginUser(email, password);
-  });
-}
+signInButton?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  loginUser(email, password);
+});
 
-if (signUpButton) {
-  signUpButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("newEmail").value.trim();
-    const password = document.getElementById("newPassword").value.trim();
-    registerUser(email, password);
-  });
-}
+signUpButton?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("newEmail").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  registerUser(email, password);
+});

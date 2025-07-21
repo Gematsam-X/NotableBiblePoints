@@ -1,4 +1,3 @@
-import Backendless from "backendless";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 
@@ -35,10 +34,9 @@ async function recoveryPassword() {
 
   try {
     // Costruisce la query per cercare l'utente con l'email
-    const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
-      `email = '${email}'`
-    );
-    const users = await Backendless.Data.of("Users").find(queryBuilder);
+    const users = await backendlessRequest("queryUsersByEmail", {
+      email: email,
+    });
 
     if (!users || users.length === 0) {
       modal.style.display = "none";
@@ -54,7 +52,7 @@ async function recoveryPassword() {
     console.log("Utente trovato:", user);
 
     // Invio dell'email per il recupero della password
-    await Backendless.UserService.restorePassword(email);
+    await backendlessRequest("recoverPassword", { email: email });
     modal.style.display = "none";
     document.querySelector("#emailForRecovery").value = ""; // Pulisce il campo email
     toast(

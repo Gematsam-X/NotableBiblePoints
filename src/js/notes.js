@@ -1,6 +1,6 @@
 import { Share } from "@capacitor/share";
-import Backendless from "backendless";
 import { deleteValue, getValue, setValue } from "./indexedDButils.js";
+import backendlessRequest from "./backendlessRequest.js";
 import { isDarkTheme } from "./isDarkTheme.js";
 import { isOnline } from "./isOnline.js";
 import { hideGif, showGif } from "./loadingGif.js";
@@ -61,6 +61,7 @@ document.querySelector(".closeModal").addEventListener("click", () => {
 
 // Funzione per caricare le note dal database o da IndexedDB
 async function loadNotes() {
+  const selectedChapter = sessionStorage.getItem("selectedChapter");
   const notesContainer = document.querySelector(".notesContainer");
   if (!notesContainer) return;
 
@@ -68,67 +69,57 @@ async function loadNotes() {
   refreshBtn.classList.add("disabled");
 
   try {
+    // Prendo email criptata e token da localStorage
     const userEmail = localStorage.getItem("userEmail");
+    const userToken = localStorage.getItem("userToken");
 
-    // Ottieni i dati dal server o IndexedDB
-    const allRecords = (await shouldUseServer())
-      ? (await Backendless.Data.of("NotableBiblePoints").findFirst())
-          .NotablePoints
+    // ☁️ Prendo note da backend o IndexedDB (a seconda di shouldUseServer)
+    const userNotes = (await shouldUseServer())
+      ? await backendlessRequest("notes:get", { email: userEmail }, userToken)
       : await getValue("userNotes");
 
-    console.log(allRecords, "allRecords");
-
-    // Verifica che allRecords sia un array
-    if (!Array.isArray(allRecords)) {
+    if (!Array.isArray(userNotes)) {
       toast("Errore: i dati non sono in formato corretto.");
       notesContainer.innerHTML = "<p>Errore nei dati delle note.</p>";
       return;
     }
 
-    const notesArray = Object.values(allRecords).filter(
-      (item) => typeof item === "object" && item.id
-    );
-    const userNotes = notesArray.filter((note) => note.owner === userEmail);
-
-    console.log(allRecords, notesArray, userNotes);
-
-    // Salvataggio delle note locali in IndexedDB (aspettiamo il completamento)
+    // Aggiorno IndexedDB con note pulite
     await setValue("userNotes", userNotes);
 
-    // Popola il contenitore con le note
-    notesContainer.innerHTML = ""; // Svuota il contenitore
+    notesContainer.innerHTML = "";
     let notesFound = false;
     let allNotes = [];
 
-    if (Array.isArray(userNotes) && userNotes.length > 0) {
+    if (userNotes.length > 0) {
       if (await shouldUseServer()) await setValue("userNotes", userNotes);
 
-      // Filtra e ordina le note
-      userNotes.forEach((noteObj) => {
-        if (
-          noteObj.book === selectedBook &&
-          noteObj.chapter === chapter &&
-          noteObj.owner === userEmail
-        ) {
-          notesFound = true;
-          const { verse, title = "", content, id: noteId, tags = [] } = noteObj;
-          allNotes.push({ verse, title, content, noteId, tags });
+      userNotes.forEach(
+        ({
+          book,
+          chapter,
+          verse,
+          title = "",
+          content,
+          id: noteId,
+          tags = [],
+        }) => {
+          if (book == selectedBook && chapter == selectedChapter) {
+            notesFound = true;
+            allNotes.push({ verse, title, content, noteId, tags });
+          }
         }
-      });
+      );
 
-      // Ordina per versetto
       allNotes.sort((a, b) => a.verse - b.verse);
 
-      // Aggiungi le note al contenitore
       allNotes.forEach(({ verse, title, content, noteId, tags }) => {
         const noteElement = document.createElement("div");
         noteElement.classList.add("note");
         noteElement.setAttribute("data-id", noteId);
-        if (tags?.length > 0) {
+        if (tags.length > 0)
           noteElement.setAttribute("data-tags", JSON.stringify(tags));
-        }
 
-        // Costruzione tag HTML visivi
         const tagsHtml = tags
           .map((tag) => `<span class="tag-pill">${tag}</span>`)
           .join("");
@@ -144,25 +135,24 @@ async function loadNotes() {
           : "../assets/notes/share/light.webp";
 
         noteElement.innerHTML = `
+          <span class="close-note">&times;</span>
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
-          <div class="tags-container">${tagsHtml}</div>
+            <div class="tags-container">${tagsHtml}</div>
           </div>
-        <span class="close-note">&times;</span>
           <div class="note-body">
             <h2 class="note-title">${title}</h2>
             <h3>${content}</h3>
           </div>
-
           <div class="note-action-buttons">
             <button class="delete">
-              <img class="deleteNote_img" src="${deleteImageSrc}" width="40px" height="40px">
+              <img class="deleteNote_img" src="${deleteImageSrc}" width="40" height="40">
             </button>
             <button class="edit">
-              <img class="edit_img" src="${editImageSrc}" width="40px" height="40px">
+              <img class="edit_img" src="${editImageSrc}" width="40" height="40">
             </button>
             <button class="share">
-              <img class="share_img" src="${shareImageSrc}" width="40px" height="40px">
+              <img class="share_img" src="${shareImageSrc}" width="40" height="40">
             </button>
           </div>
         `;
@@ -171,20 +161,22 @@ async function loadNotes() {
       });
     }
 
-    // Messaggio se non ci sono note
     if (!notesFound) {
       notesContainer.innerHTML =
-        "<p>Non hai salvato nessun punto notevole per questo capitolo. Creane uno usando il pulsante in basso a destra con l'icona '+'.</p>";
+        "<p>Non hai salvato nessuna nota per questo capitolo. Creane una usando il pulsante in basso a destra con l'icona '+'.</p>";
     }
   } catch (error) {
     if (error.message.toLowerCase().includes("not existing user token")) {
       toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
-      logoutUser(true, true);
-      return;
+      logoutUser(false);
+    } else if (error.message.toLowerCase().includes("requests per minute"))
+      toast("Si è verificato un errore tecnico.");
+    else {
+      console.error("Errore nel recupero delle note:", error);
+      toast(`Errore: ${error.message}`);
     }
-    console.error("Errore nel recupero delle note:", error);
-    toast(`Errore: ${error.message}`);
     notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
+    return;
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
@@ -215,10 +207,7 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
   // 1️⃣ Prendo il <select> dal DOM
   const tagSelect = document.getElementById("noteTags");
-  if (!tagSelect) {
-    console.warn("⚠️ Campo #noteTags non trovato nel DOM!");
-    return;
-  }
+  if (!tagSelect) return;
 
   // 2️⃣ Recupero email utente
   const currentUserEmail = localStorage.getItem("userEmail");
@@ -229,14 +218,17 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
   // 3️⃣ Carico le note (server o local)
   const res = (await shouldUseServer())
-    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    ? await backendlessRequest(
+        "notes:get",
+        { email: currentUserEmail },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
-  const allPoints = Array.isArray(res) ? res : res?.NotablePoints || [];
-  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
 
   // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
   const tagSet = new Set();
-  for (const point of userPoints) {
+  for (const point of allPoints) {
     if (Array.isArray(point.tags)) {
       point.tags.forEach((t) => {
         if (t && typeof t === "string") tagSet.add(t.trim());
@@ -333,27 +325,28 @@ async function saveNote() {
     toast("Compila tutti i campi correttamente!");
     return;
   }
+
   modal.style.display = "none";
   showGif();
 
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Recupera il primo (e unico) record dal database che contiene tutte le note
-    let userNotes = (await isOnline())
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : await getValue("userNotes");
+    // Recupera il record dal database che contiene tutte le note
+    let notes =
+      ((await isOnline())
+        ? await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            localStorage.getItem("userToken")
+          )
+        : await getValue("userNotes")) || [];
 
-    // Se non esiste un record, creiamo uno vuoto con un array di note
-    if (!userNotes) {
-      userNotes = { NotablePoints: [] };
-    }
+    let newNote,
+      noteIndex = null;
 
-    let notes = (await isOnline()) ? userNotes.NotablePoints : userNotes;
-
-    // Se stai modificando una nota
     if (editingNoteId) {
-      const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+      noteIndex = notes.findIndex((note) => note.id === editingNoteId);
       if (noteIndex === -1) {
         toast("Errore: impossibile trovare la nota da modificare.");
         console.warn("[saveNote] Nota da modificare NON trovata!");
@@ -369,48 +362,47 @@ async function saveNote() {
         tags: selectedTags,
       };
     } else {
-      const newNote = {
+      newNote = {
         id: Date.now().toString(),
         title: noteTitle || " ",
         verse: verseNumber,
         content: noteContent,
         chapter: parseInt(sessionStorage.getItem("selectedChapter")),
         book: sessionStorage.getItem("selectedBook"),
-        owner: userEmail,
+        owner: await backendlessRequest("decrypt", {
+          ciphertext: localStorage.getItem("userEmail"),
+        }),
         tags: selectedTags,
       };
 
       notes.push(newNote);
     }
 
-    // Aggiorna il record principale
-    userNotes.NotablePoints = notes;
-
-    if (await isOnline()) {
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-      console.log("Nota salvata con successo sul server!");
-    } else {
-      await setValue(
-        "userNotes",
-        notes.filter((note) => note.owner === userEmail)
+    if (await isOnline())
+      await backendlessRequest(
+        "notes:addOrUpdate",
+        {
+          note: newNote || notes[noteIndex],
+          email: userEmail,
+        },
+        localStorage.getItem("userToken")
       );
-      console.log("Nota salvata con successo in locale!");
-    }
+    else await setValue("userNotes", notes);
 
-    // Resetta lo stato di editing
     editingNoteId = null;
     modal.style.display = "none";
 
     if (await isOnline()) await deleteValue("userNotes");
 
-    loadNotes();
+    await loadNotes();
   } catch (error) {
-    console.error("Errore durante il salvataggio/modifica:", error);
+    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
     toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
+
     if (typeof tagChoices !== "undefined") {
       tagChoices.removeActiveItems(); // reset visivo
     }
@@ -485,12 +477,15 @@ document.querySelector(".notesContainer").addEventListener("click", (event) => {
 
 // Funzione per eliminare una nota
 async function deleteNote(noteElement) {
+  // Conferma da parte dell'utente
   if (!confirm("Sei sicuro di voler eliminare questa nota?")) return;
 
+  // Mostra GIF di caricamento e chiude la modale
   showGif();
   modal.style.display = "none";
 
   try {
+    // Prende l'ID della nota dall'attributo HTML
     const noteId = noteElement.getAttribute("data-id");
 
     if (!noteId) {
@@ -498,51 +493,33 @@ async function deleteNote(noteElement) {
       return;
     }
 
-    // Recupera le note
-    let userNotes = (await isOnline())
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : await getValue("userNotes");
+    const userEmail = localStorage.getItem("userEmail");
+    const userToken = localStorage.getItem("userToken");
 
-    console.log(userNotes);
+    // 1. Elimina la nota da Backendless (tramite funzione serverless)
+    if (await isOnline())
+      await backendlessRequest(
+        "notes:delete",
+        { ids: noteId, email: userEmail },
+        userToken
+      );
 
-    if (
-      ((await isOnline()) && !userNotes.NotablePoints) ||
-      (!(await isOnline()) && !userNotes)
-    ) {
-      toast("Errore: impossibile trovare le note dell'utente.");
-      return;
-    }
-
-    // Filtra le note eliminando quella con l'id corrispondente
-    const updatedNotes = (await isOnline())
-      ? userNotes.NotablePoints.filter((note) => note.id !== noteId)
-      : userNotes.filter((note) => note.id !== noteId);
-
-    // Aggiorna l'oggetto
-    (await isOnline())
-      ? (userNotes.NotablePoints = updatedNotes)
-      : (userNotes = updatedNotes);
-
+    // 2. Segna la nota come eliminata localmente
     let deletedNotes = (await getValue("deletedNotes")) || [];
-    const noteToDelete = { id: noteId };
-    deletedNotes.push(noteToDelete);
+    deletedNotes.push({ id: noteId });
     await setValue("deletedNotes", deletedNotes);
 
-    await setValue(
-      "userNotes",
-      updatedNotes.filter(
-        (note) => note.owner === localStorage.getItem("userEmail")
-      )
-    );
+    // 3. Aggiorna le userNotes rimuovendo la nota eliminata
+    const allNotes = (await getValue("userNotes")) || [];
 
-    // Salva di nuovo
-    if (await isOnline()) {
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-    }
+    const updatedNotes = allNotes.filter((note) => note.id !== noteId);
 
-    // Rimuove dal DOM
+    await setValue("userNotes", updatedNotes);
+
+    // 4. Rimuove visivamente la nota dal DOM
     noteElement.remove();
 
+    // 5. Messaggio di successo
     toast("Nota eliminata con successo!");
   } catch (error) {
     console.error("Errore durante l'eliminazione:", error);
@@ -680,29 +657,36 @@ refreshBtn?.addEventListener("click", async () => {
 
 // Funzione per aggiornare Choices.js con i tag freschi
 async function refreshTagChoices() {
-  const userEmail = localStorage.getItem("userEmail");
+  const currentUserEmail = localStorage.getItem("userEmail");
+  if (!currentUserEmail) return;
+
   const res = (await shouldUseServer())
-    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    ? await backendlessRequest(
+        "notes:get",
+        { email: currentUserEmail },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
 
-  const allNotes = Array.isArray(res) ? res : res?.NotablePoints || [];
-  const userNotes = allNotes.filter((n) => n.owner === userEmail);
+  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
 
   const tagSet = new Set();
-  userNotes.forEach((note) => {
-    if (Array.isArray(note.tags)) {
-      note.tags.forEach((t) => tagSet.add(t.trim()));
+  for (const point of allPoints) {
+    if (Array.isArray(point.tags)) {
+      point.tags.forEach((tag) => {
+        if (tag && typeof tag === "string") tagSet.add(tag.trim());
+      });
     }
-  });
+  }
 
-  const choicesArray = Array.from(tagSet).map((tag) => ({
+  const newChoices = Array.from(tagSet).map((tag) => ({
     value: tag,
     label: tag,
   }));
-  tagChoices?.setChoices(choicesArray, "value", "label", true);
-}
 
-// Sezione sul reindirizzamento alla Traduzione del Nuovo Mondo
+  // Aggiorna choices nel tagChoices (Choices.js)
+  tagChoices.setChoices(newChoices, "value", "label", true);
+}
 
 const bibleBooks = [
   "Genesi",
@@ -776,6 +760,10 @@ const bibleBooks = [
 const link = document.querySelector("#readChapter") || null;
 
 link?.addEventListener("click", () => {
+  // Ottieni il libro selezionato
+  const selectedBook = sessionStorage.getItem("selectedBook");
+  const selectedChapter = sessionStorage.getItem("selectedChapter");
+
   // Cerca l'indice del libro selezionato nell'array bibleBooks
   const bookIndex = bibleBooks.indexOf(selectedBook); // Restituisce l'indice del libro, o -1 se non trovato
 
@@ -784,17 +772,82 @@ link?.addEventListener("click", () => {
     const bookCode = (bookIndex + 1).toString().padStart(2, "0");
 
     // Costruisce il codice del riferimento (ad esempio, 01001001 per Genesi 1:1)
-    const referenceCode = `${bookCode}${chapter.padStart(
+    const referenceCode = `${bookCode}${selectedChapter.padStart(
       3,
       "0"
-    )}000-${bookCode}${chapter.padStart(3, "0")}999}`;
+    )}000-${bookCode}${selectedChapter.padStart(3, "0")}999}`;
 
     // Costruisce l'URL con il riferimento completo
     link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
-  } else {
-    // Se il libro non è trovato, puoi gestire l'errore
+  } else
     toast(
       "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
     );
+});
+
+// Funzione per aggiungere il listener al singolo h4
+function attachClickListenerToVerse(verseElement) {
+  verseElement.addEventListener("click", () => {
+    if (!document.fullscreenElement) return;
+
+    const selectedBook = sessionStorage.getItem("selectedBook");
+    const selectedChapter = sessionStorage.getItem("selectedChapter");
+    const bookIndex = bibleBooks.indexOf(selectedBook);
+
+    if (bookIndex === -1) {
+      toast("Libro non trovato");
+      return;
+    }
+
+    // Ricava il numero del versetto cliccato
+    const verseNumber = verseElement.textContent
+      .trim()
+      .replace("Versetto ", "")
+      .padStart(3, "0");
+
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+    const chapterCode = selectedChapter.padStart(3, "0");
+    const referenceCode = `${bookCode}${chapterCode}${verseNumber}`;
+
+    window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
+  });
+}
+
+// Funzione che cerca tutti gli h4 dentro .verse-number e aggiunge il listener
+function applyListenersToAllVerses() {
+  document.querySelectorAll(".verse-number h4").forEach((e) => {
+    // Evita di aggiungere due volte lo stesso listener (optional)
+    if (!e.dataset.listenerAttached) {
+      attachClickListenerToVerse(e);
+      e.dataset.listenerAttached = "true";
+    }
+  });
+}
+
+// Applichiamo i listener iniziali
+applyListenersToAllVerses();
+
+// Creiamo un observer per tenere d'occhio il DOM
+const verseObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    // Per ogni nodo aggiunto al DOM
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        // Se è proprio un h4 dentro .verse-number
+        if (node.matches && node.matches(".verse-number h4")) {
+          attachClickListenerToVerse(node);
+        } else {
+          // Oppure se dentro ci sono elementi del genere
+          node.querySelectorAll?.(".verse-number h4").forEach((child) => {
+            attachClickListenerToVerse(child);
+          });
+        }
+      }
+    });
   }
+});
+
+verseObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
 });

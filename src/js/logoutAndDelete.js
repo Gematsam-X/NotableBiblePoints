@@ -1,18 +1,10 @@
-import Backendless from "backendless";
-import { deleteValue, getValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
+import backendlessRequest from "./backendlessRequest.js";
+import { deleteValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
 
 export async function deleteCurrentUser() {
   try {
-    const currentUser = await Backendless.UserService.getCurrentUser();
-    console.log("Utente attuale:", currentUser);
-
-    if (!currentUser) {
-      toast("Nessun utente loggato.");
-      return;
-    }
-
     showGif();
 
     const confirmDelete = confirm(
@@ -24,8 +16,8 @@ export async function deleteCurrentUser() {
       return;
     }
 
-    // Recupera l'email dell'utente da IndexedDB
-    const userEmail = await getValue("userEmail");
+    // Recupera l'email
+    const userEmail = localStorage.getItem("userEmail");
     if (!userEmail) {
       toast("Errore: email utente non trovata.");
       hideGif();
@@ -33,32 +25,34 @@ export async function deleteCurrentUser() {
     }
 
     // Recupera l'oggetto JSON dalla tabella NotableBiblePoints
-    const databaseEntry = await Backendless.Data.of(
-      "NotableBiblePoints"
-    ).findFirst();
+    const result =
+      (await backendlessRequest(
+        "notes:get",
+        {
+          email: userEmail,
+        },
+        localStorage.getItem("userToken")
+      )) || [];
 
-    if (!databaseEntry || !databaseEntry.NotablePoints) {
+    if (!result) {
       toast("Errore: dati non trovati.");
       hideGif();
       return;
     }
 
-    console.log("Dati attuali:", databaseEntry.NotablePoints);
-
-    // Filtra i dati per rimuovere quelli dell'utente
-    const updatedNotablePoints = databaseEntry.NotablePoints.filter(
-      (entry) => entry.owner !== userEmail
+    await backendlessRequest(
+      "notes:delete",
+      {
+        email: userEmail,
+        ids: result.map(({ id }) => id),
+      },
+      localStorage.getItem("userToken")
     );
 
-    console.log("Dati aggiornati:", updatedNotablePoints);
-
-    // Aggiorna il database con i dati filtrati
-    databaseEntry.NotablePoints = updatedNotablePoints;
-    await Backendless.Data.of("NotableBiblePoints").save(databaseEntry);
-
     // Rimuovi l'utente dalla tabella Users
-    console.log("Eliminazione utente con ID:", currentUser.objectId);
-    await Backendless.Data.of("Users").remove(currentUser.objectId);
+    await backendlessRequest("deleteUser", {
+      objectId: localStorage.getItem("userId"),
+    });
 
     logoutUser(false);
   } catch (error) {
@@ -73,25 +67,19 @@ export async function logoutUser(isFromAccountPage = false, showAlert = true) {
   if (showAlert) showGif();
   try {
     // Logout dell'utente
-    await Backendless.UserService.logout();
+    await backendlessRequest("logout");
 
-    // Rimuoviamo i dati relativi all'utente
+    // Rimuoviamo i dati relativi all'utente da IndexedDB
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
     localStorage.removeItem("userToken");
     await deleteValue("userNotes");
+    await deleteValue("userNotesByTag");
     await deleteValue("deletedNotes");
-    localStorage.removeItem("userNotes");
-    localStorage.removeItem("deletedNotes");
 
-    console.log(
-      `reindirizzo a ${
-        !isFromAccountPage ? "./html/login.html" : "./login.html"
-      }`
-    );
-
-    window.location.href = !isFromAccountPage
-      ? "./html/login.html"
-      : "./login.html";
+    window.location.href = isFromAccountPage
+      ? "./login.html"
+      : "./html/login.html";
   } catch (error) {
     console.error("Errore nel logout:", error);
     toast("Errore durante il logout: " + error.message, 4000);
@@ -138,7 +126,6 @@ export async function redirectToOriginPage() {
   const previousPage = await findValidHistoryEntry();
 
   if (previousPage) {
-    console.log("Ritornando a " + previousPage);
     window.location.href = previousPage;
   } else {
     window.location.href = "login.html";

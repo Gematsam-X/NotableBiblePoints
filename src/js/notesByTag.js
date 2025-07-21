@@ -1,12 +1,11 @@
-import Backendless from "backendless";
-import { Share } from "@capacitor/share";
+import Choices from "choices.js";
+import { isOnline } from "./isOnline.js";
+import "choices.js/public/assets/styles/choices.min.css";
+import backendlessRequest from "./backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "./indexedDButils.js";
 import { isDarkTheme } from "./isDarkTheme.js";
-import { isOnline } from "./isOnline.js";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
-import Choices from "choices.js";
-import "choices.js/public/assets/styles/choices.min.css";
 
 let editingNoteId = null;
 const modal = document.querySelector(".modal");
@@ -24,7 +23,7 @@ async function shouldUseServer() {
   else return true;
 }
 
-// 🔁 Carica solo le note che contengono il filteringTag
+// Carica solo le note che contengono il filteringTag
 async function loadNotesByTag(forceServer = false) {
   if (!notesContainer) return;
 
@@ -35,25 +34,24 @@ async function loadNotesByTag(forceServer = false) {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Prendo i dati da server o IndexedDB in base a shouldUseServer
+    // Prendo i dati
     const allRecords =
-      (await shouldUseServer()) || forceServer
-        ? (await Backendless.Data.of("NotableBiblePoints").findFirst())
-            .NotablePoints || []
+      forceServer || (await shouldUseServer())
+        ? (await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            localStorage.getItem("userToken")
+          )) || []
         : await getValue("userNotes");
 
-    const globalUserNotes = allRecords.filter(
-      (note) => note?.owner === userEmail
-    );
-
-    // Filtro le note in base all'owner e al tag filtrante
-    const filteredNotes = globalUserNotes.filter((note) =>
+    // Filtro le note in base al tag filtrante
+    const filteredNotes = allRecords.filter((note) =>
       note?.tags?.includes(filteringTag)
     );
 
     // Salvo nel DB locale filtered subset (campo userNotesByTag)
     await setValue("userNotesByTag", filteredNotes);
-    await setValue("userNotes", globalUserNotes);
+    await setValue("userNotes", allRecords);
 
     notesContainer.innerHTML = "";
 
@@ -73,6 +71,8 @@ async function loadNotesByTag(forceServer = false) {
       if (note.tags?.length) {
         noteElement.setAttribute("data-tags", JSON.stringify(note.tags));
       }
+      noteElement.setAttribute("data-book", note.book);
+      noteElement.setAttribute("data-chapter", JSON.stringify(note.chapter));
 
       // Tags come pillole cliccabili
       const tagsHtml = note.tags
@@ -81,17 +81,18 @@ async function loadNotesByTag(forceServer = false) {
 
       // Icone adattate a tema scuro o chiaro
       const deleteImg = isDarkTheme
-        ? "/src/assets/notes/delete/dark.webp"
-        : "/src/assets/notes/delete/light.webp";
+        ? "../assets/notes/delete/dark.webp"
+        : "../assets/notes/delete/light.webp";
       const editImg = isDarkTheme
-        ? "/src/assets/notes/edit/dark.webp"
-        : "/src/assets/notes/edit/light.webp";
+        ? "../assets/notes/edit/dark.webp"
+        : "../assets/notes/edit/light.webp";
       const shareImg = isDarkTheme
-        ? "/src/assets/notes/share/dark.webp"
-        : "/src/assets/notes/share/light.webp";
+        ? "../assets/notes/share/dark.webp"
+        : "../assets/notes/share/light.webp";
 
       // HTML interno della nota
       noteElement.innerHTML = `
+        <span class="close-note">&times;</span>
         <div class="verse-number">
           <h4>${note.book} ${note.chapter}:${note.verse}</h4>
           <div class="tags-container">${tagsHtml}</div>
@@ -118,7 +119,7 @@ async function loadNotesByTag(forceServer = false) {
 }
 
 // Al caricamento della pagina, carica le note
-window.addEventListener("load", loadNotesByTag);
+window.addEventListener("load", loadNotesByTag());
 
 // Listener click dentro il contenitore delle note
 notesContainer?.addEventListener("click", async (event) => {
@@ -135,21 +136,23 @@ notesContainer?.addEventListener("click", async (event) => {
 
   // Se clicchi su una nota
   const noteElement = event.target.closest(".note");
-  if (!noteElement) return;
+  if (!noteElement || noteElement.id) return;
 
   // Se clicchi su pulsanti azione
   if (event.target.closest(".delete")) return deleteNote(noteElement);
   if (event.target.closest(".share")) return shareNote(noteElement);
   if (event.target.closest(".edit")) return editNote(noteElement);
-
-  // 🖱️ Se clicchi sulla nota stessa, fullscreen SOLO per la nota e stile evidenziato
+  if (event.target.classList.contains("close-note")) {
+    document.exitFullscreen();
+  }
   try {
-    if (document.fullscreenElement) {
-      noteElement.id = "";
-      await document.exitFullscreen();
+    if (
+      !document.fullscreenElement &&
+      !document.getElementById("clicked-note")
+    ) {
+      noteElement.id = "clicked-note";
+      await noteElement.requestFullscreen();
     }
-    noteElement.id = "clicked-note";
-    await noteElement.requestFullscreen();
   } catch (err) {
     console.warn("Impossibile entrare in fullscreen:", err);
   }
@@ -172,73 +175,76 @@ notesContainer?.addEventListener("click", async (event) => {
   noteElement.classList.add("clicked-note");
 });
 
-async function shareNote(noteElement) {
-  const noteTitle = noteElement.querySelector(".note-title").textContent;
-  const noteContent = noteElement.querySelector(".note-body h3").textContent;
-  const verseNumber = noteElement
-    .querySelector(".verse-number h4")
-    .textContent.replace("Versetto ", "")
-    .trim();
+// Condivisione della nota tramite Web Share API o copia appunti
+function shareNote(noteElement) {
+  const title = noteElement.querySelector(".note-title").textContent;
+  const content = noteElement.querySelector(".note-body h3").textContent;
+  const verse = noteElement.querySelector(".verse-number h4").textContent;
 
-  const shareText = `Ho trovato un punto notevole interessante in ${selectedBook} ${chapter}:${verseNumber}: ${noteContent}`;
+  const shareText = `Nota: ${title} (${verse})\n${content}`;
 
-  try {
-    await Share.share({
-      title: `Punto notevole: ${noteTitle}`,
-      text: shareText,
-      dialogTitle: "Condividi con",
-    });
-  } catch (err) {
-    console.error("Errore durante la condivisione:", err);
-    copyToClipboard(shareText);
+  if (navigator.share) {
+    navigator.share({ title: title, text: shareText });
+  } else {
+    navigator.clipboard.writeText(shareText);
+    toast("Nota copiata negli appunti!");
   }
 }
 
 // Eliminazione nota con salvataggio online se possibile e sempre IndexedDB
+/**
+ * Elimina una nota, sia lato Backendless che localmente.
+ * @param {HTMLElement} noteElement - L'elemento DOM della nota da eliminare.
+ */
 async function deleteNote(noteElement) {
   if (!confirm("Vuoi davvero eliminare questa nota?")) return;
 
+  showGif(); // Mostra la gif di caricamento
+
   try {
-    showGif();
     const id = noteElement.getAttribute("data-id");
     const userEmail = localStorage.getItem("userEmail");
+    const userToken = localStorage.getItem("userToken");
 
-    const online = await isOnline();
-
-    let data = online
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : await getValue("userNotes");
-
-    const notes = online ? data.NotablePoints : data;
-
-    if (!Array.isArray(notes)) {
-      toast("Errore interno: lista note non valida");
-      console.error("[deleteNote] Errore: notes non è un array");
-      hideGif();
+    if (!id || !userEmail || !userToken) {
+      toast("Errore: dati utente mancanti o ID non valido.");
+      console.error("[deleteNote] ID o credenziali non trovate.");
       return;
     }
 
-    const updated = notes.filter((note) => note.id !== id);
+    const online = await isOnline();
 
+    // Elimina la nota da Backendless se siamo online
     if (online) {
-      data.NotablePoints = updated;
-      await Backendless.Data.ta.of("NotableBiblePoints").save(data);
+      await backendlessRequest(
+        "notes:delete",
+        { email: userEmail, ids: id },
+        userToken
+      );
     }
 
+    // Prende le note salvate localmente
+    const allNotes = (await getValue("userNotes")) || [];
+
+    // Filtra le note rimuovendo quella con l'id corrispondente
+    const updated = allNotes.filter((note) => note.id !== id);
+
+    // Aggiorna sia l'array completo che quello filtrato per il tag attivo
+    await setValue("userNotes", updated);
     await setValue(
       "userNotesByTag",
-      updated.filter(
-        (n) => n.owner === userEmail && n.tags?.includes(filteringTag)
-      )
+      updated.filter((n) => n.tags?.includes(filteringTag))
     );
 
+    // Rimuove la nota dal DOM
     noteElement.remove();
-    toast("Nota eliminata.");
+
+    toast("Nota eliminata con successo.");
   } catch (error) {
     console.error("[deleteNote] Errore durante eliminazione:", error);
     toast("Errore durante l'eliminazione della nota.");
   } finally {
-    hideGif();
+    hideGif(); // Nasconde la gif di caricamento in ogni caso
   }
 }
 
@@ -297,29 +303,26 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    let userNotes = (await isOnline())
-      ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-      : await getValue("userNotes");
+    // Recupera il record dal database che contiene tutte le note
+    let notes =
+      ((await isOnline())
+        ? await backendlessRequest(
+            "notes:get",
+            { email: userEmail },
+            localStorage.getItem("userToken")
+          )
+        : await getValue("userNotes")) || [];
 
-    if (!userNotes) userNotes = { NotablePoints: [] };
-
-    let allNotes = (await isOnline()) ? userNotes.NotablePoints : userNotes;
-
-    // Filtra solo le note dell'utente
-    let userNotesOnly = allNotes.filter((note) => note.owner === userEmail);
-
-    const noteIndex = userNotesOnly.findIndex(
-      (note) => note.id === editingNoteId
-    );
+    // Cerca la nota da modificare tra le tue
+    const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
     if (noteIndex === -1) {
       toast("Errore: impossibile trovare la nota da modificare.");
-      console.warn("[saveNote] Nota da modificare NON trovata!");
       return;
     }
 
-    // Aggiorna solo la tua nota
-    userNotesOnly[noteIndex] = {
-      ...userNotesOnly[noteIndex],
+    // Aggiorna la nota
+    notes[noteIndex] = {
+      ...notes[noteIndex],
       ...(noteTitle && { title: noteTitle }),
       verse: verseNumber,
       updatedAt: Date.now().toString(),
@@ -327,18 +330,13 @@ async function saveNote() {
       tags: selectedTags,
     };
 
-    if (await isOnline()) {
-      // Ricostruisci array completo preservando le note degli altri utenti
-      userNotes.NotablePoints = [
-        ...allNotes.filter((n) => n.owner !== userEmail),
-        ...userNotesOnly,
-      ];
-
-      await Backendless.Data.of("NotableBiblePoints").save(userNotes);
-    } else {
-      // Offline: salva solo le tue note
-      await setValue("userNotes", userNotesOnly);
-    }
+    if (await isOnline())
+      await backendlessRequest(
+        "notes:addOrUpdate",
+        { email: localStorage.getItem("userEmail"), note: notes[noteIndex] },
+        localStorage.getItem("userToken")
+      );
+    else await setValue("userNotes", notes);
 
     editingNoteId = null;
     modal.style.display = "none";
@@ -347,17 +345,15 @@ async function saveNote() {
 
     (await isOnline()) ? await loadNotesByTag(true) : await loadNotesByTag();
   } catch (error) {
-    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
+    console.error("[saveNote] Errore durante modifica:", error);
     toast("Errore durante il salvataggio. Riprova più tardi.");
   } finally {
-    // Pulisce i campi
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
 
-    // Reset dropdown tag
     if (typeof tagChoices !== "undefined") {
-      tagChoices.removeActiveItems();
+      tagChoices.removeActiveItems(); // reset visivo
     }
 
     await refreshTagChoices();
@@ -404,14 +400,19 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
   // 3️⃣ Carico le note (server o local)
   const res = (await shouldUseServer())
-    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    ? await backendlessRequest(
+        "notes:get",
+        {
+          email: localStorage.getItem("userEmail"),
+        },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
-  const allPoints = Array.isArray(res) ? res : res?.NotablePoints || [];
-  const userPoints = allPoints.filter((p) => p.owner === currentUserEmail);
+  const allPoints = Array.isArray(res) ? res : res || [];
 
   // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
   const tagSet = new Set();
-  for (const point of userPoints) {
+  for (const point of allPoints) {
     if (Array.isArray(point.tags)) {
       point.tags.forEach((t) => {
         if (t && typeof t === "string") tagSet.add(t.trim());
@@ -501,14 +502,19 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 async function refreshTagChoices() {
   const userEmail = localStorage.getItem("userEmail");
   const res = (await shouldUseServer())
-    ? await Backendless.Data.of("NotableBiblePoints").findFirst()
+    ? await backendlessRequest(
+        "notes:get",
+        {
+          email: localStorage.getItem("userEmail"),
+        },
+        localStorage.getItem("userToken")
+      )
     : await getValue("userNotes");
 
-  const allNotes = Array.isArray(res) ? res : res?.NotablePoints || [];
-  const userNotes = allNotes.filter((n) => n.owner === userEmail);
+  const allNotes = Array.isArray(res) ? res : res || [];
 
   const tagSet = new Set();
-  userNotes.forEach((note) => {
+  allNotes.forEach((note) => {
     if (Array.isArray(note.tags)) {
       note.tags.forEach((t) => tagSet.add(t.trim()));
     }
@@ -552,4 +558,152 @@ const observer = new MutationObserver(() => {
 // Configura l'osservatore per rilevare aggiunte e rimozioni di nodi
 observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
+});
+
+const bibleBooks = [
+  "Genesi",
+  "Esodo",
+  "Levitico",
+  "Numeri",
+  "Deuteronomio",
+  "Giosuè",
+  "Giudici",
+  "Rut",
+  "1 Samuele",
+  "2 Samuele",
+  "1 Re",
+  "2 Re",
+  "1 Cronache",
+  "2 Cronache",
+  "Esdra",
+  "Neemia",
+  "Ester",
+  "Giobbe",
+  "Salmi",
+  "Proverbi",
+  "Ecclesiaste",
+  "Cantico dei Cantici",
+  "Isaia",
+  "Geremia",
+  "Lamentazioni",
+  "Ezechiele",
+  "Daniele",
+  "Osea",
+  "Gioele",
+  "Amos",
+  "Abdia",
+  "Giona",
+  "Michea",
+  "Naum",
+  "Abacuc",
+  "Sofonia",
+  "Aggeo",
+  "Zaccaria",
+  "Malachia",
+  "Matteo",
+  "Marco",
+  "Luca",
+  "Giovanni",
+  "Atti",
+  "Romani",
+  "1 Corinti",
+  "2 Corinti",
+  "Galati",
+  "Efesini",
+  "Filippesi",
+  "Colossesi",
+  "1 Tessalonicesi",
+  "2 Tessalonicesi",
+  "1 Timoteo",
+  "2 Timoteo",
+  "Tito",
+  "Filemone",
+  "Ebrei",
+  "Giacomo",
+  "1 Pietro",
+  "2 Pietro",
+  "1 Giovanni",
+  "2 Giovanni",
+  "3 Giovanni",
+  "Giuda",
+  "Rivelazione",
+];
+
+// Funzione per aggiungere il listener al singolo h4
+function attachClickListenerToVerse(verseElement, noteElement) {
+  verseElement.addEventListener("click", () => {
+    // Blocca il click se non siamo in modalità fullscreen
+    if (!document.fullscreenElement) return;
+
+    // Ricava le info dal contenitore del versetto
+    const selectedBook = noteElement.getAttribute("data-book");
+    const selectedChapter = noteElement.getAttribute("data-chapter");
+    const bookIndex = bibleBooks.indexOf(selectedBook);
+
+    if (bookIndex === -1) {
+      toast("Libro non trovato");
+      return;
+    }
+
+    // Estrai il numero del versetto da "Proverbi 20:4"
+    const text = verseElement.textContent.trim();
+    const verseMatch = text.match(/:(\d+)$/); // Cattura il numero dopo i due punti
+
+    if (!verseMatch) {
+      toast("Versetto non riconosciuto");
+      return;
+    }
+
+    const verseNumber = verseMatch[1].padStart(3, "0"); // es: "4" → "004"
+
+    // Crea il codice
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+    const chapterCode = selectedChapter.padStart(3, "0");
+    const referenceCode = `${bookCode}${chapterCode}${verseNumber}`;
+
+    // Vai su jw.org al versetto specifico
+    window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&bible=${referenceCode}&pub=nwtsty`;
+  });
+}
+
+// Funzione che cerca tutti gli h4 dentro .verse-number e aggiunge il listener
+function applyListenersToAllVerses() {
+  document.querySelectorAll(".verse-number h4").forEach((e) => {
+    // Evita doppio listener
+    if (!e.dataset.listenerAttached) {
+      const noteElement = e.closest(".note"); // Cerca il contenitore più vicino
+      if (noteElement) {
+        attachClickListenerToVerse(e, noteElement);
+        e.dataset.listenerAttached = "true";
+      }
+    }
+  });
+}
+
+// Applica i listener iniziali ai versetti esistenti
+applyListenersToAllVerses();
+
+// Osserva il DOM per versetti aggiunti dinamicamente
+const verseObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.matches?.(".verse-number h4")) {
+          const noteElement = node.closest(".note");
+          if (noteElement) attachClickListenerToVerse(node, noteElement);
+        } else {
+          node.querySelectorAll?.(".verse-number h4").forEach((child) => {
+            const noteElement = child.closest(".note");
+            if (noteElement) attachClickListenerToVerse(child, noteElement);
+          });
+        }
+      }
+    });
+  }
+});
+
+// Inizia l’osservazione del DOM
+verseObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
 });

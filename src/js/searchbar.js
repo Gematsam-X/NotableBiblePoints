@@ -1,7 +1,8 @@
-import Backendless from 'backendless';
 import toast from "./toast.js";
 import { getValue, setValue } from "./indexedDButils.js";
 import { showGif, hideGif } from "./loadingGif.js";
+import { isOnline } from "./isOnline.js";
+import backendlessRequest from "./backendlessRequest.js";
 
 (async () => {
   const toggleSearchMode = document.getElementById("toggleSearchMode");
@@ -31,7 +32,7 @@ import { showGif, hideGif } from "./loadingGif.js";
         resultsModal.style.display = "none";
         return;
       }
-      const matches = await searchInJson(searchTerm); // Attende il risultato della ricerca
+      const matches = await searchWitinNotes(searchTerm); // Attende il risultato della ricerca
       if (matches?.length) {
         // Se ci sono occorrenze
         resultsContent.innerHTML = `<h2>Occorrenze trovate:</h2>${matches.join(
@@ -51,7 +52,7 @@ import { showGif, hideGif } from "./loadingGif.js";
   }
 
   // Funzione per cercare nel file JSON
-  async function searchInJson(searchTerm) {
+  async function searchWitinNotes(searchTerm) {
     if (searchTerm.length < 3) {
       searchInput.blur();
       toast("Inserisci almeno 3 caratteri per la ricerca.");
@@ -60,17 +61,18 @@ import { showGif, hideGif } from "./loadingGif.js";
     }
 
     if (!notesData || !notesData.length) {
-      if (navigator.onLine) {
+      if (await isOnline()) {
         showGif();
-        notesData = (
-          await Backendless.Data.of("NotableBiblePoints").findFirst()
-        ).NotablePoints.filter(
-          (note) => note.owner === localStorage.getItem("userEmail")
+        const results = await backendlessRequest(
+          "notes:get",
+          { email: localStorage.getItem("userEmail") },
+          localStorage.getItem("userToken")
         );
-        await setValue("userNotes", notesData);
+
+        await setValue("userNotes", results);
         hideGif();
       } else {
-        alert("Connettersi a Internet.");
+        toast("Errore di connessione. Verifica la tua rete e riprova.");
         return [];
       }
     }
@@ -230,7 +232,7 @@ import { showGif, hideGif } from "./loadingGif.js";
       sessionStorage.getItem("selectedNoteId"),
       sessionStorage.getItem("selectedChapter")
     );
-    window.location.href = "../html/notes.html";
+    window.location.href = "./html/notes.html";
   }
 
   // Osserva cambiamenti nel contenuto della modale
@@ -369,10 +371,10 @@ import { showGif, hideGif } from "./loadingGif.js";
       // Se c'è il capitolo, reindirizza a notes.html
       if (chapterInput && !isNaN(chapterInput)) {
         sessionStorage.setItem("selectedChapter", parseInt(chapterInput));
-        window.location.href = "notes.html";
+        window.location.href = "./html/notes.html";
       } else {
         // Se solo il libro, reindirizza a chapters.html
-        window.location.href = "chapters.html";
+        window.location.href = "./html/chapters.html";
       }
     } else if (matches?.length > 1) {
       searchInput.blur();

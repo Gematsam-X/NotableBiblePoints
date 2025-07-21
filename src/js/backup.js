@@ -1,18 +1,18 @@
-import Backendless from "backendless";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
 import { deleteValue, getValue, setValue } from "./indexedDButils.js"; // Importiamo le funzioni per IndexedDB
 import { isOnline } from "./isOnline.js";
 import { hideGif, showGif } from "./loadingGif.js";
 import toast from "./toast.js";
+import backendlessRequest from "./backendlessRequest.js";
 
 async function findUserRecords() {
   return (
-    (
-      await Backendless.Data.of("NotableBiblePoints").findFirst()
-    ).NotablePoints.filter(
-      (entry) => entry.owner == localStorage.getItem("userEmail")
-    ) ||
+    (await backendlessRequest(
+      "notes:get",
+      { email: localStorage.getItem("userEmail") },
+      localStorage.getItem("userToken")
+    )) ||
     (await getValue("userNotes")) ||
     []
   );
@@ -28,14 +28,13 @@ export async function createBackup() {
     return;
   }
 
-  const userEmail = localStorage.getItem("userEmail") || "utente";
-
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
+  const now = Date.now().toString().slice(-6); // Ultimi 6 caratteri del timestamp
 
-  const fileName = `NotableBiblePointsBACKUP_${userEmail}_${day}-${month}-${year}.txt`;
+  const fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}_${now}.txt`;
 
   const fileData = JSON.stringify(databaseEntry, null, 4);
 
@@ -65,7 +64,7 @@ export async function createBackup() {
       dialogTitle: "Condividi il backup",
     });
 
-    toast("Backup creato e condiviso con successo!");
+    toast("Backup salvato con successo!");
   } catch (err) {
     console.error("Errore nel salvataggio o nella condivisione del file:", err);
     if (err.message.toLowerCase().includes("share canceled")) return;
@@ -73,96 +72,88 @@ export async function createBackup() {
   }
 }
 
-let restoreListenerSet = false;
-
 export async function restoreBackup() {
   const inputFile = document.getElementById("fileInput");
 
   if (!inputFile) {
-    toast("Elemento fileInput non trovato nel DOM.");
+    toast("Elemento di input file non trovato.");
     return;
   }
 
   inputFile.accept = ".txt";
 
-  if (!restoreListenerSet) {
-    restoreListenerSet = true;
+  // Rimuovi eventuali listener precedenti per evitare duplicati
+  const newInput = inputFile.cloneNode(true);
+  inputFile.replaceWith(newInput);
 
-    inputFile.addEventListener("change", async function (event) {
-      const file = event.target.files[0];
-      if (!file) {
-        toast("Nessun file selezionato.");
-        return;
-      }
+  newInput.addEventListener("change", async function (event) {
+    const file = event.target.files[0];
+    if (!file) {
+      toast("Seleziona un file .nbp valido.");
+      return;
+    }
 
-      showGif();
+    showGif();
 
-      const reader = new FileReader();
-      reader.onload = async function (e) {
-        try {
-          const jsonData = JSON.parse(e.target.result);
+    const reader = new FileReader();
 
-          if (!Array.isArray(jsonData)) {
-            toast("Il file di backup è corrotto.");
-            return;
-          }
+    reader.onload = async function (e) {
+      try {
+        const jsonData = JSON.parse(e.target.result);
 
-          const userEmail = localStorage.getItem("userEmail");
-          if (!userEmail) {
-            toast("Utente non autenticato.");
-            return;
-          }
-
-          const online = await isOnline();
-
-          let userNotes = online
-            ? await Backendless.Data.of("NotableBiblePoints").findFirst()
-            : await getValue("userNotes");
-
-          if (!userNotes) userNotes = { NotablePoints: [] };
-
-          const allNotes = online ? userNotes.NotablePoints : userNotes;
-
-          // 🔥 FILTRIAMO tutte le note tranne quelle dell'utente corrente
-          const otherUsersNotes = allNotes.filter((n) => n.owner !== userEmail);
-
-          // 🔄 AGGIUNGIAMO/SOSTITUIAMO tutte quelle del backup (che sono SOLO dell'utente)
-          const updatedNotes = [
-            ...otherUsersNotes,
-            ...jsonData.map((note) => ({
-              ...note,
-              owner: userEmail,
-              updatedAt: Date.now().toString(),
-            })),
-          ];
-
-          await deleteValue("userNotes");
-
-          // Salviamo!
-          if (online) {
-            await Backendless.Data.of("NotableBiblePoints").save({
-              ...userNotes,
-              NotablePoints: updatedNotes,
-            });
-          } else {
-            await setValue(
-              "userNotes",
-              updatedNotes.filter((n) => n.owner === userEmail)
-            );
-          }
-
-          toast("Backup ripristinato con successo.");
-        } catch (err) {
-          console.error("Errore nel parsing del file:", err);
-          toast("Errore nel file di backup.");
-        } finally {
-          hideGif();
+        if (!Array.isArray(jsonData)) {
+          toast("Il file di backup è corrotto. Non è possibile ripristinarlo.");
+          return;
         }
-      };
 
-      reader.readAsText(file);
-    });
-  }
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) {
+          toast("Utente non autenticato.");
+          return;
+        }
 
-  inputFile.click();
+        const existing = await getValue("userNotes");
+        const notes = Array.isArray(existing) ? existing : [];
+
+        for (const newRecord of jsonData) {
+          const idx = notes.findIndex((note) => note.id === newRecord.id);
+
+          const record = {
+            ...newRecord,
+            updatedAt: Date.now().toString(),
+          };
+
+          if (idx !== -1) {
+            notes[idx] = { ...notes[idx], ...record };
+          } else {
+            notes.push(record);
+          }
+        }
+
+        // Salva nel server o in locale
+        if (await isOnline())
+          await backendlessRequest(
+            "notes:addOrUpdate",
+            {
+              email: userEmail,
+              note: notes,
+            },
+            localStorage.getItem("userToken")
+          );
+
+        await setValue("userNotes", notes);
+
+        toast("Backup ripristinato con successo!");
+      } catch (err) {
+        console.error("Errore nel parsing del file:", err);
+        toast("Errore nel file di backup. Assicurati che sia valido.");
+      } finally {
+        hideGif();
+      }
+    };
+
+    reader.readAsText(file);
+  });
+
+  newInput.click();
 }

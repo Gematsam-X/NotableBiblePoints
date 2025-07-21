@@ -29,7 +29,7 @@ if (userEmail && userToken) {
 } else {
   // Se non ci sono dati salvati, esegui il logout
   console.log("Nessun utente loggato, vai al login.");
-  localStorage.setItem("isAuthenticated", "false");
+  localStorage.removeItem("isAuthenticated");
   if (
     window.location.pathname.split("/").pop() !== "login.html" &&
     window.location.pathname.split("/").pop() !== "accessRestricted.html"

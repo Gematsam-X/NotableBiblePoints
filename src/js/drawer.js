@@ -1,4 +1,4 @@
-import toast from "./toast.js";
+import backendlessRequest from "./backendlessRequest.js";
 import { Share } from "@capacitor/share";
 
 const drawer = document.querySelector(".drawer");
@@ -42,8 +42,12 @@ document
   .querySelector(".openDrawer")
   .addEventListener("click", handleOpenDrawerClick);
 
-document.querySelector("#username").innerText =
-  localStorage.getItem("userEmail");
+document.querySelector("#username").innerText = await backendlessRequest(
+  "decrypt",
+  {
+    ciphertext: localStorage.getItem("userEmail"),
+  }
+);
 
 document.querySelector("#drawer-account").addEventListener("click", () => {
   window.location.href = "./html/account.html";
@@ -64,5 +68,6 @@ document.querySelector("#other-apps").addEventListener("click", () => {
 });
 
 document.querySelector("#update").addEventListener("click", () => {
-  window.location.href = "https://github.com/Gematsam-X/NotableBiblePoints/releases";
+  window.location.href =
+    "https://github.com/Gematsam-X/NotableBiblePoints/releases";
 });
