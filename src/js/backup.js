@@ -33,7 +33,7 @@ export async function createBackup() {
   const day = String(today.getDate()).padStart(2, "0");
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
-  const now = new Date.now();
+  const now = today.now().toString().slice(-6); // Ultimi 6 caratteri del timestamp
 
   let fileName = `NotableBiblePointsBACKUP_${day}-${month}-${year}_${now}.txt`;
 
