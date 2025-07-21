@@ -254,6 +254,7 @@ const corsHeaders = {
 function ok(data) {
   return {
     statusCode: 200,
+    headers: corsHeaders,
     body: JSON.stringify(data),
   };
 }
@@ -261,6 +262,7 @@ function ok(data) {
 function status4xx(message, httpCode = 0) {
   return {
     statusCode: 400 + httpCode,
+    headers: corsHeaders,
     body: JSON.stringify({ error: message }),
   };
 }
