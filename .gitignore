@@ -64,3 +64,6 @@ android/local.properties
 
 # === TEST COVERAGE ===
 coverage/
+
+# === SEGRETI ===
+src/js/backendlessSecretValues.js

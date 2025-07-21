@@ -6,6 +6,7 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 // Lista dei JS da includere come entry separati
 const jsFiles = [
   "backendlessInit",
+  "backendlessSecretValues",
   "accountEventListeners",
   "auth",
   "backup",
