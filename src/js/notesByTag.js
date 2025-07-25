@@ -193,7 +193,7 @@ notesContainer?.addEventListener("click", async (event) => {
   // Se clicchi su un tag-pill
   const tagClicked = event.target.closest(".tag-pill");
   if (tagClicked) {
-    const newTag = tagClicked.textContent.trim();
+    const newTag = tagClicked.textContent.toLowerCase().trim();
     if (newTag !== filteringTag) {
       sessionStorage.setItem("filteringTag", newTag);
       location.reload(); // ricarica pagina con nuovo filtro
@@ -474,7 +474,7 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
   for (const point of allPoints) {
     if (Array.isArray(point.tags)) {
       point.tags.forEach((t) => {
-        if (t && typeof t === "string") tagSet.add(t.trim());
+        if (t && typeof t === "string") tagSet.add(t.toLowerCase().trim());
       });
     }
   }
@@ -490,7 +490,7 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
     duplicateItemsAllowed: false,
     placeholderValue: "Aggiungi o seleziona tag...",
     searchEnabled: true,
-    shouldSort: false,
+    shouldSort: true,
     position: "auto",
     itemSelectText: "Seleziona",
     noChoicesText:
@@ -503,19 +503,19 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
   // 6️⃣ Controlla se un tag esiste già tra quelli selezionati
   function tagExists(val) {
     const v = val.toLowerCase().trim();
-    return tagChoices.getValue(true).some((t) => t.toLowerCase() === v);
+    return tagChoices.getValue(true).some((t) => t.toLowerCase().trim() === v);
   }
 
   // 7️⃣ Evento di ricerca: filtra + opzione “Crea nuovo”
   tagSelect.addEventListener("search", (e) => {
-    const q = e.detail.value.trim().toLowerCase();
+    const q = e.detail.value.toLowerCase().trim();
     if (!q) {
       updateChoicesDropdown();
       tagChoices.hideDropdown();
       return;
     }
     const filtered = tagChoicesArray.filter((c) =>
-      c.value.toLowerCase().startsWith(q)
+      c.value.toLowerCase().trim().startsWith(q)
     );
     if (q && !tagExists(q)) {
       filtered.unshift({
@@ -532,7 +532,7 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
   tagSelect.addEventListener("addItem", (e) => {
     const v = e.detail.value;
     if (v.startsWith("__add__")) {
-      const newTag = v.replace("__add__", "").trim();
+      const newTag = v.replace("__add__", "").toLowerCase().trim();
       tagChoices.removeActiveItemsByValue(v);
       if (!tagExists(newTag)) {
         // aggiungo al globale e seleziono
@@ -555,6 +555,39 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
   tagSelect.addEventListener("removeItem", () => {
     updateChoicesDropdown();
   });
+
+  const inputEl = document.querySelector(".choices__inner input");
+
+  // Event listener: trasforma in minuscolo mentre si scrive
+  inputEl.addEventListener("input", () => {
+    const cursorPos = inputEl.selectionStart; // Salviamo posizione del cursore
+    inputEl.value = inputEl.value.toLowerCase(); // Trasformiamo in minuscolo
+    inputEl.setSelectionRange(cursorPos, cursorPos); // Ripristiniamo posizione
+  });
+
+  inputEl.addEventListener("paste", (e) => {
+    e.preventDefault(); // Impedisce l'incollaggio di default
+
+    const clipboardText = (e.clipboardData || window.clipboardData).getData(
+      "text"
+    );
+    const lowercaseText = clipboardText.toLowerCase();
+
+    const start = inputEl.selectionStart;
+    const end = inputEl.selectionEnd;
+
+    const currentValue = inputEl.value;
+    const newValue =
+      currentValue.substring(0, start) +
+      lowercaseText +
+      currentValue.substring(end);
+
+    inputEl.value = newValue;
+
+    // Riposiziona il cursore dopo il testo incollato
+    const newCursorPos = start + lowercaseText.length;
+    inputEl.setSelectionRange(newCursorPos, newCursorPos);
+  });
 })();
 
 // Funzione per aggiornare Choices.js con i tag freschi
@@ -575,7 +608,7 @@ async function refreshTagChoices() {
   const tagSet = new Set();
   allNotes.forEach((note) => {
     if (Array.isArray(note.tags)) {
-      note.tags.forEach((t) => tagSet.add(t.trim()));
+      note.tags.forEach((t) => tagSet.add(t.toLowerCase().trim()));
     }
   });
 
