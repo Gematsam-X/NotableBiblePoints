@@ -81,8 +81,10 @@ const generateServiceWorkerPlugin = {
 
     const imgArray = [
       "/assets/favicon.ico",
+      "/assets/fonts/Cinzel-Bold.woff2",
+      "/assets/fonts/FiraSansCondensed-SemiBold.ttf",
+      "/assets/fonts/FiraSansCondensed-ExtraBold.ttf",
       "/assets/jw.org.webp",
-      "/assets/loadingGif/loading.gif",
     ];
 
     const finalAssets = [...filesToCache, ...imgArray];
