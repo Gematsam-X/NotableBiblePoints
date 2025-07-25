@@ -9,6 +9,74 @@ const searchButton = document.getElementById("search-button");
 const resultsModal = document.getElementById("results-modal");
 const resultsContent = document.getElementById("results-content");
 const closeModalButton = document.getElementById("close-modal");
+const bibleBooks = [
+  "Genesi",
+  "Esodo",
+  "Levitico",
+  "Numeri",
+  "Deuteronomio",
+  "Giosuè",
+  "Giudici",
+  "Rut",
+  "1 Samuele",
+  "2 Samuele",
+  "1 Re",
+  "2 Re",
+  "1 Cronache",
+  "2 Cronache",
+  "Esdra",
+  "Neemia",
+  "Ester",
+  "Giobbe",
+  "Salmi",
+  "Proverbi",
+  "Ecclesiaste",
+  "Cantico dei Cantici",
+  "Isaia",
+  "Geremia",
+  "Lamentazioni",
+  "Ezechiele",
+  "Daniele",
+  "Osea",
+  "Gioele",
+  "Amos",
+  "Abdia",
+  "Giona",
+  "Michea",
+  "Naum",
+  "Abacuc",
+  "Sofonia",
+  "Aggeo",
+  "Zaccaria",
+  "Malachia",
+  "Matteo",
+  "Marco",
+  "Luca",
+  "Giovanni",
+  "Atti",
+  "Romani",
+  "1 Corinti",
+  "2 Corinti",
+  "Galati",
+  "Efesini",
+  "Filippesi",
+  "Colossesi",
+  "1 Tessalonicesi",
+  "2 Tessalonicesi",
+  "1 Timoteo",
+  "2 Timoteo",
+  "Tito",
+  "Filemone",
+  "Ebrei",
+  "Giacomo",
+  "1 Pietro",
+  "2 Pietro",
+  "1 Giovanni",
+  "2 Giovanni",
+  "3 Giovanni",
+  "Giuda",
+  "Rivelazione",
+];
 
 let notesData = await getValue("userNotes");
 
@@ -30,7 +98,7 @@ async function handleSearch() {
       resultsModal.style.display = "none";
       return;
     }
-    const matches = await searchInJson(searchTerm); // Attende il risultato della ricerca
+    const matches = await searchWhitinNotes(searchTerm);
     if (matches?.length) {
       // Se ci sono occorrenze
       resultsContent.innerHTML = `<h2>Occorrenze trovate:</h2>${matches.join(
@@ -50,7 +118,7 @@ async function handleSearch() {
 }
 
 // Funzione per cercare nel file JSON
-async function searchInJson(searchTerm) {
+async function searchWhitinNotes(searchTerm) {
   if (searchTerm.length < 3) {
     searchInput.blur();
     toast("Inserisci almeno 3 caratteri per la ricerca.");
@@ -58,9 +126,10 @@ async function searchInJson(searchTerm) {
     return;
   }
 
+  showGif();
+
   if (!notesData || !notesData.length) {
     if (navigator.onLine) {
-      showGif();
       const results = await backendlessRequest(
         "notes:get",
         { email: localStorage.getItem("userEmail") },
@@ -71,6 +140,7 @@ async function searchInJson(searchTerm) {
       hideGif();
     } else {
       alert("Connettersi a Internet.");
+      hideGif();
       return [];
     }
   }
@@ -176,26 +246,35 @@ async function searchInJson(searchTerm) {
 
     // HTML del risultato
     const resultHtml = `
-      <div class="search-result">
-        <a class="redirect-link"
-           data-book="${entry.book}"
-           data-chapter="${entry.chapter}"
-           data-id="${entry.id}">
-          <h2><strong>${entry.book} ${entry.chapter}:${
-      entry.verse
-    }</strong></h2>
-        </a>
-        <h3><strong>${highlightedTitle}</strong></h3><br>
-        ${
-          matchedContexts.length > 0
-            ? `<div class="matched-contexts">${matchedContexts.join(
-                "<br><hr class='dashed'><br>"
-              )}</div>`
-            : contentPreview
-        }
-      </div>
-      <br><hr class="normal"><br>
-    `;
+  <div class="search-result">
+    <a class="redirect-link"
+      data-book="${entry.book}"
+      data-chapter="${entry.chapter}"
+      data-id="${entry.id}">
+      <h2><strong>${entry.book} ${entry.chapter}:${entry.verse}</strong></h2>
+    </a>
+    <h3><strong>${highlightedTitle}</strong></h3><br>
+    ${
+      matchedContexts.length > 0
+        ? `<div class="matched-contexts">${matchedContexts.join(
+            "<br><hr class='dashed'><br>"
+          )}</div>`
+        : contentPreview
+    }
+    <br>
+    ${
+      // Se esistono tag, li mettiamo dentro un contenitore <div> apposito
+      entry.tags && entry.tags.length > 0
+        ? `<div class="tags-container">
+            ${entry.tags
+              .map((tag) => `<span class="tag-pill">${tag}</span>`)
+              .join(" ")}
+          </div>`
+        : ""
+    }
+  </div>
+  <br><hr class="normal"><br>
+`;
 
     // Priorità: 3 = frase+parole, 2 = frase sola, 1 = parole sole
     let priority = 0;
@@ -207,14 +286,34 @@ async function searchInJson(searchTerm) {
       html: resultHtml,
       matchScore: totalPhraseMatches + totalWordMatches,
       priority,
+      book: entry.book,
+      chapter: entry.chapter,
+      verse: entry.verse,
     });
   }
 
   // Ordina e restituisci
   results.sort((a, b) => {
+    // 1. Priorità decrescente
     if (b.priority !== a.priority) return b.priority - a.priority;
-    return b.matchScore - a.matchScore;
+
+    // 2. Match score
+    if (b.matchScore !== a.matchScore) return b.matchScore - a.matchScore;
+
+    // 3. Libro
+    const aBookIndex = bibleBooks.indexOf(a.book);
+    const bBookIndex = bibleBooks.indexOf(b.book);
+
+    if (aBookIndex !== bBookIndex) return aBookIndex - bBookIndex;
+
+    // 4. Capitolo
+    if (a.chapter !== b.chapter) return Number(a.chapter) - Number(b.chapter);
+
+    // 5. Versetto
+    if (a.verse !== b.verse) return Number(a.verse) - Number(b.verse);
   });
+
+  hideGif();
   resultsModal.style.display = "block";
   return results.map((r) => r.html);
 }
@@ -256,131 +355,87 @@ observer.observe(resultsModal, { childList: true, subtree: true });
 // Listener per il tasto di ricerca
 searchButton.addEventListener("click", handleSearch);
 
-const bibleBooks = [
-  "Genesi",
-  "Esodo",
-  "Levitico",
-  "Numeri",
-  "Deuteronomio",
-  "Giosuè",
-  "Giudici",
-  "Rut",
-  "1 Samuele",
-  "2 Samuele",
-  "1 Re",
-  "2 Re",
-  "1 Cronache",
-  "2 Cronache",
-  "Esdra",
-  "Neemia",
-  "Ester",
-  "Giobbe",
-  "Salmi",
-  "Proverbi",
-  "Ecclesiaste",
-  "Cantico dei Cantici",
-  "Isaia",
-  "Geremia",
-  "Lamentazioni",
-  "Ezechiele",
-  "Daniele",
-  "Osea",
-  "Gioele",
-  "Amos",
-  "Abdia",
-  "Giona",
-  "Michea",
-  "Naum",
-  "Abacuc",
-  "Sofonia",
-  "Aggeo",
-  "Zaccaria",
-  "Malachia",
-  "Matteo",
-  "Marco",
-  "Luca",
-  "Giovanni",
-  "Atti",
-  "Romani",
-  "1 Corinti",
-  "2 Corinti",
-  "Galati",
-  "Efesini",
-  "Filippesi",
-  "Colossesi",
-  "1 Tessalonicesi",
-  "2 Tessalonicesi",
-  "1 Timoteo",
-  "2 Timoteo",
-  "Tito",
-  "Filemone",
-  "Ebrei",
-  "Giacomo",
-  "1 Pietro",
-  "2 Pietro",
-  "1 Giovanni",
-  "2 Giovanni",
-  "3 Giovanni",
-  "Giuda",
-  "Rivelazione",
-];
-
 function checkBibleBook() {
-  if (!searchInput) {
+  function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  if (!searchInput || !searchInput.value.trim()) {
     searchInput.blur();
     toast(
-      "Inserisci un riferimento biblico valido (es. Genesi 1:1 o Genesi 1 1)."
+      "Inserisci un riferimento biblico valido (es. Genesi 1:1 o Genesi 1 1 o Genesi 1.1)."
     );
     return;
   }
 
-  const parts = searchInput.value.split(/[\s:]+/); // Dividi su spazio o ":"
-  const bookInput = parts[0].trim(); // Libro
-  const chapterInput = parts[1]?.trim(); // Capitolo (se presente)
+  // Suddivido input su spazi o ":" (es. "Genesi 1:1" → ["Genesi", "1", "1"])
+  const parts = searchInput.value.trim().split(/[\s:]+/);
+  const bookInputRaw = parts[0];
+  const chapterInput = parts[1]?.trim();
 
-  // Normalizzazione dell'input
-  const sanitizedInput = bookInput.toLowerCase().replace(/\s+/g, "");
-  const matches = bibleBooks.filter((book) =>
-    book.toLowerCase().replace(/\s+/g, "").startsWith(sanitizedInput)
-  );
+  // Normalizzazione input (minuscolo, senza spazi)
+  const sanitizedInput = bookInputRaw.toLowerCase().replace(/\s+/g, "");
 
-  if (sanitizedInput === "") {
-    searchInput.blur();
-    toast(
-      "Digita il libro biblico ed eventualmente il capitolo nel campo in basso a destra. Puoi anche digitare solo le iniziali del libro (es. 'Gen' per 'Genesi').",
-      4800
-    );
-    return;
-  }
+  // Mappa correzioni e abbreviazioni
+  const corrections = {
+    salmo: "Salmi",
+    cantico: "Cantico dei Cantici",
+    apocalisse: "Rivelazione",
+    qoelet: "Ecclesiaste",
+  };
 
-  if (matches?.length === 1 || sanitizedInput === "salmo") {
-    const bookName = sanitizedInput === "salmo" ? "Salmi" : matches[0];
+  // Funzione per trovare libro corretto
+  function findBookName(input) {
+    // 1. Cerca correzione esatta
+    if (corrections[removeAccents(input)])
+      return corrections[removeAccents(input)];
 
-    // Salvataggio del nome del libro nel sessionStorage
-    sessionStorage.setItem("selectedBook", bookName);
-
-    // Salvataggio del numero del libro nel sessionStorage (per riferimento futuro)
-    const bookIndex = bibleBooks.indexOf(bookName);
-    sessionStorage.setItem("selectedBook", bibleBooks[bookIndex]);
-
-    // Se c'è il capitolo, reindirizza a notes.html
-    if (chapterInput && !isNaN(chapterInput)) {
-      sessionStorage.setItem("selectedChapter", parseInt(chapterInput));
-      window.location.href = "/src/html/notes.html";
-    } else {
-      // Se solo il libro, reindirizza a chapters.html
-      window.location.href = "/src/html/chapters.html";
+    // 2. Cerca correzione con startsWith (sia input che key)
+    for (const key in corrections) {
+      if (
+        key.startsWith(removeAccents(input)) ||
+        removeAccents(input).startsWith(key)
+      ) {
+        return corrections[key];
+      }
     }
-  } else if (matches?.length > 1) {
-    searchInput.blur();
-    toast(
-      `Il testo fornito non è univoco. Forse intendevi: ${matches.join(" - ")}`
-    );
-  } else {
+
+    // 3. Cerca startsWith nella lista bibleBooks
+    const found = bibleBooks.find((book) => {
+      const normalizedBook = book.toLowerCase().replace(/\s+/g, "");
+      return (
+        normalizedBook.startsWith(removeAccents(input)) ||
+        removeAccents(input).startsWith(normalizedBook)
+      );
+    });
+    if (found) return found;
+
+    // 4. Nessun risultato
+    return null;
+  }
+
+  const bookName = findBookName(sanitizedInput);
+
+  if (!bookName) {
     searchInput.blur();
     toast(
       "Il libro non è stato trovato. Verifica di aver scritto correttamente il nome."
     );
+    return;
+  }
+
+  // Salva il libro selezionato (nome e indice)
+  sessionStorage.setItem("selectedBook", bookName);
+  const bookIndex = bibleBooks.indexOf(bookName);
+  sessionStorage.setItem("selectedBookIndex", bookIndex);
+
+  // Se il capitolo è un numero valido, vai a notes.html
+  if (chapterInput && !isNaN(chapterInput)) {
+    sessionStorage.setItem("selectedChapter", parseInt(chapterInput));
+    window.location.href = "/src/html/notes.html";
+  } else {
+    // Altrimenti vai a chapters.html
+    window.location.href = "/src/html/chapters.html";
   }
 }
 
@@ -389,25 +444,12 @@ document.addEventListener("keypress", (event) => {
   if (
     event.key === "Enter" &&
     document.activeElement === document.getElementById("search-input")
-  ) {
+  )
     handleSearch();
-  }
 });
 
 // Cambia il placeholder in base alla modalità di ricerca
-function addEventListenerToSwitch() {
-  searchInput.placeholder = toggleSearchMode.checked
-    ? "Cerca nelle tue note..."
-    : "Cerca un passo biblico...";
-
-  toggleSearchMode.addEventListener("change", () => {
-    searchInput.placeholder = toggleSearchMode.checked
-      ? "Cerca nelle tue note..."
-      : "Cerca un passo biblico...";
-  });
-}
-
-addEventListenerToSwitch();
+toggleSearchMode.addEventListener("change", updatePlaceholder);
 
 // Funzione per aggiornare il placeholder dinamicamente
 function updatePlaceholder() {
@@ -447,4 +489,39 @@ document.addEventListener("keydown", (e) => {
     resultsModal.style.display = "none";
     searchInput.blur();
   }
+});
+
+function addClickListenerToTag(tagElement) {
+  tagElement.addEventListener("click", (event) => {
+    const clickedTag = event.target.textContent;
+    sessionStorage.setItem("filteringTag", clickedTag);
+    window.location.href = "/src/html/notesByTag.html";
+  });
+}
+
+// Creiamo il MutationObserver
+const tagObserver = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    // Controlla se ci sono nuovi nodi aggiunti
+    if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+      mutation.addedNodes.forEach((node) => {
+        // Solo se il nodo è un elemento (Element) e contiene tag-pill o è tag-pill
+        if (node.nodeType === 1) {
+          // Se il nodo stesso ha la classe tag-pill
+          if (node.classList.contains("tag-pill")) {
+            addClickListenerToTag(node);
+          }
+          // Oppure se dentro il nodo ci sono elementi tag-pill (caso container)
+          const nestedTags = node.querySelectorAll(".tag-pill");
+          nestedTags.forEach(addClickListenerToTag);
+        }
+      });
+    }
+  }
+});
+
+// Avvia l'osservatore sul contenitore resultsContainer, osservando aggiunte di figli
+tagObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
 });

@@ -22,11 +22,13 @@
         window.location.href = "/src/html/accessRestricted.html";
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("userEmail");
+        localStorage.removeItem("userId");
         localStorage.removeItem("userToken");
       }
     </script>
   </head>
   <body>
+    <button id="home-btn"><span class="fi-sr-home"></span></button>
     <button id="return-btn">Indietro</button>
     <h1 class="standard-title">Impostazioni account - NotableBiblePoints</h1>
     <br />
@@ -39,7 +41,7 @@
     <div class="actions-row">
       <div class="action" id="logout">
         <div class="img-container">
-          <img id="logout_img" />
+          <span class="fi-sr-logout"></span>
         </div>
         <div class="text-container">
           <h2>Logout</h2>
@@ -51,7 +53,7 @@
       </div>
       <div class="action" id="delete">
         <div class="img-container">
-          <img id="deleteAccount_img" />
+          <span class="fi-sr-delete-user"></span>
         </div>
         <div class="text-container">
           <h2>Elimina account</h2>
@@ -66,7 +68,7 @@
     <div class="actions-row">
       <div class="action" id="createBackup">
         <div class="img-container">
-          <img id="createBackup_img" />
+          <span class="fi-sr-backup-create"></span>
         </div>
         <div class="text-container">
           <h2>Crea un backup</h2>
@@ -82,7 +84,7 @@
 
       <div class="action" id="restoreBackup">
         <div class="img-container">
-          <img id="restoreBackup_img" />
+          <span class="fi-sr-backup-restore"></span>
         </div>
         <div class="text-container">
           <h2>Importa un backup</h2>

@@ -1,7 +1,3 @@
-import "/src/icons.css";
-import "/src/login.css";
-import "/src/styles.css";
-
 const loginTab = document.getElementById("loginTab");
 const signupTab = document.getElementById("signupTab");
 const loginForm = document.getElementById("loginForm");

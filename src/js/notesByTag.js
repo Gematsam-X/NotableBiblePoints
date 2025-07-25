@@ -2,8 +2,8 @@ import Choices from "choices.js";
 import "choices.js/public/assets/styles/choices.min.css";
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
-import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
+import shouldUseServer from "./shouldUseServer.js";
 import toast from "/src/js/toast.js";
 
 let editingNoteId = null;
@@ -11,16 +11,78 @@ const modal = document.querySelector(".modal");
 const refreshBtn = document.querySelector(".refreshNotes");
 const notesContainer = document.querySelector(".notesContainer");
 
+const bibleBooks = [
+  "Genesi",
+  "Esodo",
+  "Levitico",
+  "Numeri",
+  "Deuteronomio",
+  "Giosuè",
+  "Giudici",
+  "Rut",
+  "1 Samuele",
+  "2 Samuele",
+  "1 Re",
+  "2 Re",
+  "1 Cronache",
+  "2 Cronache",
+  "Esdra",
+  "Neemia",
+  "Ester",
+  "Giobbe",
+  "Salmi",
+  "Proverbi",
+  "Ecclesiaste",
+  "Cantico dei Cantici",
+  "Isaia",
+  "Geremia",
+  "Lamentazioni",
+  "Ezechiele",
+  "Daniele",
+  "Osea",
+  "Gioele",
+  "Amos",
+  "Abdia",
+  "Giona",
+  "Michea",
+  "Naum",
+  "Abacuc",
+  "Sofonia",
+  "Aggeo",
+  "Zaccaria",
+  "Malachia",
+  "Matteo",
+  "Marco",
+  "Luca",
+  "Giovanni",
+  "Atti",
+  "Romani",
+  "1 Corinti",
+  "2 Corinti",
+  "Galati",
+  "Efesini",
+  "Filippesi",
+  "Colossesi",
+  "1 Tessalonicesi",
+  "2 Tessalonicesi",
+  "1 Timoteo",
+  "2 Timoteo",
+  "Tito",
+  "Filemone",
+  "Ebrei",
+  "Giacomo",
+  "1 Pietro",
+  "2 Pietro",
+  "1 Giovanni",
+  "2 Giovanni",
+  "3 Giovanni",
+  "Giuda",
+  "Rivelazione",
+];
+
 const filteringTag = sessionStorage.getItem("filteringTag");
 const pageTitle = document.querySelector(".notes-page-title");
 if (pageTitle) pageTitle.textContent = `Note con tag "${filteringTag}"`;
-
-// Funzione che decide se usare il server o no (server solo se online e IndexedDB vuoto)
-async function shouldUseServer() {
-  if (!navigator.onLine) return false;
-  else if (await getValue("userNotes")) return false;
-  else return true;
-}
 
 // Carica solo le note che contengono il filteringTag
 async function loadNotesByTag(forceServer = false) {
@@ -60,7 +122,24 @@ async function loadNotesByTag(forceServer = false) {
     }
 
     // Ordino le note per numero del versetto (verse)
-    filteredNotes.sort((a, b) => a.verse - b.verse);
+    filteredNotes // Funzione di ordinamento
+      .sort((a, b) => {
+        const bookAIndex = bibleBooks.indexOf(a.book);
+        const bookBIndex = bibleBooks.indexOf(b.book);
+
+        // 1: ordine dei libri
+        if (bookAIndex !== bookBIndex) {
+          return bookAIndex - bookBIndex;
+        }
+
+        // 2: capitolo
+        if (a.chapter !== b.chapter) {
+          return a.chapter - b.chapter;
+        }
+
+        // 3: versetto
+        return a.verse - b.verse;
+      });
 
     // Creo l'HTML per ogni nota
     filteredNotes.forEach((note) => {
@@ -78,19 +157,9 @@ async function loadNotesByTag(forceServer = false) {
         .map((tag) => `<span class='tag-pill'>${tag}</span>`)
         .join("");
 
-      // Icone adattate a tema scuro o chiaro
-      const deleteImg = isDarkTheme
-        ? "/src/assets/notes/delete/dark.webp"
-        : "/src/assets/notes/delete/light.webp";
-      const editImg = isDarkTheme
-        ? "/src/assets/notes/edit/dark.webp"
-        : "/src/assets/notes/edit/light.webp";
-      const shareImg = isDarkTheme
-        ? "/src/assets/notes/share/dark.webp"
-        : "/src/assets/notes/share/light.webp";
-
       // HTML interno della nota
       noteElement.innerHTML = `
+      <span class="close-note">&times;</span>
         <div class="verse-number">
           <h4>${note.book} ${note.chapter}:${note.verse}</h4>
           <div class="tags-container">${tagsHtml}</div>
@@ -100,9 +169,9 @@ async function loadNotesByTag(forceServer = false) {
           <h3>${note.content}</h3>
         </div>
         <div class="note-action-buttons">
-          <button class="delete"><img src="${deleteImg}" width="40"></button>
-          <button class="edit"><img src="${editImg}" width="40"></button>
-          <button class="share"><img src="${shareImg}" width="40"></button>
+          <button class="delete"><span class="fi-sr-delete"></span></button>
+          <button class="edit"><span class="fi-sr-edit"></span></button>
+          <button class="share"><span class="fi-sr-share"></span></button>
         </div>
       `;
 
@@ -136,10 +205,6 @@ notesContainer?.addEventListener("click", async (event) => {
   const noteElement = event.target.closest(".note");
   if (!noteElement || noteElement.id) return;
 
-  // Se clicchi su pulsanti azione
-  if (event.target.closest(".delete")) return deleteNote(noteElement);
-  if (event.target.closest(".share")) return shareNote(noteElement);
-  if (event.target.closest(".edit")) return editNote(noteElement);
   try {
     if (document.fullscreenElement) {
       noteElement.id = "";
@@ -554,75 +619,6 @@ observer.observe(document.querySelector(".notesContainer"), {
   childList: true,
 });
 
-const bibleBooks = [
-  "Genesi",
-  "Esodo",
-  "Levitico",
-  "Numeri",
-  "Deuteronomio",
-  "Giosuè",
-  "Giudici",
-  "Rut",
-  "1 Samuele",
-  "2 Samuele",
-  "1 Re",
-  "2 Re",
-  "1 Cronache",
-  "2 Cronache",
-  "Esdra",
-  "Neemia",
-  "Ester",
-  "Giobbe",
-  "Salmi",
-  "Proverbi",
-  "Ecclesiaste",
-  "Cantico dei Cantici",
-  "Isaia",
-  "Geremia",
-  "Lamentazioni",
-  "Ezechiele",
-  "Daniele",
-  "Osea",
-  "Gioele",
-  "Amos",
-  "Abdia",
-  "Giona",
-  "Michea",
-  "Naum",
-  "Abacuc",
-  "Sofonia",
-  "Aggeo",
-  "Zaccaria",
-  "Malachia",
-  "Matteo",
-  "Marco",
-  "Luca",
-  "Giovanni",
-  "Atti",
-  "Romani",
-  "1 Corinti",
-  "2 Corinti",
-  "Galati",
-  "Efesini",
-  "Filippesi",
-  "Colossesi",
-  "1 Tessalonicesi",
-  "2 Tessalonicesi",
-  "1 Timoteo",
-  "2 Timoteo",
-  "Tito",
-  "Filemone",
-  "Ebrei",
-  "Giacomo",
-  "1 Pietro",
-  "2 Pietro",
-  "1 Giovanni",
-  "2 Giovanni",
-  "3 Giovanni",
-  "Giuda",
-  "Rivelazione",
-];
-
 // Funzione per aggiungere il listener al singolo h4
 function attachClickListenerToVerse(verseElement, noteElement) {
   verseElement.addEventListener("click", () => {
@@ -701,3 +697,29 @@ verseObserver.observe(document.body, {
   childList: true,
   subtree: true,
 });
+
+document
+  .querySelector(".notesContainer")
+  ?.addEventListener("click", (event) => {
+    const closestNote = event.target.closest(".note");
+
+    function clickedButton(btnClass) {
+      return (
+        event.target.classList.contains(btnClass) ||
+        event.target.classList.contains(`fi-sr-${btnClass}`)
+      );
+    }
+
+    if (closestNote) {
+      // Gestione del bottone "Elimina"
+      if (clickedButton("delete")) deleteNote(closestNote);
+
+      // Gestione del bottone "Condividi"
+      if (clickedButton("share")) shareNote(closestNote);
+
+      // Gestione del bottone "Modifica"
+      if (clickedButton("edit")) editNote(closestNote);
+
+      if (clickedButton("close-note")) document.exitFullscreen();
+    }
+  });

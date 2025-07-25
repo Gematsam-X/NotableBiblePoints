@@ -1,3 +1,6 @@
+import "/src/styles.css";
+import "/src/login.css";
+import "/src/icons.css";
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import toast from "/src/js/toast.js";

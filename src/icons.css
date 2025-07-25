@@ -45,11 +45,98 @@ span[class*="fi-sr-"]:before {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Solid Rounded Icons */
+
 .fi-sr-eye-crossed:before {
   content: "\f45d";
 }
+
 .fi-sr-eye:before {
   content: "\f45f";
+}
+
+.fi-sr-tags:before {
+  content: "\f8dc";
+  font-size: 40px;
+}
+
+.fi-sr-home:before {
+  content: "\f5a1";
+  font-size: larger;
+}
+
+.fi-sr-share:before {
+  content: "\f7e4";
+  font-size: 40px;
+}
+
+.fi-sr-user:before {
+  content: "\f995";
+  font-size: 40px;
+}
+
+.fi-sr-apps:before {
+  content: "\f148";
+  font-size: 40px;
+}
+
+.fi-sr-edit:before {
+  content: "\f705";
+}
+
+.fi-sr-delete:before {
+  content: "\f956";
+}
+
+.fi-sr-add:before {
+  content: "\f111";
+}
+
+.fi-sr-refresh:before {
+  content: "\f78c";
+}
+
+.fi-sr-search:before {
+  content: "\f7d5";
+  font-size: 25px;
+}
+
+.fi-sr-menu-burger:before {
+  content: "\f665";
+  font-size: 40px;
+}
+
+.fi-sr-help:before {
+  font-size: 40px;
+  content: "\f5db";
+}
+
+.fi-sr-right-arrow:before {
+  content: "\f171";
+  font-size: 25px;
+}
+
+.fi-sr-logout:before {
+  content: "\f170";
+}
+
+.fi-sr-delete-user:before {
+  content: "\f3e5";
+}
+
+.fi-sr-backup-create:before {
+  content: "\f361";
+}
+
+.fi-sr-backup-restore:before {
+  content: "\f374";
+}
+
+/* Brands icons*/
+
+.fi-brands-github:before {
+  content: "\f15d";
+  font-size: 40px;
 }
 
 .fi-brands-android:before {
@@ -57,7 +144,7 @@ span[class*="fi-sr-"]:before {
   font-size: 40px;
 }
 
-/* Extracted on 2025-06-08 from:
+/* Extracted from:
    https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css
    https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css
    Only a partial subset of the original stylesheets is included.

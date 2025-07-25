@@ -62,6 +62,7 @@ document.querySelector("#share-app").addEventListener("click", () => {
   };
 
   navigator.share(shareData).catch((e) => {
+    if (e.message.toLowerCase().includes("aborted")) return; // L'utente ha annullato la condivisione
     console.error("Errore durante la condivisione:", e);
     toast(`Errore durante la condivisione: ${e.message}`);
   });
@@ -85,3 +86,10 @@ document
     closeDrawer();
     checkVersion(false, true);
   });
+
+document
+  .querySelector("#drawer-tags")
+  .addEventListener(
+    "click",
+    () => (window.location.href = "/src/html/tags.html")
+  );

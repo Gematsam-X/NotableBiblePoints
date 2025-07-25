@@ -1,23 +1,34 @@
+// Crea l'elemento modale principale
 const loadingModalElement = document.createElement("div");
-
 loadingModalElement.classList.add("loadingModal");
 
+// Crea il contenitore dell'animazione
 const loadingModalContent = document.createElement("div");
 loadingModalContent.classList.add("loadingModalContent");
-loadingModalContent.innerHTML =
-  "<img src='/src/assets/loadingGif/loading.gif'>";
 
+// Inserisci lo spinner direttamente con HTML + CSS inline
+loadingModalContent.innerHTML = `
+  <div class="loadingGif"></div>
+
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+`;
+
+// Appendi la modale al body
 document.body.appendChild(loadingModalElement);
 loadingModalElement.appendChild(loadingModalContent);
 
-const mod = document.querySelector(".loadingModal");
+// Imposta uno stile base da CSS (senza fogli esterni) per nascondere inizialmente
 
+// Funzioni per mostrare/nascondere la modale
 export function showGif() {
-  mod.style.display = "block";
-  mod.style.visibility = "visible";
+  loadingModalElement.style.display = "flex";
 }
 
 export function hideGif() {
-  mod.style.display = "none";
-  mod.style.visibility = "hidden";
+  loadingModalElement.style.display = "none";
 }

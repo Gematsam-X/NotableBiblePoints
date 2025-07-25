@@ -1,3 +1,4 @@
+import "/src/icons.css";
 import { redirectToOriginPage } from "/src/js/logoutAndDelete.js";
 
 const returnButton = document.getElementById("return-btn");
@@ -21,3 +22,7 @@ if (loc === "notes.html") {
 } else {
   returnButton.addEventListener("click", redirectToOriginPage);
 }
+
+document.getElementById("home-btn").addEventListener("click", () => {
+  window.location.href = "/index.html";
+});

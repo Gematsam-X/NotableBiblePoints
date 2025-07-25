@@ -1,10 +1,12 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
+    <title>Tag - NotableBiblePoints</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/src/assets/favicon.ico" />
     <!-- Meta tag Open Graph -->
-    <meta property="og:title" content="Le tue note - NotableBiblePoints" />
+    <meta property="og:title" content="Tag - NotableBiblePoints" />
     <meta
       property="og:description"
       content="NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
@@ -26,57 +28,22 @@
     </script>
   </head>
   <body>
+    <button id="return-btn">Indietro</button>
     <button id="home-btn"><span class="fi-sr-home"></span></button>
-    <div class="notes-page-title-container">
-      <button id="return-btn">Indietro</button>
-      <h1 class="notes-page-title"></h1>
-    </div>
-    <br />
-    <br />
-    <button class="openModal"><span class="fi-sr-add"></span></button>
-    <a id="readChapter">
-      <button>Leggi dalla Traduzione del Nuovo mondo</button>
-    </a>
+    <h1 class="notes-page-title">I tuoi tag</h1>
+
+    <div id="userTags"></div>
+
     <button class="refreshNotes">
       <span class="fi-sr-refresh"></span>
     </button>
 
-    <div class="notesContainer"></div>
-
-    <div class="modal">
+    <div id="tagActionModal" class="modal centeredModal">
       <div class="modal-content">
-        <div class="modal-header">
-          <span class="closeModal">&times;</span>
-          <h2>Nuova nota o punto notevole</h2>
-        </div>
+        <span class="closeModal" id="closeModalBtn">&times;</span>
+        <div class="modal-header"><h2>Gestione tag</h2></div>
         <hr />
-        <div class="modal-body">
-          <div class="note-form-body">
-            <label for="noteTitle">Titolo (Opzionale)</label>
-            <input
-              type="text"
-              id="noteTitle"
-              autocomplete="off"
-              placeholder="Titolo della nota..."
-            />
-            <label for="verseNumber">Versetto</label>
-            <input
-              id="verseNumber"
-              type="number"
-              autocomplete="off"
-              placeholder="Versetto di riferimento..."
-            />
-            <label for="note-content">Contenuto</label>
-            <textarea
-              id="noteContent"
-              autocomplete="off"
-              placeholder="Contenuto della nota..."
-            ></textarea>
-            <label for="noteTags">Tag</label>
-            <select id="noteTags" multiple></select>
-          </div>
-          <button id="saveNote">Salva</button>
-        </div>
+        <div class="modal-body"></div>
         <hr />
         <div class="modal-footer">
           <h3>NotableBiblePoints - Salva i punti notevoli</h3>
@@ -84,9 +51,10 @@
       </div>
     </div>
 
+    <script type="module" src="/src/js/tagsPage.js"></script>
+    <script type="module" src="/src/js/rememberMe.js"></script>
+    <script type="module" src="/src/js/referrer.js"></script>
     <script type="module" src="/src/js/theme.js"></script>
-    <script type="module" src="/src/js/chaptersAndNotesReferrer.js"></script>
-    <script type="module" src="/src/js/notes.js"></script>
     <script type="module" src="/src/js/legend.js"></script>
     <script type="module" src="/src/js/return.js"></script>
     <script type="module" src="/src/js/loadingGif.js"></script>

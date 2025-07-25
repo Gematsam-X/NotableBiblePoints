@@ -1,4 +1,4 @@
-import { openDB } from "/src/js/idb.js";
+import { openDB } from "idb";
 
 const DB_NAME = "NotableBiblePointsDB";
 const DB_VERSION = 1;

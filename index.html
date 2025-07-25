@@ -48,19 +48,15 @@
   <body>
     <h1 class="home-page-title">NotableBiblePoints - Salva i punti notevoli</h1>
 
-    <span class="openDrawer"
-      ><img width="40px" height="40px" id="openDrawer_img"
-    /></span>
+    <span class="openDrawer"><span class="fi-sr-menu-burger"></span></span>
 
-    <button class="help">
-      <img width="40px" height="40px" id="help_img" />
-    </button>
+    <button class="help"><span class="fi-sr-help"></span></button>
 
     <div class="search-container">
       <div class="search-bar">
         <input type="text" id="search-input" />
         <button id="search-button">
-          <img width="40px" height="40px" id="lens_img" alt="Cerca" />
+          <span class="fi-sr-search"></span>
         </button>
       </div>
       <div class="switch-container">
@@ -197,14 +193,9 @@
       <div class="drawer-content">
         <h2>Il tuo account</h2>
         <div class="drawer-horizontal-align" id="drawer-account">
-          <img
-            width="40px"
-            height="40px"
-            id="avatar_img"
-            data-flipped-src="true"
-          />
+          <span class="fi-sr-user"></span>
           <h3 id="username"></h3>
-          <img width="20px" height="20px" id="rightArrow_img" />
+          <span class="fi-sr-right-arrow"></span>
         </div>
         <hr />
         <h2>Tema</h2>
@@ -217,18 +208,18 @@
           <label class="switch-label" for="themeToggle">Scuro</label>
         </div>
         <hr />
+        <div class="drawer-horizontal-align" id="drawer-tags">
+          <span class="fi-sr-tags"></span>
+          <h2>Tag</h2>
+        </div>
+        <hr />
         <div class="drawer-horizontal-align" id="share-app">
-          <img
-            width="40px"
-            height="40px"
-            class="share_img"
-            data-flipped-src="true"
-          />
+          <span class="fi-sr-share"></span>
           <h2>Condividi l'app</h2>
         </div>
         <hr />
         <div class="drawer-horizontal-align" id="other-apps">
-          <img width="40px" height="40px" id="otherApps_img" />
+          <span class="fi-sr-apps"></span>
           <h2>Altre app</h2>
         </div>
         <hr />
@@ -254,12 +245,9 @@
             <a
               href="https://github.com/Gematsam-X/NotableBiblePoints"
               target="_blank"
-              ><img
-                width="40px"
-                height="40px"
-                id="github_img"
-                alt="GitHub logo"
-            /></a>
+              id="github-link"
+              ><span class="fi-brands-github"></span
+            ></a>
             <a href="https://jw.org" target="_blank"
               ><img
                 width="40px"

@@ -4,18 +4,13 @@ import { logoutUser } from "/src/js/logoutAndDelete.js";
 const userEmail = localStorage.getItem("userEmail");
 const userToken = localStorage.getItem("userToken");
 
-console.log("Email salvata:", userEmail);
-console.log("Token salvato:", userToken);
-
 if (userEmail && userToken) {
   try {
     if (localStorage.getItem("isAuthenticated") === "true") {
-      console.log("Utente già autenticato:", userEmail);
       // Se l'utente sta effettuando il login ma è già autenticato, salta il login e reindirizza alla home
       if (window.location.pathname.split("/").pop() === "login.html")
         window.location.href = "/index.html";
     } else {
-      console.log("Utente non autenticato o token non valido.");
       // Se l'utente non è autenticato, esegui il logout e reindirizza
       if (window.location.pathname.split("/").pop() !== "login.html")
         logoutUser();
@@ -28,7 +23,6 @@ if (userEmail && userToken) {
   }
 } else {
   // Se non ci sono dati salvati, esegui il logout
-  console.log("Nessun utente loggato, vai al login.");
   localStorage.setItem("isAuthenticated", "false");
   if (
     window.location.pathname.split("/").pop() !== "login.html" &&

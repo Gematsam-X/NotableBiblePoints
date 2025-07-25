@@ -45,3 +45,5 @@
 - [x] Fix security problem, filtering notes in the backend and not saving important info in localStorage
 - [x] Add a redirect to the corresponding verse when clicking on the referenced verse in a note
 - [x] Fix style bug for horizontal orientation
+- [ ] Add a function to search in tags
+- [ ] Add the ability to add a custom color to the notes

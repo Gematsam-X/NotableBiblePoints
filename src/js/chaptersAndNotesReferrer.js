@@ -16,7 +16,8 @@ if (
   !document.referrer.endsWith("/") &&
   referrer !== "chapters.html" &&
   referrer !== "notes.html" &&
-  referrer !== "notesbytag.html"
+  referrer !== "notesbytag.html" &&
+  referrer !== "tags.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
   sessionStorage.removeItem("selectedBook");

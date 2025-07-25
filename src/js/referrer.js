@@ -5,6 +5,7 @@ const allowedPages = [
   "index.html",
   "chapters.html",
   "account.html",
+  "tags.html",
   "/",
 ];
 

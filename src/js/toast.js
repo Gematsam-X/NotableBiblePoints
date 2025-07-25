@@ -7,21 +7,7 @@ export default function toast(message, duration = 3000) {
     toast.classList.add("toast");
     toast.textContent = message;
 
-    function isOnPage(page) {
-      return window.location.href.split("/").pop() === page;
-    }
-    if (
-      isOnPage("notes.html") &&
-      document.querySelector(".modal").style.display == "block"
-    ) {
-      document.querySelector(".modal").appendChild(toast);
-    } else if (isOnPage("notes.html")) {
-      document.querySelector(".notesContainer")?.appendChild(toast);
-    } else if (isOnPage("login.html")) {
-      document.querySelector(".container")?.appendChild(toast);
-    } else {
-      document.body.appendChild(toast);
-    }
+    document.body.appendChild(toast);
 
     // Aggiungiamo la classe per la transizione dopo un breve ritardo
     setTimeout(() => toast.classList.add("show"), 10);
@@ -40,6 +26,6 @@ export default function toast(message, duration = 3000) {
       hideToast();
     });
   } else {
-    console.log("Toast non mostrato perchè c'è già un altro toast attivo.");
+    console.warn("Toast non mostrato perchè c'è già un altro toast attivo.");
   }
 }

@@ -2,10 +2,10 @@ import Choices from "choices.js";
 import "choices.js/public/assets/styles/choices.min.css";
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js"; // Importiamo le funzioni IndexedDB
-import { isDarkTheme } from "/src/js/isDarkTheme.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione di logout
 import toast from "/src/js/toast.js";
+import shouldUseServer from "./shouldUseServer.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -18,13 +18,6 @@ const pageTitle = document.querySelector(".notes-page-title");
 if (pageTitle)
   pageTitle.textContent = `Note del capitolo ${selectedChapter} di ${selectedBook}`;
 window.document.title = `${selectedBook} ${selectedChapter} - NotableBiblePoints`;
-
-// Funzione per controllare se bisogna usare il server
-async function shouldUseServer() {
-  if (!navigator.onLine) return false;
-  else if (await getValue("userNotes")) return false;
-  else if (!(await getValue("userNotes"))) return true;
-}
 
 const modal = document.querySelector(".modal");
 
@@ -124,17 +117,8 @@ async function loadNotes() {
           .map((tag) => `<span class="tag-pill">${tag}</span>`)
           .join("");
 
-        const deleteImageSrc = isDarkTheme
-          ? "/src/assets/notes/delete/dark.webp"
-          : "/src/assets/notes/delete/light.webp";
-        const editImageSrc = isDarkTheme
-          ? "/src/assets/notes/edit/dark.webp"
-          : "/src/assets/notes/edit/light.webp";
-        const shareImageSrc = isDarkTheme
-          ? "/src/assets/notes/share/dark.webp"
-          : "/src/assets/notes/share/light.webp";
-
         noteElement.innerHTML = `
+        <span class="close-note">&times;</span>
           <div class="verse-number">
             <h4>Versetto ${verse}</h4>
             <div class="tags-container">${tagsHtml}</div>
@@ -145,13 +129,13 @@ async function loadNotes() {
           </div>
           <div class="note-action-buttons">
             <button class="delete">
-              <img class="deleteNote_img" src="${deleteImageSrc}" width="40" height="40">
+              <span class="fi-sr-delete"></span>
             </button>
             <button class="edit">
-              <img class="edit_img" src="${editImageSrc}" width="40" height="40">
+              <span class="fi-sr-edit"></span>
             </button>
             <button class="share">
-              <img class="share_img" src="${shareImageSrc}" width="40" height="40">
+              <span class="fi-sr-share"></span>
             </button>
           </div>
         `;
@@ -223,7 +207,7 @@ let tagChoicesArray = [];
         localStorage.getItem("userToken")
       )
     : await getValue("userNotes");
-  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
+  const allPoints = Array.isArray(res) ? res : [];
 
   // 4️⃣ Costruisco il Set di tag unici e popolo tagChoicesArray
   const tagSet = new Set();
@@ -325,7 +309,7 @@ async function refreshTagChoices() {
       )
     : await getValue("userNotes");
 
-  const allPoints = Array.isArray(res) ? res : res[0]?.NotablePoints || [];
+  const allPoints = Array.isArray(res) ? res : [];
 
   const tagSet = new Set();
   for (const point of allPoints) {
@@ -365,7 +349,7 @@ async function saveNote() {
 
     // Recupera il record dal database che contiene tutte le note
     let notes =
-      (navigator.onLine
+      (navigator.onLine && editingNoteId
         ? await backendlessRequest(
             "notes:get",
             { email: userEmail },
@@ -380,8 +364,7 @@ async function saveNote() {
       noteIndex = notes.findIndex((note) => note.id === editingNoteId);
       if (noteIndex === -1) {
         toast("Errore: impossibile trovare la nota da modificare.");
-        console.warn("[saveNote] Nota da modificare NON trovata!");
-        return;
+        throw new Error("[saveNote] Nota da modificare NON trovata!");
       }
 
       notes[noteIndex] = {
@@ -445,18 +428,15 @@ async function saveNote() {
 
 document.querySelector("#saveNote")?.addEventListener("click", saveNote);
 
-let shouldEnterFullscreen = true;
-
 document.addEventListener("click", (event) => {
   // Controlla se il click è su un tag
   const tagElement = event.target.closest(".tag-pill");
 
   if (!tagElement) return; // Se non è un tag, esci
   event.stopPropagation();
-  shouldEnterFullscreen = false;
 
-  // Prendi il testp del tag
-  const tagText = tagElement.textContent.trim();
+  // Prendi il testo del tag
+  const tagText = tagElement.textContent.trim().toString();
 
   if (tagText != sessionStorage.getItem("filteringTag")) {
     sessionStorage.setItem("filteringTag", tagText);
@@ -465,8 +445,9 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("tag-pill")) return;
   const closestNote = event.target.closest(".note");
-  if (closestNote && shouldEnterFullscreen) {
+  if (closestNote) {
     closestNote.id = "clicked-note";
     closestNote.requestFullscreen();
   }
@@ -486,21 +467,24 @@ document
   ?.addEventListener("click", (event) => {
     const closestNote = event.target.closest(".note");
 
+    function clickedButton(btnClass) {
+      return (
+        event.target.classList.contains(btnClass) ||
+        event.target.classList.contains(`fi-sr-${btnClass}`)
+      );
+    }
+
     if (closestNote) {
       // Gestione del bottone "Elimina"
-      if (event.target.classList.contains("delete")) {
-        deleteNote(closestNote);
-      }
+      if (clickedButton("delete")) deleteNote(closestNote);
 
       // Gestione del bottone "Condividi"
-      if (event.target.classList.contains("share")) {
-        shareNote(closestNote);
-      }
+      if (clickedButton("share")) shareNote(closestNote);
 
       // Gestione del bottone "Modifica"
-      if (event.target.classList.contains("edit")) {
-        editNote(closestNote);
-      }
+      if (clickedButton("edit")) editNote(closestNote);
+
+      if (clickedButton("close-note")) document.exitFullscreen();
     }
   });
 
@@ -688,7 +672,7 @@ refreshBtn?.addEventListener("click", async () => {
     sessionStorage.getItem("canRefresh") != false
   ) {
     if (navigator.onLine) await deleteValue("userNotes");
-    loadNotes(); // Ricarica le note (ora il server verrà usato solo se l'utente è online)
+    loadNotes();
   }
 });
 

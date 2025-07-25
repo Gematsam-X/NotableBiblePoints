@@ -2,9 +2,8 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import fs from "fs";
 import { buildSync } from "esbuild";
-import { viteStaticCopy } from "vite-plugin-static-copy"; // 🧩 Plugin per copiare file statici
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
-// Lista dei JS da includere come entry separati
 const jsFiles = [
   "accountEventListeners",
   "auth",
@@ -14,11 +13,9 @@ const jsFiles = [
   "checkIfLegacy",
   "checkVersion",
   "drawer",
-  "idb",
   "indexedDButils",
   "injectChapters",
   "injectInstructions",
-  "isDarkTheme",
   "legend",
   "loadingGif",
   "logoutAndDelete",
@@ -31,13 +28,14 @@ const jsFiles = [
   "rememberMe",
   "return",
   "searchbar",
+  "shouldUseServer",
+  "tagsPage",
   "theme",
   "toast",
   "toggleLoginSignup",
   "verifyChapterNotes",
 ];
 
-// 📄 Entrate HTML
 const htmlEntries = {
   main: resolve(__dirname, "index.html"),
   login: resolve(__dirname, "src/html/login.html"),
@@ -46,25 +44,19 @@ const htmlEntries = {
   notesHTML: resolve(__dirname, "src/html/notes.html"),
   notesByTagHTML: resolve(__dirname, "src/html/notesByTag.html"),
   onboarding: resolve(__dirname, "src/html/onboarding.html"),
+  tags: resolve(__dirname, "src/html/tags.html"),
   accessRestricted: resolve(__dirname, "src/html/accessRestricted.html"),
 };
 
-// 💻 Entrate JS dinamiche
 const jsEntries = Object.fromEntries(
   jsFiles.map((name) => [name, resolve(__dirname, `src/js/${name}.js`)])
 );
+const allInputs = { ...htmlEntries, ...jsEntries };
 
-// 🎯 Tutti gli input (HTML + JS)
-const allInputs = {
-  ...htmlEntries,
-  ...jsEntries,
-};
-
-// 👀 Log dei file effettivi prima della build
 console.log("👉 INPUT FILES to build:");
 Object.entries(allInputs).forEach(([key, path]) => {
   const exists = fs.existsSync(path) || false;
-  console.log(`  ${key}: ${path} ${exists ? "✅" : "❌ NOT FOUND!"}`);
+  console.log(`  ${key}: ${path} ${exists ? "✅ FOUND" : "❌ NOT FOUND!"}`);
 });
 
 const generateServiceWorkerPlugin = {
@@ -83,7 +75,6 @@ const generateServiceWorkerPlugin = {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
     const template = fs.readFileSync(templatePath, "utf-8");
 
-    // Qui scegli i file da cachare (es. quelli con js e css)
     const filesToCache = Object.values(manifest)
       .filter((entry) => entry.file && /\.(js|css)$/.test(entry.file))
       .map((entry) => `/${entry.file}`);
@@ -91,40 +82,7 @@ const generateServiceWorkerPlugin = {
     const imgArray = [
       "/assets/favicon.ico",
       "/assets/jw.org.webp",
-      "/assets/account/backup/create/dark.webp",
-      "/assets/account/backup/create/light.webp",
-      "/assets/account/backup/restore/dark.webp",
-      "/assets/account/backup/restore/light.webp",
-      "/assets/account/delete/dark.webp",
-      "/assets/account/delete/light.webp",
-      "/assets/account/logout/dark.webp",
-      "/assets/account/logout/light.webp",
-      "/assets/avatar/dark.webp",
-      "/assets/avatar/light.webp",
-      "/assets/drawer/open/dark.webp",
-      "/assets/drawer/open/light.webp",
-      "/assets/drawer/otherApps/dark.webp",
-      "/assets/drawer/otherApps/light.webp",
-      "/assets/drawer/rightArrow/dark.webp",
-      "/assets/drawer/rightArrow/light.webp",
-      "/assets/fonts/Cinzel-Bold.woff2",
-      "/assets/fonts/FiraSansCondensed-ExtraBold.ttf",
-      "/assets/fonts/FiraSansCondensed-SemiBold.woff2",
-      "/assets/github/dark.webp",
-      "/assets/github/light.webp",
-      "/assets/help/dark.webp",
-      "/assets/help/light.webp",
-      "/assets/lens/dark.webp",
-      "/assets/lens/light.webp",
       "/assets/loadingGif/loading.gif",
-      "/assets/notes/delete/dark.webp",
-      "/assets/notes/delete/light.webp",
-      "/assets/notes/edit/dark.webp",
-      "/assets/notes/edit/light.webp",
-      "/assets/notes/refresh/dark.webp",
-      "/assets/notes/refresh/light.webp",
-      "/assets/notes/share/dark.webp",
-      "/assets/notes/share/light.webp",
     ];
 
     const finalAssets = [...filesToCache, ...imgArray];
@@ -133,7 +91,6 @@ const generateServiceWorkerPlugin = {
       JSON.stringify(finalAssets, null, 2)
     );
 
-    // Minifica con esbuild
     buildSync({
       stdin: {
         contents: finalCode,
@@ -150,7 +107,6 @@ const generateServiceWorkerPlugin = {
   },
 };
 
-// ⚙️ Configurazione Vite finale
 export default defineConfig({
   server: {
     port: 5174,
@@ -163,13 +119,12 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    manifest: "hashManifest.json", // 👉 forza la generazione in dist/
+    manifest: "hashManifest.json",
     rollupOptions: {
       input: allInputs,
     },
     minify: "terser",
   },
-
   plugins: [
     viteStaticCopy({
       targets: [
@@ -178,8 +133,8 @@ export default defineConfig({
           dest: "src/assets",
         },
         {
-          src: resolve(__dirname, "manifest.json"), // 📦 Copia anche il manifest
-          dest: ".", // Copiato in dist/
+          src: resolve(__dirname, "manifest.json"),
+          dest: ".",
         },
       ],
     }),

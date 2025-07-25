@@ -3,7 +3,6 @@ import { themeToggleSwitch } from "/src/js/theme.js";
 themeToggleSwitch?.addEventListener("click", toggleImages);
 
 const categories = {
-  avatar: ["/src/assets/avatar/light.webp", "/src/assets/avatar/dark.webp"],
   deleteAccount: [
     "/src/assets/account/delete/light.webp",
     "/src/assets/account/delete/dark.webp",
@@ -15,10 +14,6 @@ const categories = {
   edit: [
     "/src/assets/notes/edit/light.webp",
     "/src/assets/notes/edit/dark.webp",
-  ],
-  share: [
-    "/src/assets/notes/share/light.webp",
-    "/src/assets/notes/share/dark.webp",
   ],
   logout: [
     "/src/assets/account/logout/light.webp",
@@ -38,7 +33,6 @@ const categories = {
   ],
   lens: ["/src/assets/lens/light.webp", "/src/assets/lens/dark.webp"],
   help: ["/src/assets/help/light.webp", "/src/assets/help/dark.webp"],
-  github: ["/src/assets/github/light.webp", "/src/assets/github/dark.webp"],
   openDrawer: [
     "/src/assets/drawer/open/light.webp",
     "/src/assets/drawer/open/dark.webp",

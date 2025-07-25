@@ -7,9 +7,8 @@
   border: none;
   border-radius: 20px;
   margin: 24px 0;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
-
 
 .openDrawer {
   cursor: pointer;
@@ -141,4 +140,9 @@
   content: "";
   display: block;
   height: 80px;
+}
+
+#github-link {
+  text-decoration: none;
+  color: inherit;
 }
