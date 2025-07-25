@@ -32,7 +32,18 @@
     <button id="home-btn"><span class="fi-sr-home"></span></button>
     <h1 class="notes-page-title">I tuoi tag</h1>
 
-    <div id="userTags"></div>
+    <div class="tags-search-container">
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Cerca nei tag..." />
+        <button id="search-button">
+          <span class="fi-sr-search"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="userTags">
+      <!-- Qui verrà popolato da tagsPage.js con i tag dell'utente -->
+    </div>
 
     <button class="refreshNotes">
       <span class="fi-sr-refresh"></span>

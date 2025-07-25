@@ -14,6 +14,16 @@ const tagsContainer = document.querySelector("#userTags");
 const modal = document.querySelector(".modal");
 const modalBody = document.querySelector(".modal-content .modal-body");
 
+function debounce(fn, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+let allTags = new Set(); // Set per memorizzare tutti i tag unici
+
 let selectedTag = null;
 
 // Funzione principale per caricare i tag
@@ -33,7 +43,6 @@ async function loadTags(forceServer = false) {
   if (forceServer) await setValue("userNotes", notes);
 
   // Estrai tutti i tag da tutte le note
-  const allTags = new Set();
   notes.forEach((note) => {
     note.tags?.forEach((tag) => allTags.add(tag));
   });
@@ -169,7 +178,6 @@ function showTagOptions(tag) {
 
     const notes = await getValue("userNotes");
 
-    const allTags = new Set();
     notes.forEach((note) => {
       note.tags?.forEach((t) => allTags.add(t.toLowerCase().trim()));
     });
@@ -247,5 +255,95 @@ function showTagOptions(tag) {
 window.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.style.display = "none";
+  }
+});
+
+window.addEventListener("keydown", (e) => {
+  // Se premi Esc, chiudi la modale
+  if (e.key === "Escape" && modal.style.display === "block") {
+    modal.style.display = "none";
+    selectedTag = null;
+  }
+});
+
+async function searchWithinTags(searchTerm) {
+  console.log(`🧐 Inizio ricerca tag con termine: "${searchTerm}"`);
+  showGif();
+
+  // Escape dei caratteri speciali nella regex, ricerca case insensitive
+  const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const searchRegex = new RegExp(`\\b${escapedTerm}`, "gi");
+
+  const results = [];
+
+  // Ciclo tutte le tag nell'insieme allTags (Set)
+  for (const tag of allTags) {
+    // Conto quante volte il termine compare nella tag
+    const matches = tag.match(searchRegex);
+    if (!matches) continue; // se nessun match salto
+
+    const relevance = matches.length;
+    const result = tag.toLowerCase().trim();
+
+    results.push({
+      originalTag: tag,
+      highlightedTag: result,
+      relevance,
+    });
+
+    console.log(`✔ Trovato tag: "${tag}" con rilevanza ${relevance}`);
+  }
+
+  // Ordino per rilevanza decrescente, poi alfabetico crescente
+  results.sort((a, b) => {
+    if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+    return a.originalTag.localeCompare(b.originalTag);
+  });
+
+  console.log(`🔎 Ricerca completata, risultati trovati: ${results.length}`);
+
+  hideGif();
+
+  // Popolo il contenitore dei risultati con i tag filtrati (HTML)
+  const resultsContainer = document.querySelector("#userTags");
+  if (results.length === 0) {
+    resultsContainer.innerHTML = `<p>Nessun tag trovato per "${searchTerm}".</p>`;
+  } else {
+    resultsContainer.innerHTML = results
+      .map((r) => `<div class="tag-pill">${r.highlightedTag}</div>`)
+      .join("");
+  }
+
+  // Ritorno comunque l'array HTML (opzionale, se serve)
+  return results.map((r) => r.highlightedTag);
+}
+
+document.querySelector("#search-button").addEventListener("click", async () => {
+  const searchTerm = document.querySelector("#search-input").value.trim();
+  if (!searchTerm) {
+    toast("Inserisci un termine di ricerca valido.");
+    return;
+  }
+
+  await searchWithinTags(searchTerm);
+});
+
+const searchInput = document.querySelector("#search-input");
+
+// Funzione di ricerca da eseguire dopo il debounce
+async function performSearch() {
+  const searchTerm = searchInput.value.trim();
+  await searchWithinTags(searchTerm);
+}
+
+// Creo la versione "debounced" della funzione performSearch
+const debouncedSearch = debounce(performSearch, 300); // 300ms di attesa
+
+// Collegamento dell'evento input con debounce
+searchInput.addEventListener("input", debouncedSearch);
+
+document.addEventListener("keyDown", (event) => {
+  if (event.key === "Enter" && document.activeElement === searchInput) {
+    debouncedSearch(); // Esegue la ricerca con debounce
   }
 });

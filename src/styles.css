@@ -1029,6 +1029,7 @@ p {
 
 #userTags .tag-pill {
   transform: scale(1.2);
+  margin: 0.5rem;
 }
 
 .toast {
@@ -1052,4 +1053,10 @@ p {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, -50%) scale(1.05);
+}
+
+.tags-search-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
 }

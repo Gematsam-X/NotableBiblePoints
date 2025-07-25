@@ -98,7 +98,7 @@ async function handleSearch() {
       resultsModal.style.display = "none";
       return;
     }
-    const matches = await searchWhitinNotes(searchTerm);
+    const matches = await searchWithinNotes(searchTerm);
     if (matches?.length) {
       // Se ci sono occorrenze
       resultsContent.innerHTML = `<h2>Occorrenze trovate:</h2>${matches.join(
@@ -118,7 +118,7 @@ async function handleSearch() {
 }
 
 // Funzione per cercare nel file JSON
-async function searchWhitinNotes(searchTerm) {
+async function searchWithinNotes(searchTerm) {
   if (searchTerm.length < 3) {
     searchInput.blur();
     toast("Inserisci almeno 3 caratteri per la ricerca.");
