@@ -1,8 +1,7 @@
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import "/src/styles.css";
-
-import { createBackup, restoreBackup } from "./backup.js";
-import { deleteCurrentUser, logoutUser } from "./logoutAndDelete.js";
+import { createBackup, restoreBackup } from "/src/js/backup.js";
+import { deleteCurrentUser, logoutUser } from "/src/js/logoutAndDelete.js";
 
 function addSpecificEventListener(id, callback) {
   return document.getElementById(id).addEventListener("click", callback);

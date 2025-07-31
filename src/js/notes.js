@@ -5,7 +5,7 @@ import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js"; // 
 import { hideGif, showGif } from "/src/js/loadingGif.js";
 import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione di logout
 import toast from "/src/js/toast.js";
-import shouldUseServer from "./shouldUseServer.js";
+import shouldUseServer from "/src/js/shouldUseServer.js";
 
 const refreshBtn = document.querySelector(".refreshNotes");
 
@@ -153,7 +153,7 @@ async function loadNotes() {
       toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
       logoutUser();
     } else if (error.message.toLowerCase().includes("requests per minute"))
-      toast("Si è verificato un errore tecnico.");
+      toast("Si è verificato un errore tecnico. Riprova tra un po'.");
     else {
       console.error("Errore nel recupero delle note:", error);
       toast(`Errore: ${error.message}`);
@@ -400,7 +400,10 @@ async function saveNote() {
     if (editingNoteId) {
       noteIndex = notes.findIndex((note) => note.id === editingNoteId);
       if (noteIndex === -1) {
-        toast("Errore: impossibile trovare la nota da modificare.");
+        toast(
+          "Errore: impossibile trovare la nota da modificare. Stai cercando di modificare una nota che non esiste. Prova a cliccare il pulsante in basso a destra per ricaricare le tue note.",
+          4500
+        );
         throw new Error("[saveNote] Nota da modificare NON trovata!");
       }
 
@@ -447,8 +450,12 @@ async function saveNote() {
 
     await loadNotes();
   } catch (error) {
-    console.error("[saveNote] Errore durante salvataggio/modifica:", error);
-    toast("Errore durante il salvataggio. Riprova più tardi.");
+    if (error.message.toLowerCase().includes("requests per minute"))
+      toast("Si è verificato un errore tecnico. Riprova tra un po'.");
+    else {
+      console.error("[saveNote] Errore durante salvataggio/modifica:", error);
+      toast("Errore durante il salvataggio. Riprova più tardi.");
+    }
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";

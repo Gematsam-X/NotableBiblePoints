@@ -3,7 +3,7 @@ import "choices.js/public/assets/styles/choices.min.css";
 import backendlessRequest from "/src/js/backendlessRequest.js";
 import { deleteValue, getValue, setValue } from "/src/js/indexedDButils.js";
 import { hideGif, showGif } from "/src/js/loadingGif.js";
-import shouldUseServer from "./shouldUseServer.js";
+import shouldUseServer from "/src/js/shouldUseServer.js";
 import toast from "/src/js/toast.js";
 
 let editingNoteId = null;

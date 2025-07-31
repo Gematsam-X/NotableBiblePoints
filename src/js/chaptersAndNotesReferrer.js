@@ -17,6 +17,7 @@ if (
   referrer !== "chapters.html" &&
   referrer !== "notes.html" &&
   referrer !== "notesbytag.html" &&
+  referrer !== "notesbytag" &&
   referrer !== "tags.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);
