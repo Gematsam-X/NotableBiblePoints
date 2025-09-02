@@ -68,8 +68,8 @@
   - Eventuali tag
 
 ### 5. Visualizza, modifica e condividi
-- Modifica o elimina note tramite la modale dedicata.
-- Condividi singole note come testo attraverso il plugin Capacitor Share.
+- Modifica o elimina note tramite gli appositi tasti.
+- Condividi singole note come testo.
 
 ### 6. Sincronizzazione
 - Le modifiche vengono sincronizzate automaticamente con Backendless.
