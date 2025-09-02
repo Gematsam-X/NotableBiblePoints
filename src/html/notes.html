@@ -20,6 +20,7 @@
         window.location.href = "/src/html/accessRestricted.html";
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("userEmail");
+        localStorage.removeItem("plainUserEmail");
         localStorage.removeItem("userId");
         localStorage.removeItem("userToken");
       }
@@ -66,12 +67,39 @@
               autocomplete="off"
               placeholder="Versetto di riferimento..."
             />
-            <label for="note-content">Contenuto</label>
+            <label for="noteContent">Contenuto</label>
             <textarea
               id="noteContent"
               autocomplete="off"
               placeholder="Contenuto della nota..."
             ></textarea>
+            <label id="labelColor" for="noteColorInput">Colore</label>
+            <input
+              type="text"
+              id="noteColorInput"
+              name="noteColor"
+              value=""
+              style="display: none"
+              aria-labelledby="labelColor"
+            />
+            <div
+              id="colorSelector"
+              class="color-picker"
+              role="button"
+              tabindex="0"
+              aria-labelledby="labelColor"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            ></div>
+            <button
+              type="button"
+              class="no-color-label"
+              aria-label="Nessun colore"
+            >
+              <span class="no-color-x" aria-hidden="true">&times;</span> Nessun
+              colore
+            </button>
+
             <label for="noteTags">Tag</label>
             <select id="noteTags" multiple></select>
           </div>
@@ -87,7 +115,6 @@
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module" src="/src/js/chaptersAndNotesReferrer.js"></script>
     <script type="module" src="/src/js/notes.js"></script>
-    <script type="module" src="/src/js/legend.js"></script>
     <script type="module" src="/src/js/return.js"></script>
     <script type="module" src="/src/js/loadingGif.js"></script>
     <script type="module" src="/src/js/online.js"></script>

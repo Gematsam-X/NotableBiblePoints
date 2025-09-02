@@ -4,9 +4,9 @@ console.log(
   "risultato del test",
   regex.test(localStorage.getItem("userEmail"))
 );
-if (regex.test(localStorage.getItem("userEmail"))) {
+if (regex.test(localStorage.getItem("userEmail")) || !localStorage.getItem("plainUserEmail")) {
   const selectedTheme = localStorage.getItem("theme");
   localStorage.clear();
   localStorage.setItem("theme", selectedTheme);
-  await logoutUser(false);
+  await logoutUser(true);
 }

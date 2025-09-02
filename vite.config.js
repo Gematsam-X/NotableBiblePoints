@@ -12,11 +12,11 @@ const jsFiles = [
   "chaptersAndNotesReferrer",
   "checkIfLegacy",
   "checkVersion",
+  "colors",
   "drawer",
   "indexedDButils",
   "injectChapters",
   "injectInstructions",
-  "legend",
   "loadingGif",
   "logoutAndDelete",
   "main-ok",
@@ -46,6 +46,7 @@ const htmlEntries = {
   onboarding: resolve(__dirname, "src/html/onboarding.html"),
   tags: resolve(__dirname, "src/html/tags.html"),
   accessRestricted: resolve(__dirname, "src/html/accessRestricted.html"),
+  colorsPage: resolve(__dirname, "src/html/colors.html"),
 };
 
 const jsEntries = Object.fromEntries(
@@ -112,6 +113,7 @@ const generateServiceWorkerPlugin = {
 export default defineConfig({
   server: {
     port: 5174,
+    host: true,
   },
   preview: {
     open: "/index.html",

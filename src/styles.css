@@ -406,13 +406,13 @@ div.actions-row {
   font-size: 14px;
   transition: border-color 0.2s;
 }
+
 @media screen and (max-width: 768px) and (orientation: portrait) {
   .choices {
     width: 180%;
   }
 }
 
-/* Parte interna */
 .choices__inner {
   background-color: var(--bg) !important;
   display: flex;
@@ -425,7 +425,6 @@ div.actions-row {
   border: none !important;
 }
 
-/* Tag selezionati */
 .choices__item--selectable {
   background-color: var(--bg);
   border: 1px solid var(--border-col);
@@ -441,7 +440,6 @@ div.actions-row {
   color: var(--bg);
 }
 
-/* Bottone "x" per rimuovere un tag */
 .choices__button {
   margin-left: 6px;
   font-weight: bold;
@@ -450,7 +448,6 @@ div.actions-row {
   cursor: pointer;
 }
 
-/* Dropdown delle scelte */
 .choices__list--dropdown {
   background-color: transparent !important;
   border: none !important;
@@ -459,7 +456,6 @@ div.actions-row {
   overflow-y: auto;
 }
 
-/* Opzioni nel dropdown */
 .choices__list--dropdown .choices__item--choice {
   padding: 8px 10px;
   cursor: pointer;
@@ -1059,4 +1055,152 @@ p {
   display: flex;
   justify-content: center;
   padding: 1rem;
+}
+
+.no-color-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: default;
+  user-select: none;
+  font-size: 0.9rem;
+  border: 2px solid var(--border-col);
+  width: fit-content;
+  padding: 0 10px;
+  border-radius: 50%;
+  background-color: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.no-color-label:hover {
+  background-color: inherit;
+  transform: scale(1.05);
+}
+
+.no-color-x {
+  font-size: 3em;
+  user-select: none;
+  margin-right: 5px;
+}
+
+.color-picker {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .color-picker {
+    width: 180%;
+  }
+}
+
+.color-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-circle:hover {
+  transform: scale(1.1);
+}
+
+.color-circle.selected {
+  border-color: var(--border-col);
+  transform: scale(1.2);
+}
+
+#notesDisplay {
+  margin: 2rem auto;
+  max-width: 43.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.selectedColorPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.selectedColorCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border-col);
+}
+
+.noteList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.noteItem {
+  border: 1px solid var(--border-col);
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: var(--bg);
+  color: var(--primary-col);
+  text-align: left;
+  transition: transform 0.2s;
+}
+
+.noteItem:hover {
+  transform: scale(1.02);
+}
+
+.colorActionBtn {
+  background-color: var(--primary-col);
+  color: var(--bg);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.colorActionBtn:hover {
+  background-color: var(--btn-hover);
+}
+
+#selectedColorContainer .selectedColorIconBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.search-result .color-circle {
+  display: inline-block;
+  width: 3em;
+  height: 3em;
+  border-radius: 50%;
+  margin-top: 5px;
+  user-select: none;
+  cursor: default;
+}
+
+.search-result-content {
+  flex: 1;
 }

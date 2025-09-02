@@ -1,4 +1,3 @@
-import backendlessRequest from "/src/js/backendlessRequest.js";
 import "/src/styles.css";
 import { createBackup, restoreBackup } from "/src/js/backup.js";
 import { deleteCurrentUser, logoutUser } from "/src/js/logoutAndDelete.js";
@@ -12,9 +11,5 @@ addSpecificEventListener("delete", deleteCurrentUser);
 addSpecificEventListener("createBackup", createBackup);
 addSpecificEventListener("restoreBackup", restoreBackup);
 
-document.querySelector("#userEmail").textContent = await backendlessRequest(
-  "decrypt",
-  {
-    ciphertext: localStorage.getItem("userEmail"),
-  }
-);
+document.querySelector("#userEmail").textContent =
+  localStorage.getItem("plainUserEmail");

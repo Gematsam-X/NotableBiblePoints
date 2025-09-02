@@ -1,15 +1,18 @@
 import toast from "/src/js/toast.js";
 
-const selectedBook = sessionStorage.getItem("selectedBook");
+// Ottieni il libro selezionato dal sessionStorage
+const selectedBook = sessionStorage.getItem("selectedBook") || "Genesi"; // fallback a Genesi
 const bookTitle = document.getElementById("book-title");
 const chaptersContainer = document.getElementById("chapters-container");
 
+// Imposta il titolo della pagina
 if (bookTitle) {
   const title = `Capitoli di ${selectedBook}`;
   bookTitle.textContent = title;
   window.document.title = title + " - NotableBiblePoints";
 }
 
+// Numero di capitoli per libro
 const chaptersByBook = {
   Genesi: 50,
   Esodo: 40,
@@ -79,79 +82,15 @@ const chaptersByBook = {
   Rivelazione: 22,
 };
 
-const bibleBooks = [
-  "Genesi",
-  "Esodo",
-  "Levitico",
-  "Numeri",
-  "Deuteronomio",
-  "Giosuè",
-  "Giudici",
-  "Rut",
-  "1 Samuele",
-  "2 Samuele",
-  "1 Re",
-  "2 Re",
-  "1 Cronache",
-  "2 Cronache",
-  "Esdra",
-  "Neemia",
-  "Ester",
-  "Giobbe",
-  "Salmi",
-  "Proverbi",
-  "Ecclesiaste",
-  "Cantico dei Cantici",
-  "Isaia",
-  "Geremia",
-  "Lamentazioni",
-  "Ezechiele",
-  "Daniele",
-  "Osea",
-  "Gioele",
-  "Amos",
-  "Abdia",
-  "Giona",
-  "Michea",
-  "Naum",
-  "Abacuc",
-  "Sofonia",
-  "Aggeo",
-  "Zaccaria",
-  "Malachia",
-  "Matteo",
-  "Marco",
-  "Luca",
-  "Giovanni",
-  "Atti",
-  "Romani",
-  "1 Corinti",
-  "2 Corinti",
-  "Galati",
-  "Efesini",
-  "Filippesi",
-  "Colossesi",
-  "1 Tessalonicesi",
-  "2 Tessalonicesi",
-  "1 Timoteo",
-  "2 Timoteo",
-  "Tito",
-  "Filemone",
-  "Ebrei",
-  "Giacomo",
-  "1 Pietro",
-  "2 Pietro",
-  "1 Giovanni",
-  "2 Giovanni",
-  "3 Giovanni",
-  "Giuda",
-  "Rivelazione",
-];
+const bibleBooks = Object.keys(chaptersByBook);
 
-const chaptersNum = chaptersByBook[selectedBook]; // Default 1 se non trovato
+// Numero di capitoli del libro selezionato, fallback a 1
+const chaptersNum = chaptersByBook[selectedBook] || 1;
 
 // Funzione per creare i quadrati dei capitoli
 function createSquares(num) {
+  if (!chaptersContainer) return;
+  chaptersContainer.innerHTML = ""; // pulisci eventuali contenuti precedenti
   for (let i = 1; i <= num; i++) {
     const square = document.createElement("div");
     square.classList.add("chapter");
@@ -160,32 +99,29 @@ function createSquares(num) {
       sessionStorage.setItem("selectedChapter", i);
       window.location.href = "/src/html/notes.html";
     });
-    if (chaptersContainer) chaptersContainer.appendChild(square);
+    chaptersContainer.appendChild(square);
   }
 }
 
 createSquares(chaptersNum);
 
-const link = document.querySelector("#readBook") || null;
+// Gestione link esterno per leggere il libro
+const link = document.getElementById("readBook");
 
-// Aggiunge un listener per il click
-link?.addEventListener("click", () => {
-  // Ottieni il libro selezionato
-  const selectedBook = sessionStorage.getItem("selectedBook");
+if (link) {
+  link.addEventListener("click", (e) => {
+    e.preventDefault(); // evita problemi su Safari iOS
+    const selectedBook = sessionStorage.getItem("selectedBook") || "Genesi";
+    const bookIndex = bibleBooks.indexOf(selectedBook);
 
-  // Cerca l'indice del libro selezionato nell'array bibleBooks
-  const bookIndex = bibleBooks.indexOf(selectedBook);
-
-  if (bookIndex !== -1) {
-    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
-
-    // Costruisce l'URL con il riferimento completo
-    link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&book=${bookCode}&pub=nwtsty`;
-  } else {
-    // Se il libro non è trovato, puoi gestire l'errore
-    console.error("Libro non trovato!");
-    toast(
-      "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
-    );
-  }
-});
+    if (bookIndex !== -1) {
+      const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+      window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&book=${bookCode}&pub=nwtsty`;
+    } else {
+      console.error("Libro non trovato!");
+      toast(
+        "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
+      );
+    }
+  });
+}

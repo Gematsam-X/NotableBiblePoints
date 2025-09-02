@@ -2,10 +2,10 @@ import "/src/styles.css";
 
 if (
   !sessionStorage.getItem("selectedBook") ||
-  ((window.location.href.split("/").pop() === "notes.html" ||
-    window.location.href.split("/").pop() === "notesbytag.html") &&
+  (window.location.href.split("/").pop() === "notes.html" &&
     !sessionStorage.getItem("selectedChapter"))
 ) {
+  console.warn("Capitolo non selezionato");
   window.location.href = "/index.html";
 }
 
@@ -18,6 +18,7 @@ if (
   referrer !== "notes.html" &&
   referrer !== "notesbytag.html" &&
   referrer !== "notesbytag" &&
+  referrer !== "colors.html" &&
   referrer !== "tags.html"
 ) {
   console.warn("Referrer per la pagina non valido:", document.referrer);

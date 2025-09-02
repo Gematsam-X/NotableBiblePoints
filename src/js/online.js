@@ -155,28 +155,106 @@ async function syncWithServer() {
   }
 }
 
-// Quando torna online, avvia sync periodica e blocca bottone fino a fine sync
+/**
+ * Verifica se sei davvero online controllando il file ping.txt
+ * @returns {Promise<boolean>}
+ */
+async function checkRealInternetConnection() {
+  try {
+    const response = await fetch(
+      "https://gematsam-x.github.io/NotableBiblePoints/ping.txt",
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+    return response.ok;
+  } catch (err) {
+    console.warn("⚠️ Errore nel controllo della rete:", err);
+    return false;
+  }
+}
+
+let syncInterval = null;
+let wasFakeOffline = false; // Se l'evento offline era falso
+let lastWentOffline = false; // Se abbiamo avuto un evento offline recente
+let isCurrentlyOffline = !navigator.onLine; // Stato reale della connessione al momento
+
+window.addEventListener("offline", () => {
+  console.log("🚫 Evento offline ricevuto... controllo se è vero.");
+
+  isCurrentlyOffline = true;
+  lastWentOffline = true;
+
+  // Aspetta un attimo poi verifica davvero se siamo offline
+  setTimeout(async () => {
+    const stillOnline = await checkRealInternetConnection();
+
+    if (stillOnline) {
+      console.log("🟡 Falso offline: la rete è ancora attiva!");
+      wasFakeOffline = true;
+    } else {
+      console.log("🔌 Connessione persa davvero.");
+      wasFakeOffline = false;
+    }
+  }, 3000);
+});
+
 window.addEventListener("online", () => {
-  console.log("Connessione ripristinata. Sincronizzo i dati...");
-  toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
+  console.log(
+    "⚡ Evento online rilevato. Verifico la connessione reale tra 3000 ms..."
+  );
 
-  sessionStorage.setItem("canRefresh", "false");
-  if (!refreshBtn?.classList.contains("disabled"))
-    refreshBtn?.classList.add("disabled");
+  // Se già eravamo online, ignoro per evitare sync inutili
+  if (!isCurrentlyOffline) {
+    console.log("🟢 Già online, ignoro evento online fantasma.");
+    return;
+  }
 
-  const syncInterval = window.setInterval(async () => {
-    let syncSuccess;
+  setTimeout(async () => {
+    const reallyOnline = await checkRealInternetConnection();
 
-    if (syncRetries < maxRetries) syncSuccess = await syncWithServer();
-    else {
-      clearInterval(syncInterval);
+    // Se offline era falso oppure rete instabile → blocco sync
+    if ((lastWentOffline && wasFakeOffline) || !reallyOnline) {
+      console.warn("❌ Sync bloccata: offline fasullo o rete instabile.");
+      wasFakeOffline = false;
+      lastWentOffline = false;
       return;
     }
 
-    if (syncSuccess) {
-      sessionStorage.setItem("canRefresh", "true");
-      refreshBtn?.classList.remove("disabled");
-      clearInterval(syncInterval);
+    console.log(
+      "🌐 Connessione confermata con il server! Sincronizzo i dati..."
+    );
+    toast("Sincronizzazione in corso. Non chiudere o ricaricare l'app.", 2000);
+
+    sessionStorage.setItem("canRefresh", "false");
+    refreshBtn?.classList.add("disabled");
+
+    if (syncInterval !== null) {
+      console.warn("⏱️ Sync già in corso, evito duplicazioni.");
+      return;
     }
+
+    isCurrentlyOffline = false; // Aggiorna stato offline
+
+    syncInterval = setInterval(async () => {
+      if (syncRetries >= maxRetries) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+        return;
+      }
+
+      const syncSuccess = await syncWithServer();
+
+      if (syncSuccess) {
+        sessionStorage.setItem("canRefresh", "true");
+        refreshBtn?.classList.remove("disabled");
+        clearInterval(syncInterval);
+        syncInterval = null;
+      }
+    }, 3000);
+
+    wasFakeOffline = false;
+    lastWentOffline = false;
   }, 3000);
 });

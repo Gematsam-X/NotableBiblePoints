@@ -78,6 +78,7 @@ async function loginUser(email, password) {
     localStorage.setItem("userToken", loggedInUser["user-token"]);
 
     localStorage.setItem("userEmail", loggedInUser.encryptedEmail);
+    localStorage.setItem("plainUserEmail", loggedInUser.email);
     localStorage.setItem("userId", loggedInUser.objectId);
     localStorage.setItem("isAuthenticated", "true");
 

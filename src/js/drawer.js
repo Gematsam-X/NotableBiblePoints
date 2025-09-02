@@ -43,12 +43,8 @@ document
   .querySelector(".openDrawer")
   .addEventListener("click", handleOpenDrawerClick);
 
-document.querySelector("#username").innerText = await backendlessRequest(
-  "decrypt",
-  {
-    ciphertext: localStorage.getItem("userEmail"),
-  }
-);
+document.querySelector("#username").innerText =
+  localStorage.getItem("plainUserEmail");
 
 document.querySelector("#drawer-account").addEventListener("click", () => {
   window.location.href = "/src/html/account.html";
@@ -75,6 +71,10 @@ document.querySelector("#other-apps").addEventListener("click", () => {
 document.querySelector("#downloadAPK").addEventListener("click", () => {
   window.location.href =
     "https://github.com/Gematsam-X/NotableBiblePoints/releases/latest/download/NotableBiblePoints.apk";
+});
+
+document.querySelector("#colors-page").addEventListener("click", () => {
+  window.location.href = "/src/html/colors.html";
 });
 
 document.querySelector("#appVersion").innerText =

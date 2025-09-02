@@ -72,8 +72,11 @@ export async function logoutUser(showAlert = true) {
 
     // Rimuoviamo i dati relativi all'utente da IndexedDB
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("plainUserEmail");
+    localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userId");
     localStorage.removeItem("userToken");
+    
     await deleteValue("userNotes");
     await deleteValue("userNotesByTag");
     await deleteValue("deletedNotes");

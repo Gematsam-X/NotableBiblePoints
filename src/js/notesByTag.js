@@ -84,6 +84,90 @@ const filteringTag = sessionStorage.getItem("filteringTag");
 const pageTitle = document.querySelector(".notes-page-title");
 if (pageTitle) pageTitle.textContent = `Note con tag "${filteringTag}"`;
 
+const lightThemeColors = [
+  "#FF8A8050",
+  "#66CC6650",
+  "#0066CC33",
+  "#33D6B250",
+  "#9900B330",
+  "#CC660030",
+];
+
+const darkThemeColors = [
+  "#FF334455",
+  "#06E91150",
+  "#42A4F550",
+  "#00FFBF50",
+  "#D900FF50",
+  "#FF990050",
+];
+
+const colors = document.body.classList.contains("dark-theme")
+  ? darkThemeColors
+  : lightThemeColors;
+
+let selectedEditColorIndex = null;
+const colorsContainer = document.querySelector("#colorsContainer");
+const hiddenInput = document.getElementById("noteColorInput");
+const editColor = document.querySelector("#colorSelector");
+
+colors.forEach((color, index) => {
+  const circle = document.createElement("div");
+  circle.classList.add("color-circle");
+  circle.style.backgroundColor = color;
+  circle.dataset.index = index; // salva l’indice, NON il colore!
+
+  circle.addEventListener("click", () => {
+    if (selectedEditColorIndex === index) return; // già selezionato
+
+    // Deseleziona tutti
+    editColor
+      .querySelectorAll(".color-circle")
+      .forEach((c) => c.classList.remove("selected"));
+
+    // Seleziona questo
+    circle.classList.add("selected");
+
+    // Aggiorna valori
+    hiddenInput.value = index;
+    selectedEditColorIndex = index;
+  });
+
+  editColor.appendChild(circle);
+});
+
+// Prende tutti i pallini (dopo il rendering)
+const circles = editColor.querySelectorAll(".color-circle");
+
+function setColor(colorIndex) {
+  const colorIndexInt = parseInt(colorIndex);
+  // Salvo l’indice nell’input nascosto
+  hiddenInput.value = colorIndexInt;
+  // Aggiorno variabile globale
+  selectedEditColorIndex = colorIndexInt;
+  // Rimuovo la classe "selected" da tutti i cerchi
+  circles.forEach((circle) => circle.classList.remove("selected"));
+  // Controllo i cerchi uno per uno
+  circles.forEach((circle) => {
+    const index = parseInt(circle.getAttribute("data-index"));
+    if (index === colorIndexInt) {
+      circle.classList.add("selected");
+    }
+  });
+}
+
+// Resetta la selezione colore
+function resetColor() {
+  hiddenInput.value = "";
+  selectedEditColorIndex = null;
+  circles.forEach((circle) => circle.classList.remove("selected"));
+}
+
+// Quando l’utente clicca su "Nessun colore"
+document
+  .querySelector(".no-color-label")
+  ?.addEventListener("click", resetColor);
+
 // Carica solo le note che contengono il filteringTag
 async function loadNotesByTag(forceServer = false) {
   if (!notesContainer) return;
@@ -151,7 +235,24 @@ async function loadNotesByTag(forceServer = false) {
       }
       noteElement.setAttribute("data-book", note.book);
       noteElement.setAttribute("data-chapter", JSON.stringify(note.chapter));
-
+      if (
+        note.colorIndex !== null &&
+        Number.isInteger(note.colorIndex) &&
+        note.colorIndex >= 0
+      ) {
+        noteElement.setAttribute("data-colorIndex", note.colorIndex);
+        noteElement.style.setProperty(
+          "background-color",
+          colors[note.colorIndex],
+          "important"
+        );
+      } else {
+        noteElement.style.setProperty(
+          "background-color",
+          "inherit",
+          "important"
+        );
+      }
       // Tags come pillole cliccabili
       const tagsHtml = note.tags
         .map((tag) => `<span class='tag-pill'>${tag}</span>`)
@@ -178,8 +279,23 @@ async function loadNotesByTag(forceServer = false) {
       notesContainer.appendChild(noteElement);
     });
   } catch (err) {
-    console.error("Errore nel caricamento:", err);
-    toast("Errore durante il caricamento delle note.");
+    // Controlla se l'errore riguarda token scaduto
+    if (err.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    }
+    // Controlla se l'errore è un rate limit (429)
+    else if (err.message.toLowerCase().includes("429")) {
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    }
+    // Altri errori generici
+    else {
+      console.error("Errore nel recupero delle note:", err);
+      toast(`Errore: ${err.message}`);
+    }
+
+    // Mostra il messaggio di errore nel container delle note
+    notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${err.message}</p>`;
   } finally {
     refreshBtn?.classList.remove("disabled");
   }
@@ -196,7 +312,7 @@ notesContainer?.addEventListener("click", async (event) => {
     const newTag = tagClicked.textContent.toLowerCase().trim();
     if (newTag !== filteringTag) {
       sessionStorage.setItem("filteringTag", newTag);
-      location.reload(); // ricarica pagina con nuovo filtro
+      window.location.reload(); // ricarica pagina con nuovo filtro
     }
     return;
   }
@@ -300,8 +416,20 @@ async function deleteNote(noteElement) {
 
     toast("Nota eliminata con successo.");
   } catch (error) {
-    console.error("[deleteNote] Errore durante eliminazione:", error);
-    toast("Errore durante l'eliminazione della nota.");
+    // Controlla se l'errore riguarda token scaduto
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    }
+    // Controlla se l'errore è un rate limit (429)
+    else if (error.message.toLowerCase().includes("429")) {
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    }
+    // Altri errori generici
+    else {
+      console.error("[deleteNote] Errore durante eliminazione:", error);
+      toast(`Errore: ${error.message}`);
+    }
   } finally {
     hideGif(); // Nasconde la gif di caricamento in ogni caso
   }
@@ -319,6 +447,7 @@ async function editNote(noteElement) {
     .textContent.trim();
   const match = fullVerseText.match(/:(\d+)$/);
   const verse = match ? parseInt(match[1], 10) : null;
+  const noteColorIndex = noteElement.getAttribute("data-colorindex");
 
   const tagString = noteElement.getAttribute("data-tags");
 
@@ -326,6 +455,7 @@ async function editNote(noteElement) {
   document.querySelector("#noteTitle").value = title;
   document.querySelector("#noteContent").value = content;
   document.querySelector("#verseNumber").value = verse;
+  setColor(noteColorIndex);
   modal.style.display = "block";
 
   tagChoices.removeActiveItems();
@@ -379,6 +509,10 @@ async function saveNote() {
       return;
     }
 
+    // Trova l’indice del colore selezionato nell’array colors
+    const colorIndex =
+      selectedEditColorIndex !== null ? selectedEditColorIndex : null;
+
     // Aggiorna la nota
     notes[noteIndex] = {
       ...notes[noteIndex],
@@ -386,6 +520,7 @@ async function saveNote() {
       verse: verseNumber,
       updatedAt: Date.now().toString(),
       content: noteContent,
+      colorIndex: colorIndex,
       tags: selectedTags,
     };
 
@@ -404,8 +539,15 @@ async function saveNote() {
 
     navigator.onLine ? await loadNotesByTag(true) : await loadNotesByTag();
   } catch (error) {
-    console.error("[saveNote] Errore durante modifica:", error);
-    toast("Errore durante il salvataggio. Riprova più tardi.");
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    } else if (error.message.toLowerCase().includes("429")) {
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    } else {
+      console.error("[saveNote] Errore durante modifica:", error);
+      toast(`Errore: ${error.message}`);
+    }
   } finally {
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
@@ -592,7 +734,6 @@ let tagChoicesArray = []; // lista globale di tutti i tag disponibili
 
 // Funzione per aggiornare Choices.js con i tag freschi
 async function refreshTagChoices() {
-  const userEmail = localStorage.getItem("userEmail");
   const res = (await shouldUseServer())
     ? await backendlessRequest(
         "notes:get",

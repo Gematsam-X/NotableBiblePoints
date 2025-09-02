@@ -8,8 +8,6 @@
       name="description"
       content="NotableBiblePoints permette di salvare i punti notevoli della Bibbia e di sincronizzarli tra i vari dispositivi."
     />
-    <link rel="stylesheet" href="/src/styles.css" />
-    <link rel="stylesheet" href="/src/drawer.css" />
     <link rel="icon" href="/src/assets/favicon.ico" />
     <link rel="manifest" href="/manifest.json" />
 
@@ -24,11 +22,11 @@
     />
     <meta
       property="og:image"
-      content="https://gematsam-x.github.io/NotableBiblePoints/src/assets/favicon.ico"
+      content="https://notablebiblepoints.netlify.app/src/assets/favicon.ico"
     />
     <meta
       property="og:url"
-      content="https://gematsam-x.github.io/NotableBiblePoints/index.html"
+      content="https://notablebiblepoints.netlify.app/index.html"
     />
     <meta property="og:type" content="website" />
     <script type="module">
@@ -41,6 +39,7 @@
         window.location.href = "/src/html/accessRestricted.html";
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("userEmail");
+        localStorage.removeItem("plainUserEmail");
         localStorage.removeItem("userToken");
       }
     </script>
@@ -213,6 +212,11 @@
           <h2>Tag</h2>
         </div>
         <hr />
+        <div class="drawer-horizontal-align" id="colors-page">
+          <span class="fi-sr-palette"></span>
+          <h2>Colori</h2>
+        </div>
+        <hr />
         <div class="drawer-horizontal-align" id="share-app">
           <span class="fi-sr-share"></span>
           <h2>Condividi l'app</h2>
@@ -266,7 +270,6 @@
     <script type="module" src="/src/js/theme.js"></script>
     <script type="module" src="/src/js/checkIfLegacy.js"></script>
     <script type="module" src="/src/js/referrer.js"></script>
-    <script type="module" src="/src/js/legend.js"></script>
     <script type="module" src="/src/js/rememberMe.js"></script>
     <script type="module" src="/src/js/injectChapters.js"></script>
     <script type="module" src="/src/js/main-ok.js"></script>

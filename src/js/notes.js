@@ -7,6 +7,89 @@ import { logoutUser } from "/src/js/logoutAndDelete.js"; // Importa la funzione 
 import toast from "/src/js/toast.js";
 import shouldUseServer from "/src/js/shouldUseServer.js";
 
+const lightThemeColors = [
+  "#FF8A8050", // Rosa aranciato tenue
+  "#66CC6650", // Verde più “organico” e morbido su bianco
+  "#0066CC33", // Blu profondo
+  "#33D6B250", // Verde acqua chiaro
+  "#9900B330", // Fucsia smorzato
+  "#CC660030", // Arancione scuro soft
+];
+
+const darkThemeColors = [
+  "#FF334455", // Rosso forte
+  "#06E91150", // Verde evidenziatore
+  "#42A4F550", // Azzurro classico
+  "#00FFBF50", // Verde acqua evidenziato
+  "#D900FF50", // Fucsia acceso
+  "#FF990050", // Arancione
+];
+
+// Variabile globale che rappresenta l’indice del colore selezionato (0..5 o null)
+let selectedColorIndex = null;
+
+// Determina il tema attuale
+const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+const colors = theme === "dark" ? darkThemeColors : lightThemeColors;
+
+// Selettori DOM
+const container = document.getElementById("colorSelector");
+const hiddenInput = document.getElementById("noteColorInput");
+
+// Crea i pallini dei colori
+colors.forEach((color, index) => {
+  const circle = document.createElement("div");
+  circle.classList.add("color-circle");
+  circle.style.backgroundColor = color;
+  circle.dataset.index = index; // salva l’indice, NON il colore!
+
+  circle.addEventListener("click", () => {
+    if (selectedColorIndex === index) return; // già selezionato
+
+    // Deseleziona tutti
+    container
+      .querySelectorAll(".color-circle")
+      .forEach((c) => c.classList.remove("selected"));
+
+    // Seleziona questo
+    circle.classList.add("selected");
+
+    // Aggiorna valori
+    hiddenInput.value = index;
+    selectedColorIndex = index;
+  });
+
+  container.appendChild(circle);
+});
+
+// Prende tutti i pallini (dopo il rendering)
+const circles = container.querySelectorAll(".color-circle");
+
+// Imposta il colore selezionato (indice numerico)
+function setColor(colorIndex) {
+  const colorIndexInt = parseInt(colorIndex);
+
+  hiddenInput.value = colorIndexInt;
+  selectedColorIndex = colorIndexInt;
+
+  circles.forEach((circle) => {
+    const index = parseInt(circle.dataset.index);
+    circle.classList.toggle("selected", index === colorIndexInt);
+  });
+}
+
+// Resetta la selezione colore
+function resetColor() {
+  hiddenInput.value = "";
+  selectedColorIndex = null;
+  circles.forEach((circle) => circle.classList.remove("selected"));
+}
+
+// Quando l’utente clicca su "Nessun colore"
+document
+  .querySelector(".no-color-label")
+  ?.addEventListener("click", resetColor);
+
 const refreshBtn = document.querySelector(".refreshNotes");
 
 // Recupera il libro e il capitolo selezionati dal sessionStorage
@@ -23,12 +106,15 @@ const modal = document.querySelector(".modal");
 
 // Funzione per aprire la modale
 document.querySelector(".openModal")?.addEventListener("click", async () => {
-  editingNoteId = null; // RESET!
+  // RESET!
 
+  editingNoteId = null;
   // Pulisci input testuali
   document.querySelector("#noteTitle").value = "";
   document.querySelector("#verseNumber").value = "";
   document.querySelector("#noteContent").value = "";
+
+  resetColor();
 
   // Pulisci select tags di Choices.js
   if (typeof tagChoices !== "undefined") tagChoices.removeActiveItems();
@@ -56,7 +142,6 @@ async function loadNotes() {
   refreshBtn.classList.add("disabled");
 
   try {
-    // Prendo email criptata e token da localStorage
     const userEmail = localStorage.getItem("userEmail");
     const userToken = localStorage.getItem("userToken");
 
@@ -71,12 +156,10 @@ async function loadNotes() {
       return;
     }
 
-    // Estraggo note vere filtrando per id valido
     const userNotes = allRecords.filter(
       (item) => typeof item === "object" && item?.id
     );
 
-    // Aggiorno IndexedDB con note pulite
     await setValue("userNotes", userNotes);
 
     notesContainer.innerHTML = "";
@@ -95,53 +178,76 @@ async function loadNotes() {
           content,
           id: noteId,
           tags = [],
+          colorIndex = null,
         }) => {
           if (book === selectedBook && chapter === selectedChapter) {
             notesFound = true;
-            allNotes.push({ verse, title, content, noteId, tags });
+            allNotes.push({ verse, title, content, noteId, tags, colorIndex });
           }
         }
       );
 
       allNotes.sort((a, b) => a.verse - b.verse);
 
-      allNotes.forEach(({ verse, title, content, noteId, tags }) => {
-        const noteElement = document.createElement("div");
-        noteElement.classList.add("note");
-        noteElement.setAttribute("data-id", noteId);
-        if (tags.length > 0) {
-          noteElement.setAttribute("data-tags", JSON.stringify(tags));
+      allNotes.forEach(
+        ({ verse, title, content, noteId, tags, colorIndex }) => {
+          const noteElement = document.createElement("div");
+          noteElement.classList.add("note");
+          noteElement.setAttribute("data-id", noteId);
+          if (tags.length > 0) {
+            noteElement.setAttribute("data-tags", JSON.stringify(tags));
+          }
+
+          if (
+            colorIndex !== null &&
+            Number.isInteger(colorIndex) &&
+            colorIndex >= 0 &&
+            colorIndex < colors.length
+          ) {
+            noteElement.setAttribute("data-colorIndex", colorIndex);
+            noteElement.style.setProperty(
+              "background-color",
+              colors[colorIndex],
+              "important"
+            );
+          } else {
+            noteElement.style.setProperty(
+              "background-color",
+              "inherit",
+              "important"
+            );
+          }
+
+          const tagsHtml = tags
+            .map((tag) => `<span class="tag-pill">${tag}</span>`)
+            .join("");
+
+          noteElement.innerHTML = `
+            <span class="close-note">&times;</span>
+            <div class="verse-number">
+              <h4>Versetto ${verse}</h4>
+              <div class="tags-container">${tagsHtml}</div>
+            </div>
+            <div class="note-body">
+              <h2 class="note-title">${title}</h2>
+              <h3>${content}</h3>
+            </div>
+            <div class="note-action-buttons">
+              <button class="delete">
+                <span class="fi-sr-delete"></span>
+              </button>
+              <button class="edit">
+                <span class="fi-sr-edit"></span>
+              </button>
+              <button class="share">
+                <span class="fi-sr-share"></span>
+              </button>
+            </div>
+          `;
+
+          notesContainer.appendChild(noteElement);
         }
-
-        const tagsHtml = tags
-          .map((tag) => `<span class="tag-pill">${tag}</span>`)
-          .join("");
-
-        noteElement.innerHTML = `
-        <span class="close-note">&times;</span>
-          <div class="verse-number">
-            <h4>Versetto ${verse}</h4>
-            <div class="tags-container">${tagsHtml}</div>
-          </div>
-          <div class="note-body">
-            <h2 class="note-title">${title}</h2>
-            <h3>${content}</h3>
-          </div>
-          <div class="note-action-buttons">
-            <button class="delete">
-              <span class="fi-sr-delete"></span>
-            </button>
-            <button class="edit">
-              <span class="fi-sr-edit"></span>
-            </button>
-            <button class="share">
-              <span class="fi-sr-share"></span>
-            </button>
-          </div>
-        `;
-
-        notesContainer.appendChild(noteElement);
-      });
+      );
     }
 
     if (!notesFound) {
@@ -152,8 +258,8 @@ async function loadNotes() {
     if (error.message.toLowerCase().includes("not existing user token")) {
       toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
       logoutUser();
-    } else if (error.message.toLowerCase().includes("requests per minute"))
-      toast("Si è verificato un errore tecnico. Riprova tra un po'.");
+    } else if (error.message.toLowerCase().includes("429"))
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
     else {
       console.error("Errore nel recupero delle note:", error);
       toast(`Errore: ${error.message}`);
@@ -368,11 +474,13 @@ async function refreshTagChoices() {
 
 // Async function to save or update a note
 async function saveNote() {
+  // Prendi valori da input
   const noteTitle = document.querySelector("#noteTitle").value.trim();
   const verseNumber = parseInt(document.querySelector("#verseNumber").value);
   const noteContent = document.querySelector("#noteContent").value.trim();
   const selectedTags = tagChoices.getValue(true);
 
+  // Validazione base
   if (isNaN(verseNumber) || !noteContent) {
     toast("Compila tutti i campi correttamente!");
     return;
@@ -384,7 +492,7 @@ async function saveNote() {
   try {
     const userEmail = localStorage.getItem("userEmail");
 
-    // Recupera il record dal database che contiene tutte le note
+    // Recupera note (online o offline)
     let notes =
       (navigator.onLine && editingNoteId
         ? await backendlessRequest(
@@ -407,6 +515,11 @@ async function saveNote() {
         throw new Error("[saveNote] Nota da modificare NON trovata!");
       }
 
+      // Trova l’indice del colore selezionato nell’array colors
+      const colorIndex =
+        selectedColorIndex !== null ? selectedColorIndex : null;
+
+      // Crea l’oggetto aggiornato della nota con spread e proprietà condizionali
       notes[noteIndex] = {
         ...notes[noteIndex],
         ...(noteTitle && { title: noteTitle }),
@@ -414,8 +527,13 @@ async function saveNote() {
         updatedAt: Date.now().toString(),
         content: noteContent,
         tags: selectedTags,
+        colorIndex: colorIndex,
       };
     } else {
+      // Nuova nota
+      const colorIndex =
+        selectedColorIndex !== null ? selectedColorIndex : null;
+
       newNote = {
         id: Date.now().toString(),
         title: noteTitle || " ",
@@ -427,11 +545,13 @@ async function saveNote() {
           ciphertext: localStorage.getItem("userEmail"),
         }),
         tags: selectedTags,
+        colorIndex: colorIndex,
       };
 
       notes.push(newNote);
     }
 
+    // Salvataggio online/offline
     if (navigator.onLine)
       await backendlessRequest(
         "notes:addOrUpdate",
@@ -450,13 +570,17 @@ async function saveNote() {
 
     await loadNotes();
   } catch (error) {
-    if (error.message.toLowerCase().includes("requests per minute"))
-      toast("Si è verificato un errore tecnico. Riprova tra un po'.");
-    else {
-      console.error("[saveNote] Errore durante salvataggio/modifica:", error);
-      toast("Errore durante il salvataggio. Riprova più tardi.");
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    } else if (error.message.toLowerCase().includes("429")) {
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    } else {
+      console.error("[saveNote] Errore durante modifica:", error);
+      toast(`Errore: ${error.message}`);
     }
   } finally {
+    // Pulisci campi e reset tag
     document.querySelector("#noteContent").value = "";
     document.querySelector("#noteTitle").value = "";
     document.querySelector("#verseNumber").value = "";
@@ -583,8 +707,20 @@ async function deleteNote(noteElement) {
     // 5. Messaggio di successo
     toast("Nota eliminata con successo!");
   } catch (error) {
-    console.error("Errore durante l'eliminazione:", error);
-    toast("Errore durante l'eliminazione della nota. Riprova più tardi.");
+    // Controlla se l'errore riguarda token scaduto
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    }
+    // Controlla se l'errore è un rate limit (429)
+    else if (error.message.toLowerCase().includes("429")) {
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    }
+    // Altri errori generici
+    else {
+      console.error("[deleteNote] Errore durante eliminazione:", error);
+      toast(`Errore: ${error.message}`);
+    }
   } finally {
     hideGif();
   }
@@ -659,10 +795,13 @@ async function editNote(noteElement) {
     .querySelector(".verse-number h4")
     .textContent.replace("Versetto ", "")
     .trim();
+  const noteColorIndex = noteElement.getAttribute("data-colorIndex");
+  console.log(noteColorIndex);
 
   document.querySelector("#noteTitle").value = noteTitle;
-  document.querySelector("#verseNumber").value = verseNumber;
   document.querySelector("#noteContent").value = noteContent;
+  document.querySelector("#verseNumber").value = verseNumber;
+  setColor(noteColorIndex);
 
   // Pulisce prima i tag precedenti (visivamente)
   if (typeof tagChoices !== "undefined") {

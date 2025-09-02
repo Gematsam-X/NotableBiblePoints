@@ -65,7 +65,6 @@ exports.handler = async (event) => {
             process.env.ENCRYPTION_KEY
           ).toString();
           // Ritorna l'oggetto utente loggato
-          console.log(loggedUser);
           return ok(loggedUser);
         } catch (e) {
           return status4xx(
@@ -216,17 +215,6 @@ exports.handler = async (event) => {
             ids: id,
           }),
         });
-        console.log(
-          "delete request body:",
-          JSON.stringify({
-            email: CryptoJS.AES.decrypt(
-              email,
-              process.env.ENCRYPTION_KEY
-            ).toString(CryptoJS.enc.Utf8),
-            token: userToken,
-            ids: id,
-          })
-        );
 
         if (!res.ok) {
           throw new Error(

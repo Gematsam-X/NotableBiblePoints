@@ -46,4 +46,4 @@
 - [x] Add a redirect to the corresponding verse when clicking on the referenced verse in a note
 - [x] Fix style bug for horizontal orientation
 - [x] Add a function to search in tags
-- [ ] Add the ability to add a custom color to the notes
+- [x] Add the ability to add a custom color to the notes

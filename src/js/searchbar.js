@@ -77,6 +77,27 @@ const bibleBooks = [
   "Giuda",
   "Rivelazione",
 ];
+const lightThemeColors = [
+  "#FF8A8050",
+  "#66CC6650",
+  "#0066CC33",
+  "#33D6B250",
+  "#9900B330",
+  "#CC660030",
+];
+
+const darkThemeColors = [
+  "#FF334455",
+  "#06E91150",
+  "#42A4F550",
+  "#00FFBF50",
+  "#D900FF50",
+  "#FF990050",
+];
+
+const colors = document.body.classList.contains("dark-theme")
+  ? darkThemeColors
+  : lightThemeColors;
 
 let notesData = await getValue("userNotes");
 
@@ -139,7 +160,7 @@ async function searchWithinNotes(searchTerm) {
       await setValue("userNotes", results);
       hideGif();
     } else {
-      alert("Connettersi a Internet.");
+      toast("Connettersi a Internet.");
       hideGif();
       return [];
     }
@@ -247,31 +268,36 @@ async function searchWithinNotes(searchTerm) {
     // HTML del risultato
     const resultHtml = `
   <div class="search-result">
-    <a class="redirect-link"
-      data-book="${entry.book}"
-      data-chapter="${entry.chapter}"
-      data-id="${entry.id}">
-      <h2><strong>${entry.book} ${entry.chapter}:${entry.verse}</strong></h2>
-    </a>
-    <h3><strong>${highlightedTitle}</strong></h3><br>
-    ${
-      matchedContexts.length > 0
-        ? `<div class="matched-contexts">${matchedContexts.join(
-            "<br><hr class='dashed'><br>"
-          )}</div>`
-        : contentPreview
-    }
-    <br>
-    ${
-      // Se esistono tag, li mettiamo dentro un contenitore <div> apposito
-      entry.tags && entry.tags.length > 0
-        ? `<div class="tags-container">
-            ${entry.tags
-              .map((tag) => `<span class="tag-pill">${tag}</span>`)
-              .join(" ")}
-          </div>`
-        : ""
-    }
+    <span class="color-circle" style="background-color: ${
+      colors[Number(entry.colorIndex)]
+    }"></span>
+
+    <div class="search-result-content">
+      <a class="redirect-link"
+        data-book="${entry.book}"
+        data-chapter="${entry.chapter}"
+        data-id="${entry.id}">
+        <h2><strong>${entry.book} ${entry.chapter}:${entry.verse}</strong></h2>
+      </a>
+      <h3><strong>${highlightedTitle}</strong></h3><br>
+      ${
+        matchedContexts.length > 0
+          ? `<div class="matched-contexts">${matchedContexts.join(
+              "<br><hr class='dashed'><br>"
+            )}</div>`
+          : contentPreview
+      }
+      <br>
+      ${
+        entry.tags && entry.tags.length > 0
+          ? `<div class="tags-container">
+              ${entry.tags
+                .map((tag) => `<span class="tag-pill">${tag}</span>`)
+                .join(" ")}
+            </div>`
+          : ""
+      }
+    </div>
   </div>
   <br><hr class="normal"><br>
 `;
@@ -379,7 +405,6 @@ function checkBibleBook() {
   // Mappa correzioni e abbreviazioni
   const corrections = {
     salmo: "Salmi",
-    cantico: "Cantico dei Cantici",
     apocalisse: "Rivelazione",
     qoelet: "Ecclesiaste",
   };

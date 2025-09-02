@@ -58,7 +58,7 @@ export default async function checkVersion(refresh = true, showToast = false) {
           const ping = performance.now() - start;
           console.log(`Ping: ${Math.round(ping)}ms`);
 
-          return ping < 600; // true se buona o discreta
+          return ping < 500; // true se buona o discreta
         } catch (err) {
           console.warn("Errore di rete:", err);
           return false; // connessione assente o errore

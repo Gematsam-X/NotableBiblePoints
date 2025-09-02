@@ -132,6 +132,11 @@ span[class*="fi-sr-"]:before {
   content: "\f374";
 }
 
+.fi-sr-palette:before {
+  content: "\f6de";
+  font-size: 40px;
+}
+
 /* Brands icons*/
 
 .fi-brands-github:before {
