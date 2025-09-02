@@ -1,66 +1,100 @@
 # NotableBiblePoints - Salva i punti notevoli
 
-NotableBiblePoints è un'app web che ti consente di salvare i punti notevoli che trovi durante la lettura della Bibbia, memorizzandoli nel cloud e permettendoti di condividerli facilmente tra dispositivi.
-È progettata per chi desidera organizzare e approfondire la propria lettura della Bibbia, tenendo traccia degli insegnamenti e dei versetti significativi.
+**NotableBiblePoints** è un'app web che permette di salvare i punti notevoli che trovi durante la lettura della Bibbia, memorizzarli nel cloud e condividerli facilmente tra dispositivi.  
+È progettata per chi vuole organizzare e approfondire la propria lettura, tenendo traccia di insegnamenti e versetti significativi.
+
+---
 
 ## Caratteristiche principali
 
-### Salvataggio dei punti notevoli
+### 1. Salvataggio dei punti notevoli
+- Aggiungi punti notevoli con titolo, contenuto e riferimenti al versetto.
+- Organizza le note per libro, capitolo e versetto.
+- Tagga le note per filtrarle facilmente.
 
-Aggiungi punti notevoli dalla lettura della Bibbia con testo, note e riferimenti.
+### 2. Sincronizzazione cloud
+- I dati sono memorizzati in **Backendless**, garantendo accesso sicuro da qualsiasi dispositivo.
+- Tutti i dati sensibili (email, token) sono criptati durante il trasferimento.
+- La sincronizzazione avviene automaticamente quando sei online.
 
-### Sincronizzazione cloud:
+### 3. Condivisione tra dispositivi
+- Accedi alle tue note da smartphone, tablet o PC senza perdere dati.
+- Condivisione di singole note tramite testo o link sicuro.
 
-I tuoi dati sono memorizzati nel cloud con Backendless, garantendo che siano sempre disponibili su qualsiasi dispositivo.
+### 4. Interfaccia semplice e responsiva
+- Design pulito e intuitivo, ottimizzato per desktop e mobile.
+- Tabelle, modali e pulsanti accessibili e chiari.
+- Funzionalità fullscreen per una lettura immersiva.
 
-### Condivisione tra dispositivi:
+### 5. Utilizzo offline
+- Tutte le note vengono salvate anche offline su **IndexedDB**.
+- Appena viene ristabilita la connessione a Internet, le note offline vengono sincronizzate automaticamente con Backendless.
+- Perfetto per leggere o prendere appunti in ogni circostanza.
 
-Accedi ai tuoi punti notevoli da diversi dispositivi senza perdere dati.
-
-### Interfaccia semplice e responsiva:
-
-Un design semplice e adattabile che funziona su qualsiasi dispositivo.
+---
 
 ## Tecnologie utilizzate
 
-**HTML**: Per la struttura delle pagine.
+| Tecnologia | Ruolo |
+|------------|-------|
+| **HTML** | Struttura delle pagine |
+| **CSS** | Layout e styling dell'app |
+| **JavaScript** | Logica dell'app, interazioni, gestione dati |
+| **Backendless** | Backend cloud: storage, autenticazione, sincronizzazione |
+| **IndexedDB** | Persistenza locale offline |
+| **Choices.js** | Selezione e gestione dei tag |
+| **Capacitor** | Funzionalità native mobile (share, network detection) |
 
-**CSS**: Per lo styling e il layout dell'app.
+---
 
-**JavaScript**: Per la logica dell'applicazione e l'interazione con l'utente.
+## Flusso di utilizzo
 
-**Backendless**: Per la gestione dei dati nel cloud, la sincronizzazione tra dispositivi e l'autenticazione.
+### 1. Accedi all'app
+- Inserisci email e password per accedere.  
+- Se non hai un account, registrati direttamente nell'app.
 
-## Utilizzo
+### 2. Seleziona il libro
+- Clicca sul libro desiderato nella tabella principale.
 
-### Accedi all'app:
+### 3. Seleziona il capitolo
+- Scegli il capitolo dalla griglia di numeri che appare dopo aver selezionato il libro.
 
-Entra nel tuo account. Se non hai un account, registrati direttamente nell'app per iniziare.
+### 4. Aggiungi punti notevoli
+- Clicca sul pulsante **+** in basso a destra.
+- Inserisci:
+  - Titolo della nota
+  - Contenuto della nota
+  - Versetto di riferimento
+  - Eventuali tag
 
-### Seleziona il libro
+### 5. Visualizza, modifica e condividi
+- Modifica o elimina note tramite la modale dedicata.
+- Condividi singole note come testo attraverso il plugin Capacitor Share.
 
-Puoi farlo cliccando sul libro desiderato nella tabella principale dell'app.
+### 6. Sincronizzazione
+- Le modifiche vengono sincronizzate automaticamente con Backendless.
+- Le note offline vengono integrate al cloud appena la connessione ritorna.
 
-### Seleziona il capitolo
+---
 
-Scegli il numero del capitolo dalla tabella di quadrati che appare dopo aver selezionato il libro.
+## Sicurezza e Privacy 🔒
+- Email utente criptata durante il trasferimento.
+- Cloud Code Backendless valida email e token prima di restituire le note.
+- La sincronizzazione offline/online è progettata per prevenire perdita di dati e conflitti.
 
-### Aggiungi punti notevoli:
+---
 
-Utilizza il pulsante in basso a destra con il simbolo **+** per creare una nuova nota. Poi inserisci il titolo della nota, il contenuto e il versetto dove hai trovato il punto notevole.
+## Note aggiuntive
 
-### Visualizza i tuoi punti notevoli:
+- L'app è ottimizzata per funzionare sia su desktop che su mobile.
+- La gestione tag avanzata con Choices.js permette filtri multipli veloci.
+- La combinazione IndexedDB + Backendless garantisce un'esperienza offline-first senza perdita di dati.
 
-Puoi visualizzare, modificare o eliminare i punti notevoli che hai salvato. Puoi anche condividerli sotto forma di testo.
-
-### Sincronizzazione:
-
-I dati vengono sincronizzati con Backendless, quindi puoi accedervi da qualsiasi dispositivo e non ci sono rischi di perdita di dati.
-
-## Utilizzo offline:
-
-È possibile utilizzare l'applicazione anche offline. Appena si riaprira l'applicazione con una connessione a Internet, i dati salvati offline verranno sincronizzati con Backendless. In questo modo il progetto è fruibile in ogni circostanza.
+---
 
 ## Licenza
 
-Il progetto è distribuito sotto una licenza MIT con obbligo di attribuizione all'autore originale. L'autore originale è **"Gionatan Venturi - Gematsam X"**. Vedi il file [LICENSE](LICENSE) per maggiori dettagli.
+Distribuito sotto licenza MIT con obbligo di attribuzione all'autore originale:
+*Gionatan Venturi - Gematsam X*
+
+Vedi il file [LICENSE](LICENSE) per dettagli completi.
