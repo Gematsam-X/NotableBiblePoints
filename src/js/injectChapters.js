@@ -157,6 +157,7 @@ function createSquares(num) {
     square.classList.add("chapter");
     square.textContent = i;
     square.addEventListener("click", () => {
+      toast("Libro cliccato!");
       sessionStorage.setItem("selectedChapter", i);
       window.location.href = "/src/html/notes.html";
     });
@@ -182,7 +183,6 @@ link?.addEventListener("click", () => {
     // Costruisce l'URL con il riferimento completo
     link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&book=${bookCode}&pub=nwtsty`;
   } else {
-    // Se il libro non è trovato, puoi gestire l'errore
     console.error("Libro non trovato!");
     toast(
       "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
