@@ -96,6 +96,7 @@ function createSquares(num) {
     square.classList.add("chapter");
     square.textContent = i;
     square.addEventListener("click", () => {
+      toast("Libro cliccato!");
       sessionStorage.setItem("selectedChapter", i);
       window.location.href = "/src/html/notes.html";
     });
@@ -114,14 +115,15 @@ if (link) {
     const selectedBook = sessionStorage.getItem("selectedBook") || "Genesi";
     const bookIndex = bibleBooks.indexOf(selectedBook);
 
-    if (bookIndex !== -1) {
-      const bookCode = (bookIndex + 1).toString().padStart(2, "0");
-      window.location.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&book=${bookCode}&pub=nwtsty`;
-    } else {
-      console.error("Libro non trovato!");
-      toast(
-        "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
-      );
-    }
-  });
-}
+  if (bookIndex !== -1) {
+    const bookCode = (bookIndex + 1).toString().padStart(2, "0");
+
+    // Costruisce l'URL con il riferimento completo
+    link.href = `https://www.jw.org/finder?wtlocale=I&prefer=lang&book=${bookCode}&pub=nwtsty`;
+  } else {
+    console.error("Libro non trovato!");
+    toast(
+      "C'è stato un errore nel reindirizzamento. Si prega di riprovare più tardi."
+    );
+  }
+});
