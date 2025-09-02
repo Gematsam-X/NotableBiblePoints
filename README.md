@@ -98,3 +98,108 @@ Distribuito sotto licenza MIT con obbligo di attribuzione all'autore originale:
 *Gionatan Venturi - Gematsam X*
 
 Vedi il file [LICENSE](LICENSE) per dettagli completi.
+
+---
+
+# NotableBiblePoints - Save Notable Points
+
+**NotableBiblePoints** is a web app that lets you save notable points you find while reading the Bible, store them in the cloud, and easily share them between devices.
+
+It is designed for those who want to organize and deepen their reading, keeping track of significant teachings and verses.
+
+---
+
+## Main Features
+
+### 1. Save Notable Points
+- Add notable points with title, content, and verse references.
+- Organize notes by book, chapter, and verse.
+- Tag notes to easily filter them.
+
+### 2. Cloud Sync
+- Data is stored in **Backendless**, ensuring secure access from any device.
+- All sensitive data (email, token) is encrypted during transfer.
+- Sync occurs automatically when you're online.
+
+### 3. Sharing between Devices
+- Access your notes from your smartphone, tablet, or PC without losing data.
+- Share individual notes via text or secure link.
+
+### 4. Simple and responsive interface
+- Clean and intuitive design, optimized for desktop and mobile.
+- Accessible and clear tables, modals, and buttons.
+- Full-screen functionality for immersive reading.
+
+### 5. Offline use
+- All notes are saved offline to **IndexedDB**.
+- As soon as your internet connection is re-established, offline notes are automatically synced with Backendless.
+- Perfect for reading or taking notes anywhere.
+
+---
+
+## Technologies used
+
+| Technology | Role |
+|-----------|-------|
+| **HTML** | Page structure |
+| **CSS** | App layout and styling |
+| **JavaScript** | App logic, interactions, data management |
+| **Backendless** | Cloud backend: storage, authentication, synchronization |
+| **IndexedDB** | Local offline persistence |
+| **Choices.js** | Tag selection and management |
+| **Capacitor** | Native mobile features (share, network detection) |
+
+---
+
+## Usage flow
+
+### 1. Log in to the app
+- Enter your email and password to log in.
+- If you don't have an account, sign up directly in the app.
+
+### 2. Select the book
+- Click on the desired book in the main table.
+
+### 3. Select the chapter
+- Choose the chapter from the number grid that appears after selecting the book.
+
+### 4. Add noteworthy points
+- Click the **+** button at the bottom right.
+- Enter:
+- Note title
+- Note content
+- Reference verse
+- Any tags
+
+### 5. View, edit, and share
+- Edit or delete notes using the appropriate buttons.
+
+- Share individual notes as text.
+
+### 6. Sync
+- Changes are automatically synced with Backendless.
+- Offline notes are integrated into the cloud as soon as the connection is restored.
+
+---
+
+## Security and Privacy 🔒
+- User email is encrypted during transfer.
+- Backendless cloud code validates email and token before returning notes.
+- Offline/online sync is designed to prevent data loss and conflicts.
+
+---
+
+## Additional Notes
+
+- The app is optimized for both desktop and mobile.
+- Advanced tag management with Choices.js allows for fast multiple filters.
+- The combination of IndexedDB and Backendless ensures an offline-first experience without data loss.
+
+---
+
+## License
+
+Distributed under the MIT License with attribution to the original author:
+*Gionatan Venturi - Gematsam X*
+
+See the [LICENSE](LICENSE) file for complete details.
