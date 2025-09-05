@@ -43,7 +43,6 @@
 | **Backendless** | Backend cloud: storage, autenticazione, sincronizzazione |
 | **IndexedDB** | Persistenza locale offline |
 | **Choices.js** | Selezione e gestione dei tag |
-| **Capacitor** | Funzionalità native mobile (share, network detection) |
 
 ---
 
@@ -147,7 +146,6 @@ It is designed for those who want to organize and deepen their reading, keeping 
 | **Backendless** | Cloud backend: storage, authentication, synchronization |
 | **IndexedDB** | Local offline persistence |
 | **Choices.js** | Tag selection and management |
-| **Capacitor** | Native mobile features (share, network detection) |
 
 ---
 
