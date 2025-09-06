@@ -6,7 +6,7 @@
 - [x] Add the chapters logic
 - [x] Add the notes logic with a selector for the verse number
 - [x] Fix the images logic
-- [x] Change the storing method in Backendless; instead of single records, use only a JSON per user (avoiding too much API calls)
+- [x] Change the storing method in Backendless; instead of single records, use only a JSON (avoiding too many API calls)
 - [x] Add a "Back" button in the appropriate pages
 - [x] Improve the style of the modal for saving a new note
 - [x] Add an icon
