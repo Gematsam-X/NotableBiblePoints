@@ -5,7 +5,6 @@ async function verifyChapterNotes() {
   let userNotes = [];
 
   try {
-    // Decripto l’email utente
     const userEmail = localStorage.getItem("userEmail");
 
     // Provo a prendere i dati da IndexedDB
@@ -56,7 +55,17 @@ async function verifyChapterNotes() {
       }
     }
   } catch (error) {
-    console.error("Errore nel recupero dati:", error);
+    if (error.message.toLowerCase().includes("not existing user token")) {
+      toast("Sessione scaduta. Effettua nuovamente il login per continuare.");
+      logoutUser();
+    } else if (error.message.toLowerCase().includes("429"))
+      toast("Si è verificato un errore tecnico. Riprova tra un minuto.");
+    else {
+      console.error("Errore nel recupero delle note:", error);
+      toast(`Errore: ${error.message}`);
+    }
+    notesContainer.innerHTML = `<p>Errore nel caricamento delle note. Riprova più tardi.<br>Dettagli: ${error.message}</p>`;
+    return;
   }
 }
 

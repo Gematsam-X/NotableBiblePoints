@@ -22,8 +22,6 @@ loadingModalContent.innerHTML = `
 document.body.appendChild(loadingModalElement);
 loadingModalElement.appendChild(loadingModalContent);
 
-// Imposta uno stile base da CSS (senza fogli esterni) per nascondere inizialmente
-
 // Funzioni per mostrare/nascondere la modale
 export function showGif() {
   loadingModalElement.style.display = "flex";

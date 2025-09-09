@@ -2,6 +2,7 @@ import "/src/drawer.css";
 import "/src/icons.css";
 import checkVersion from "/src/js/checkVersion.js";
 import "/src/styles.css";
+import toast from "/src/js/toast.js";
 
 document
   .querySelector(".help")
@@ -15,9 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   booksCells.forEach((cell) => {
     cell.addEventListener("click", () => {
-      const bookName = cell.dataset.name; // Prendiamo il nome dal data-name
-      sessionStorage.setItem("selectedBook", bookName); // Salviamo in sessionStorage
-      window.location.href = "/src/html/chapters.html"; // Reindirizziamo alla pagina dei capitoli
+      try {
+        toast("Libro selezionato: " + cell.dataset.name);
+        const bookName = cell.dataset.name; // Prendiamo il nome dal data-name
+        sessionStorage.setItem("selectedBook", bookName); // Salviamo in sessionStorage
+        window.location.href = "/src/html/chapters.html"; // Reindirizziamo alla pagina dei capitoli
+      } catch (e) {
+        console.error("Errore durante la selezione del libro:", e);
+      }
     });
   });
 });

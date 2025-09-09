@@ -106,8 +106,7 @@ const colors = document.body.classList.contains("dark-theme")
   ? darkThemeColors
   : lightThemeColors;
 
-let selectedEditColorIndex = null;
-const colorsContainer = document.querySelector("#colorsContainer");
+let selectedColorIndex = null;
 const hiddenInput = document.getElementById("noteColorInput");
 const editColor = document.querySelector("#colorSelector");
 
@@ -118,7 +117,7 @@ colors.forEach((color, index) => {
   circle.dataset.index = index; // salva l’indice, NON il colore!
 
   circle.addEventListener("click", () => {
-    if (selectedEditColorIndex === index) return; // già selezionato
+    if (selectedColorIndex === index) return; // già selezionato
 
     // Deseleziona tutti
     editColor
@@ -130,7 +129,7 @@ colors.forEach((color, index) => {
 
     // Aggiorna valori
     hiddenInput.value = index;
-    selectedEditColorIndex = index;
+    selectedColorIndex = index;
   });
 
   editColor.appendChild(circle);
@@ -144,7 +143,7 @@ function setColor(colorIndex) {
   // Salvo l’indice nell’input nascosto
   hiddenInput.value = colorIndexInt;
   // Aggiorno variabile globale
-  selectedEditColorIndex = colorIndexInt;
+  selectedColorIndex = colorIndexInt;
   // Rimuovo la classe "selected" da tutti i cerchi
   circles.forEach((circle) => circle.classList.remove("selected"));
   // Controllo i cerchi uno per uno
@@ -159,7 +158,7 @@ function setColor(colorIndex) {
 // Resetta la selezione colore
 function resetColor() {
   hiddenInput.value = "";
-  selectedEditColorIndex = null;
+  selectedColorIndex = null;
   circles.forEach((circle) => circle.classList.remove("selected"));
 }
 
@@ -509,10 +508,6 @@ async function saveNote() {
       return;
     }
 
-    // Trova l’indice del colore selezionato nell’array colors
-    const colorIndex =
-      selectedEditColorIndex !== null ? selectedEditColorIndex : null;
-
     // Aggiorna la nota
     notes[noteIndex] = {
       ...notes[noteIndex],
@@ -520,7 +515,7 @@ async function saveNote() {
       verse: verseNumber,
       updatedAt: Date.now().toString(),
       content: noteContent,
-      colorIndex: colorIndex,
+      colorIndex: selectedColorIndex,
       tags: selectedTags,
     };
 

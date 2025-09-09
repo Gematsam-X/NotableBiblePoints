@@ -96,7 +96,6 @@ function createSquares(num) {
     square.classList.add("chapter");
     square.textContent = i;
     square.addEventListener("click", () => {
-      toast("Libro cliccato!");
       sessionStorage.setItem("selectedChapter", i);
       window.location.href = "/src/html/notes.html";
     });

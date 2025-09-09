@@ -1,4 +1,3 @@
-import backendlessRequest from "/src/js/backendlessRequest.js";
 import checkVersion from "/src/js/checkVersion.js";
 import toast from "/src/js/toast.js";
 
