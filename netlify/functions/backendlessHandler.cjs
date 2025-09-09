@@ -87,25 +87,6 @@ exports.handler = async (event) => {
         await Backendless.UserService.restorePassword(body.data.email);
         return ok({ message: "Email inviata" });
 
-      case "decrypt": {
-        const { ciphertext } = body.data;
-        if (!ciphertext) throw new Error("Testo criptato non fornito");
-
-        try {
-          const bytes = CryptoJS.AES.decrypt(
-            ciphertext,
-            process.env.ENCRYPTION_KEY
-          );
-          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-
-          if (!decrypted) throw new Error("Decryption failed");
-
-          return ok(decrypted);
-        } catch (e) {
-          throw new Error("Errore durante la decriptazione");
-        }
-      }
-
       // 🔐 Chiamate sicure al servizio
       case "notes:get": {
         const encrypted = body.data?.email;

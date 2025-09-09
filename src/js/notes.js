@@ -541,9 +541,7 @@ async function saveNote() {
         content: noteContent,
         chapter: parseInt(sessionStorage.getItem("selectedChapter")),
         book: sessionStorage.getItem("selectedBook"),
-        owner: await backendlessRequest("decrypt", {
-          ciphertext: localStorage.getItem("userEmail"),
-        }),
+        owner: localStorage.getItem("plainUserEmail"),
         tags: selectedTags,
         colorIndex: colorIndex,
       };
