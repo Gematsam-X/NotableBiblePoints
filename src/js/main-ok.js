@@ -12,7 +12,7 @@ document
   );
 
 // Versione definitiva a prova di Safari e dinamica
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   console.log(
     "🔥 DOM pronto - inizializzo listener click sulle celle della tavola periodica"
   );
